@@ -1,0 +1,377 @@
+<%@ page language="java" contentType="text/html" pageEncoding="utf-8"%>
+
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<jsp:include page="/WEB-INF/index/header.jsp" flush="true"></jsp:include>
+<body class="easyui-layout">
+<header>
+	<script type="text/javascript" src="<%=basePath %>src/js/webuploader.js"></script>
+	<link rel="stylesheet" href="<%=basePath %>src/css/webuploader.css" />
+</header>
+<div data-options="region:'north',border:false" style="overflow: hidden" id="publicNorth">
+	<div class="easyui-panel" style="width: 100%;overflow: hidden">
+		<div class="houseType">
+			<div class="smallType type3">
+				<div class="typeCount"></div>
+				<div class="typeName">公共租赁住房（低保、特困家庭）</div>
+				<input name="typeCode" type="hidden" value="3">
+			</div>
+			<div class="smallType type5">
+				<div class="typeCount"></div>
+				<div class="typeName">经济适用住房</div>
+				<input name="typeCode" type="hidden" value="1">
+			</div>
+		</div>
+		<form id="queryForm">
+			<ul class="search-group">
+				<li><input class="easyui-textbox" name="username" id="username" style="width: 92%" data-options="label:'申请人:'"></li>
+				<li><input class="easyui-textbox" name="sfzh" id="sfzh" style="width: 92%" data-options="label:'身份证号:'"></li>
+				<li class="readonly ssq">
+					<input class="easyui-combobox" name="ssq" id="ssq" style="width: 92%" data-options="label:'所属县区:',panelHeight:'auto',panelMaxHeight:400,
+					editable:false,valueField:'piItemcode',textField:'piItemname',onSelect:select">
+				</li>
+				<li>
+					<select class="easyui-combobox" name="ssjd" id="ssjd" style="width: 92%" data-options="label:'所属街道:',panelHeight:'auto',panelMaxHeight:400,
+					editable:false,valueField:'piItemcode',textField:'piItemname'"></select>
+				</li>
+				<li><input class="easyui-datebox" name="beginDate" id="beginDate" style="width: 92%" data-options="label:'开始时间:'"></li>
+				<li><input class="easyui-datebox" name="endDate" id="endDate" style="width: 92%" data-options="label:'结束时间:'"></li>
+				<li class="query-btn">
+					<a class="icon iconfont icon-sousuo" onclick="query()"><i>查&nbsp;询</i></a>
+				</li>
+				<li class="query-btn">
+					<a class="icon iconfont icon-20daochu" onclick="exportXml()"><i>导&nbsp;出</i></a>
+				</li>
+				<li class="query-btn">
+					<a class="icon iconfont" onclick="divAll()"><i>直接选房</i></a>
+				</li>
+				<li class="query-btn">
+					<a class="icon iconfont" onclick="rejectAll()"><i>过期取消</i></a>
+				</li>
+			</ul>
+		</form>
+		<ul class="search-group">
+			<li><input class="easyui-textbox" name="inputnum" id="inputnum" style="width: 92%" data-options="label:'筛选数量:',validType:'number'"></li>
+			<li>
+				<select id="importXml" class="easyui-combobox" name="apptype"  style="width: 92%" data-options="label:'申请类型:',panelHeight:'auto',panelMaxHeight:400,
+					editable:false,valueField:'piItemcode',textField:'piItemname'"></select>
+			</li>
+			<li class="query-btn">
+				<a class="icon iconfont icon-19daoru" onclick="importXml()"><i>导&nbsp;入</i></a>
+			</li>
+			<form id="uploadForm" enctype="multipart/form-data" method="post" style="display: none">
+				<input class="easyui-filebox"  id="file" name="file" data-options=" accept:'text/xml,application/xml',onChange:fileUpload,multiple:false">
+			</form>
+		</ul>
+	</div>
+</div>
+<div data-options="region:'center',border:false">
+	<div class="easyui-panel resPanel" style="width: 100%;height: 98%;overflow: auto">
+		<table id="dataTable" class="easyui-datagrid resTable" style="height: 100%;min-height: 300px"
+			   data-options="singleSelect:true,rownumbers:true,pagination:true,border:true,striped:true,
+                       pagePosition:'bottom',pageSize:20,nowrap:true,fitColumns:true">
+			<thead>
+			<tr>
+				<th data-options="field:'APPTYPE',width:120,align:'center',halign:'center',formatter:convenrtApplyType">申请类型</th>
+				<th data-options="field:'ID',width:150,align:'center'">申请编号</th>
+				<th data-options="field:'APPLYDATE',width:100,align:'center'">申请日期</th>
+				<th data-options="field:'PASSDATE',width:100,align:'center'">审批通过日期</th>
+				<th data-options="field:'USERNAME',width:100,align:'center'">申请人</th>
+				<th data-options="field:'SFZH',width:150,align:'center'">身份证号</th>
+				<th data-options="field:'SSQ',width:100,align:'center'">所属县区</th>
+				<th data-options="field:'SSJD',width:100,align:'center'">所属街道</th>
+				<th data-options="field:'STATE',width:100,align:'center'">摇号状态</th>
+				<th data-options="field:'OPUSERNAME',width:100,align:'center'">摇号操作人</th>
+				<th data-options="field:'OPTIME',width:100,align:'center'">操作时间</th>
+				<th data-options="field:'essetNature',width:200,align:'center',formatter:search">操作</th>
+			</tr>
+			</thead>
+		</table>
+	</div>
+</div>
+</body>
+<script>
+    //为街道和街区默认赋值
+    $(function () {
+        var ssqId = "${sessionScope.user.parmItemssq.piItemcode}";
+        var ssqname = "${sessionScope.user.parmItemssq.piItemname}";
+        var ssjText = "${sessionScope.user.parmItemssjd.piItemname}";
+        $("#ssq").combobox({
+            url:'<%=basePath %>ParmItem/getOptions?parmSetcode=05',
+            onLoadSuccess:function(){
+                var datas=$("#ssq").combobox('getData');
+                if(ssqId =="0"){
+                    $("#ssq").combobox('setValue',datas[0]);
+                } else {
+                    $("#ssq").combobox("setValue",ssqId);
+                    $("#ssq").combobox("readonly",true);
+                }
+            }
+        });
+
+        $("#importXml").combobox("loadData",[{piItemcode:1,piItemname:'经济适应房'}
+        		,{piItemcode:3,piItemname:'公共租赁住房（低保、特困家庭）'}]);
+
+        $("#dataTable").datagrid({
+			url:'<%=basePath %>lotnum/findlotlist',
+            queryParams:{
+                aplcLs:3
+            }
+        });
+
+    });
+	/*多条件查询*/
+    function select(record){
+        var qid = record.piItemcode;
+        var ssqId = "${sessionScope.user.parmItemssq.piItemcode}";
+        var ssjId = "${sessionScope.user.ssj}";
+        if(qid==undefined){
+            qid=record;
+        }
+        $("#ssjd").combobox({
+            url:'<%=basePath%>ParmItem/findAllJd',
+            onBeforeLoad:function(param){
+                param.qid=qid;
+            },
+            onLoadSuccess:function () {
+                if(ssqId !="0"){
+                    $("#ssjd").combobox("setValue",ssjId);
+                    $("#ssjd").combobox("readonly",true);
+                }
+            }
+        });
+    }
+    //根据条件查询
+    function query(){
+        var applyType=$.trim($('.selectType').find('input[name="typeCode"]').val());
+        $("#dataTable").datagrid('load',{
+            applyType:applyType,
+            applyUsername:$.trim($("#username").val()),
+            applyUsercard:$.trim($("#sfzh").val()),
+            applyUserSsq:$.trim($("#ssq").combobox('getValue')),
+            applyUserJd:$.trim($("#ssjd").combobox('getValue')),
+            beginDate:$.trim($("#beginDate").val()),
+            endDate:$.trim($("#endDate").val()),
+            aplcLs:3
+        });
+    }
+    //点击类型查询
+    $('.houseType .smallType').click(function () {
+        $(this).addClass('selectType').siblings().removeClass('selectType');
+        var applytype=$.trim($(this).find('input[name="typeCode"]').val());
+        $("#dataTable").datagrid('load',{
+            applyType:applytype,
+            applyUsername:$.trim($("#username").val()),
+            applyUsercard:$.trim($("#sfzh").val()),
+            applyUserSsq:$.trim($("#ssq").combobox('getValue')),
+            applyUserJd:$.trim($("#ssjd").combobox('getValue')),
+            beginDate:$.trim($("#beginDate").val()),
+            endDate:$.trim($("#endDate").val()),
+            aplcLs:3
+        })
+    });
+
+    /*转换业务类别*/
+    function convenrtApplyType(value,row,index){
+        //alert("value:"+value);
+        var apptype = value;
+        switch (apptype){
+            case "1":
+                return "经济适应住房";
+            case "2":
+                return "公共租赁住房租赁补贴";
+            case "3":
+                return "公共租赁住房（低保、特困家庭）";
+            case "4":
+                return "公共租赁住房（外来务工人员）";
+            case "5":
+                return "公共租赁住房（新就业人员）";
+        }
+    }
+
+    /*添加查询按钮*/
+    function search(value,row,index) {
+        var apptype = row.APPTYPE;
+        var aplid = row.APPID;
+        return '<a class="blue" style="cursor:pointer" onclick="auditOpinion(\''+apptype+'\',\''+aplid +'\')">查看</a>';
+    }
+
+    function auditOpinion(apptype,aplid){
+        var a = $('<a href="<%=basePath %>task/toApprove?applyType='+apptype+'&applyId='+aplid+'&chengxin=chengxin#true" target="_blank"></a>')[0];
+        var e = document.createEvent('MouseEvents');
+        e.initEvent('click', true, true);
+        a.dispatchEvent(e);
+    }
+
+    /*导出xml*/
+    function exportXml() {
+        //var all = $.trim($("input[name='all']:checked").val());
+        var applyType=$.trim($('.selectType').find('input[name="typeCode"]').val());
+        var ssq = $.trim($("#ssq").combobox('getValue'));
+        if(applyType==""){
+            bank.ajaxMessage("请选择业务类别");
+            return;
+		}
+
+		if(ssq=="0"){
+            bank.ajaxMessage("请选择摇号的市区");
+            return;
+		}
+        var ssq =$.trim($("#ssq").combobox('getValue'));
+        window.location.href="<%=basePath%>lotnum/downlotlist?applyType="+applyType+"&applyUserSsq="+ssq+"&aplcLs=3";
+    }
+
+    /*导入xml*/
+    function importXml(){
+        var num=$.trim($("#inputnum").val());
+        var applyType = $.trim($("#importXml").combobox("getValue"));
+        if(num.length==0||applyType.length==0){
+            bank.alertMessage("筛选数量和申请类型不能为空")
+		}else{
+            $('#file').next('span').find('.filebox-label').click();
+        }
+	}
+    function fileUpload() {
+                var temp = $('#file').filebox('getValue');
+                if (temp != '') {
+                    var arr = temp.split('.');
+                    if (arr.length > 1) {
+                        var expanded_name = arr[arr.length - 1].toLowerCase();//取得文件扩展名
+                        if (expanded_name == "xml") {//确实是Excel文件
+                            $('#uploadForm').form('submit', {
+                                url:'<%=basePath %>lotnum/uploadXml',
+                                contentType: false,
+                                processData: false,
+                                dataType: "json",
+                                iframe: false,
+                                onSubmit: function(param){
+                                     param.num = $("#inputnum").val();
+                                     param.applyType = $("#importXml").combobox("getValue");
+                                     param.aplcLs=3;
+                                },
+                                success: function (result) {
+                                    bank.ajaxMessage(result);
+                                    reloadTable();
+                                    $('#file').filebox('reset');
+                                   /* bank.ajaxMessage(result._raw);
+                                    if(result._raw.indexOf("成功")!=-1){
+                                        reloadTable();
+                                    }*/
+                                }, error: function () {
+                                    $('#file').filebox('reset');
+                                    $.messager.alert('操作提示', "数据库连接失败!", 'warning');
+                                }
+                            });
+                        }
+                        else {//选择了其他类型的文件
+                            $('#file').filebox('reset');
+                            bank.alertMessage('请选择xml文件!');
+                        }
+                    }
+                    else {//选择了无扩展名的文件
+                        $('#file').filebox('reset');
+                       bank.alertMessage("请选择xml文件!");
+                    }
+                }
+    }
+
+    /*更新查询到的全部申请单状态为可选房的状态*/
+    function divAll() {
+        var applyType=$.trim($('.selectType').find('input[name="typeCode"]').val());
+        var ssq = $.trim($("#ssq").combobox('getValue'));
+        if(applyType==''){
+            	bank.ajaxMessage("请选择业务类别");
+				return;
+		}
+
+        if(ssq=="0"){
+            bank.ajaxMessage("请选择对应的市区");
+            return;
+        }
+		$.messager.confirm('信息提示','确定直接将全部用户设为待选房状态？',function (data) {
+			if(data){
+                $.post("<%=basePath%>/lotnum/lotAllUser",
+                    {
+                        applyType:applyType,
+                        applyUsername:$.trim($("#username").val()),
+                        applyUsercard:$.trim($("#sfzh").val()),
+                        applyUserSsq:$.trim($("#ssq").combobox('getValue')),
+                        applyUserJd:$.trim($("#ssjd").combobox('getValue')),
+                        beginDate:$.trim($("#beginDate").val()),
+                        endDate:$.trim($("#endDate").val()),
+                        aplcLs:3
+                    },
+                    function (data) {
+                        bank.ajaxMessage(data);
+                        if(data.indexOf("成功")!=-1){
+                            reloadTable();
+                        }
+                        //alert("data:"+data);
+                    },"json");
+			}
+        });
+
+    }
+
+    function reloadTable(){
+        var applyType=$.trim($('.selectType').find('input[name="typeCode"]').val());
+        $("#dataTable").datagrid('reload',{
+            applyType:$.trim($(this).find('input[name="typeCode"]').val()),
+            applyUsername:$.trim($("#username").val()),
+            applyUsercard:$.trim($("#sfzh").val()),
+            applyUserSsq:$.trim($("#ssq").combobox('getValue')),
+            applyUserJd:$.trim($("#ssjd").combobox('getValue')),
+            beginDate:$.trim($("#beginDate").val()),
+            endDate:$.trim($("#endDate").val()),
+            aplcLs:3
+        });
+	}
+	/*将所有轮候和待摇号状态申请全部取消，状态改为*/
+	function rejectAll() {
+        var applyType = $.trim($('.selectType').find('input[name="typeCode"]').val());
+        var ssq = $.trim($("#ssq").combobox('getValue'));
+        if (applyType == '') {
+            bank.ajaxMessage("请选择业务类别");
+            return;
+        }
+
+        if(ssq=="0"){
+            bank.ajaxMessage("请选择对应的市区");
+            return;
+        }
+        $.messager.confirm('信息提示', '确定直接将所有过期的用户申请作废？', function (data) {
+            if (data) {
+                $.post("<%=basePath%>/lotnum/rejectAllUser",
+                    {
+                        applyType: applyType,
+                        applyUsername: $.trim($("#username").val()),
+                        applyUsercard: $.trim($("#sfzh").val()),
+                        applyUserSsq: $.trim($("#ssq").combobox('getValue')),
+                        applyUserJd: $.trim($("#ssjd").combobox('getValue')),
+                        beginDate: $.trim($("#beginDate").val()),
+                        endDate: $.trim($("#endDate").val()),
+                        aplcLs: 3
+                    },
+                    function (data) {
+                        bank.ajaxMessage(data);
+                        if (data.indexOf("成功") != -1) {
+                            reloadTable();
+                        }
+                        //alert("data:"+data);
+                    }, "json");
+            }
+        });
+    }
+
+</script>
+<style>
+	.webuploader-pick {
+		background:none !important;
+		position: relative;
+		top:-10px;
+	}
+
+</style>
+</html>

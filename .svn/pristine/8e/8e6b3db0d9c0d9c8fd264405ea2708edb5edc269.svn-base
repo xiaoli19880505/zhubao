@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.lotnum.LotNumMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.lotnum.LotNum">
+    <id column="LID" jdbcType="VARCHAR" property="lid" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="SFZH" jdbcType="VARCHAR" property="sfzh" />
+    <result column="SQBH" jdbcType="VARCHAR" property="sqbh" />
+    <result column="NUM" jdbcType="VARCHAR" property="num" />
+    <result column="STATE" jdbcType="VARCHAR" property="state" />
+    <result column="USERID" jdbcType="VARCHAR" property="userid" />
+    <result column="QZTIME" jdbcType="TIMESTAMP" property="qztime" />
+    <result column="SQLB" jdbcType="VARCHAR" property="sqlb" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    LID, NAME, SFZH, SQBH, NUM, STATE, USERID, QZTIME, SQLB
+  </sql>
+
+  <select id="select" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+  </select>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from LOTNUM
+    where LID = #{lid,jdbcType=VARCHAR}
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from LOTNUM
+    where LID = #{lid,jdbcType=VARCHAR}
+  </delete>
+  <!--<insert id="insert" parameterType="com.sys.pojo.lotnum.LotNum">
+    insert into LOTNUM (LID, NAME, SFZH, 
+      SQBH, NUM, STATE, USERID, 
+      QZTIME)
+    values (#{lid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{sfzh,jdbcType=VARCHAR}, 
+      #{sqbh,jdbcType=VARCHAR}, #{num,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, 
+      #{qztime,jdbcType=TIMESTAMP})
+  </insert>-->
+  <insert id="insert" parameterType="com.sys.pojo.lotnum.LotNum">
+    insert into LOTNUM
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="lid != null">
+        LID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="sfzh != null">
+        SFZH,
+      </if>
+      <if test="sqbh != null">
+        SQBH,
+      </if>
+      <if test="num != null">
+        NUM,
+      </if>
+      <if test="state != null">
+        STATE,
+      </if>
+      <if test="userid != null">
+        USERID,
+      </if>
+      <if test="qztime != null">
+        QZTIME,
+      </if>
+      <if test="sqlb != null">
+        SQLB,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="lid != null">
+        #{lid,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sfzh != null">
+        #{sfzh,jdbcType=VARCHAR},
+      </if>
+      <if test="sqbh != null">
+        #{sqbh,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null">
+        #{num,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="qztime != null">
+        #{qztime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sqlb != null">
+        #{sqlb,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="com.sys.pojo.lotnum.LotNum">
+    update LOTNUM
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sfzh != null">
+        SFZH = #{sfzh,jdbcType=VARCHAR},
+      </if>
+      <if test="sqbh != null">
+        SQBH = #{sqbh,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null">
+        NUM = #{num,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        STATE = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="userid != null">
+        USERID = #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="qztime != null">
+        QZTIME = #{qztime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sqlb != null">
+        SQLB = #{sqlb,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LID = #{lid,jdbcType=VARCHAR}
+  </update>
+  <!--<update id="updateByPrimaryKey" parameterType="com.sys.pojo.lotnum.LotNum">
+    update LOTNUM
+    set NAME = #{name,jdbcType=VARCHAR},
+      SFZH = #{sfzh,jdbcType=VARCHAR},
+      SQBH = #{sqbh,jdbcType=VARCHAR},
+      NUM = #{num,jdbcType=VARCHAR},
+      STATE = #{state,jdbcType=VARCHAR},
+      USERID = #{userid,jdbcType=VARCHAR},
+      QZTIME = #{qztime,jdbcType=TIMESTAMP}
+    where LID = #{lid,jdbcType=VARCHAR}
+  </update>-->
+  <!--条件查询摇号表的数目-->
+  <select id="selectCountByMap">
+    select COUNT(*)  from LOTNUM
+    <include refid="sqlWhere" />
+  </select>
+
+
+  <!--条件查询摇号表的数目-->
+  <select id="selectMaxNumByMap" resultType="java.lang.String">
+    select max(lot.NUM)  from LOTNUM lot
+    <include refid="sqlWhere" />
+  </select>
+
+  <!--条件查询摇号表的数目,排序后只选num最小的那一条-->
+  <select id="selectOneByOreder" resultMap="BaseResultMap">
+    select * from (select * from LOTNUM lot
+    where lot.STATE='0'
+    <if test="applyType!=null and applyType!=''">
+      and lot.SQLB = #{applyType}
+    </if>
+    order by to_number(lot.NUM) ) where rownum &lt;= 1
+  </select>
+
+  <!--批量更新摇号数据-->
+  <update id="updateLotList">
+    <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+      update LOTNUM
+      <set>
+        <if test="item.state!=null and item.state!=''">
+          STATE=#{item.state,jdbcType=VARCHAR},
+        </if>
+      </set>
+      <where>
+        <if test="item.lid!=null and item.lid!=''">
+          and LID=#{item.lid,jdbcType=VARCHAR}
+        </if>
+      </where>
+    </foreach>
+  </update>
+
+  <!--查询条件-->
+  <sql id="sqlWhere">
+    <where>
+      <if test="sqbh!=null and sqb!=''">
+        and SQBH = #{sqbh,jdbcType=VARCHAR}
+      </if>
+      <if test="applytype!=null and applytype!=''">
+        and sqlb = #{applytype,jdbcType=VARCHAR}
+      </if>
+      <if test="state!=null and state!=''">
+        and STATE = #{state,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </sql>
+
+</mapper>

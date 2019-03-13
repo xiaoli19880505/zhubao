@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.SourceHouseMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.SourceHouse">
+    <id column="SH_ID" jdbcType="VARCHAR" property="shId" />
+    <result column="SH_XMID" jdbcType="VARCHAR" property="shXmid" />
+    <result column="SH_LPID" jdbcType="VARCHAR" property="shLpid" />
+    <result column="SH_FWID" jdbcType="VARCHAR" property="shFwid" />
+    <result column="SH_FYLX" jdbcType="VARCHAR" property="shFylx" />
+    <result column="SH_SSQ" jdbcType="VARCHAR" property="shSsq" />
+    <result column="SH_SYZT" jdbcType="VARCHAR" property="shSyzt" />
+    <result column="SH_FLAG" jdbcType="DECIMAL" property="shFlag" />
+    <result column="SH_APPLYID" jdbcType="VARCHAR" property="shApplyid" />
+    <result column="SH_QYZT" jdbcType="VARCHAR" property="shQyzt" />
+    <result column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="TEXT" jdbcType="VARCHAR" property="text" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    SH_ID, SH_XMID, SH_LPID, SH_FWID, SH_FYLX, SH_SSQ, SH_SYZT, SH_FLAG, SH_APPLYID, 
+    SH_QYZT
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from SOURCEHOUSE
+    where SH_ID = #{shId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByCondition"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from SOURCEHOUSE
+    where 1=1
+    <if test="shApplyid != null and shApplyid != ''">
+      and SH_APPLYID = #{shApplyid}
+    </if>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from SOURCEHOUSE
+    where SH_ID = #{shId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="saveSourceHouse" parameterType="java.util.List"
+          useGeneratedKeys="false">
+    insert into SOURCEHOUSE (SH_ID, SH_XMID, SH_LPID,
+    SH_FWID, SH_FYLX,SH_SSQ,
+    SH_SYZT)
+   <foreach  collection="list" item="item" index="index" separator="union all">
+      (
+      SELECT
+      #{item.shId,jdbcType=VARCHAR}, #{item.shXmid,jdbcType=VARCHAR}, #{item.shLpid,jdbcType=VARCHAR},
+      #{item.shFwid,jdbcType=VARCHAR}, #{item.shFylx,jdbcType=VARCHAR},#{item.shSsq,jdbcType=VARCHAR},
+      #{item.shSyzt,jdbcType=VARCHAR}
+      FROM DUAL
+     )
+    </foreach>
+  </insert>
+  <insert id="insert" parameterType="com.sys.pojo.SourceHouse">
+    insert into SOURCEHOUSE (SH_ID, SH_XMID, SH_LPID, 
+      SH_FWID, SH_FYLX, SH_SSQ, 
+      SH_SYZT, SH_FLAG, SH_APPLYID, 
+      SH_QYZT)
+    values (#{shId,jdbcType=VARCHAR}, #{shXmid,jdbcType=VARCHAR}, #{shLpid,jdbcType=VARCHAR}, 
+      #{shFwid,jdbcType=VARCHAR}, #{shFylx,jdbcType=VARCHAR}, #{shSsq,jdbcType=VARCHAR}, 
+      #{shSyzt,jdbcType=VARCHAR}, #{shFlag,jdbcType=DECIMAL}, #{shApplyid,jdbcType=VARCHAR}, 
+      #{shQyzt,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sys.pojo.SourceHouse">
+    insert into SOURCEHOUSE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="shId != null">
+        SH_ID,
+      </if>
+      <if test="shXmid != null">
+        SH_XMID,
+      </if>
+      <if test="shLpid != null">
+        SH_LPID,
+      </if>
+      <if test="shFwid != null">
+        SH_FWID,
+      </if>
+      <if test="shFylx != null">
+        SH_FYLX,
+      </if>
+      <if test="shSsq != null">
+        SH_SSQ,
+      </if>
+      <if test="shSyzt != null">
+        SH_SYZT,
+      </if>
+      <if test="shFlag != null">
+        SH_FLAG,
+      </if>
+      <if test="shApplyid != null">
+        SH_APPLYID,
+      </if>
+      <if test="shQyzt != null">
+        SH_QYZT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="shId != null">
+        #{shId,jdbcType=VARCHAR},
+      </if>
+      <if test="shXmid != null">
+        #{shXmid,jdbcType=VARCHAR},
+      </if>
+      <if test="shLpid != null">
+        #{shLpid,jdbcType=VARCHAR},
+      </if>
+      <if test="shFwid != null">
+        #{shFwid,jdbcType=VARCHAR},
+      </if>
+      <if test="shFylx != null">
+        #{shFylx,jdbcType=VARCHAR},
+      </if>
+      <if test="shSsq != null">
+        #{shSsq,jdbcType=VARCHAR},
+      </if>
+      <if test="shSyzt != null">
+        #{shSyzt,jdbcType=VARCHAR},
+      </if>
+      <if test="shFlag != null">
+        #{shFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="shApplyid != null">
+        #{shApplyid,jdbcType=VARCHAR},
+      </if>
+      <if test="shQyzt != null">
+        #{shQyzt,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sys.pojo.SourceHouse">
+    update SOURCEHOUSE
+    <set>
+      <if test="shXmid != null">
+        SH_XMID = #{shXmid,jdbcType=VARCHAR},
+      </if>
+      <if test="shLpid != null">
+        SH_LPID = #{shLpid,jdbcType=VARCHAR},
+      </if>
+      <if test="shFwid != null">
+        SH_FWID = #{shFwid,jdbcType=VARCHAR},
+      </if>
+      <if test="shFylx != null">
+        SH_FYLX = #{shFylx,jdbcType=VARCHAR},
+      </if>
+      <if test="shSsq != null">
+        SH_SSQ = #{shSsq,jdbcType=VARCHAR},
+      </if>
+      <if test="shSyzt != null">
+        SH_SYZT = #{shSyzt,jdbcType=VARCHAR},
+      </if>
+      <if test="shFlag != null">
+        SH_FLAG = #{shFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="shApplyid != null">
+        SH_APPLYID = #{shApplyid,jdbcType=VARCHAR},
+      </if>
+      <if test="shQyzt != null">
+        SH_QYZT = #{shQyzt,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where SH_ID = #{shId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sys.pojo.SourceHouse">
+    update SOURCEHOUSE
+    set SH_XMID = #{shXmid,jdbcType=VARCHAR},
+      SH_LPID = #{shLpid,jdbcType=VARCHAR},
+      SH_FWID = #{shFwid,jdbcType=VARCHAR},
+      SH_FYLX = #{shFylx,jdbcType=VARCHAR},
+      SH_SSQ = #{shSsq,jdbcType=VARCHAR},
+      SH_SYZT = #{shSyzt,jdbcType=VARCHAR},
+      SH_FLAG = #{shFlag,jdbcType=DECIMAL},
+      SH_APPLYID = #{shApplyid,jdbcType=VARCHAR},
+      SH_QYZT = #{shQyzt,jdbcType=VARCHAR}
+    where SH_ID = #{shId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="findSourceHourses"  resultMap="BaseResultMap">
+    select distinct ITEMCODEINFO_ID AS ID,IC_ITNAME AS TEXT from SOURCEHOUSE inner join ITEMCODEINFO on SH_XMID=ITEMCODEINFO_ID
+  </select>
+  
+  <update id="updateSourceHourse" parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+      update SOURCEHOUSE S
+      set
+      S.SH_SSQ= #{item.shSsq,jdbcType=VARCHAR}
+      where S.SH_FWID=#{item.shFwid,jdbcType=VARCHAR} and S.SH_FLAG=1
+    </foreach>
+  </update>
+  <update id="updateSourceHouseApplyer" parameterType="Map">
+
+    UPDATE SOURCEHOUSE SET SH_APPLYID=#{applyid} ,SH_SYZT='1' WHERE SH_FLAG=1 AND SH_FWID
+     IN
+    <foreach collection="list" item="item" index="no" open="("
+             separator="," close=")">
+      #{item}
+    </foreach>
+
+
+
+  </update>
+  <update id="updateSourceHouseRetrunHouse" parameterType="Map">
+    UPDATE SOURCEHOUSE SET SH_APPLYID=''  WHERE SH_APPLYID=#{applyid}
+  </update>
+
+
+  <!--通过申请单id查询所属小区、楼盘、单元、室-->
+  <select id="selectHouseInfoByMap" resultType="Map">
+    select ic.IC_ITNAME AS areaname,
+        bl.BUNUM AS bunum,
+        bl.BUNAME AS buname,
+        fp.F_CECODE AS unit,
+        fp.F_RONUM AS room
+    from SOURCEHOUSE sh
+    LEFT JOIN FACTMAPPING fp on sh.SH_FWID = fp.FACTMAPPING_ID
+    LEFT JOIN BUILDINGINFO bl on fp.BUILDINGINFO_ID=bl.BUILDINGINFO_ID
+    LEFT JOIN ITEMCODEINFO ic on bl.ITEMCODEINFO_ID=ic.ITEMCODEINFO_ID
+  <where>
+    <if test="shApplyid!=null and shApplyid!=''">
+      and sh.SH_APPLYID = #{shApplyid,jdbcType=VARCHAR}
+    </if>
+  </where>
+  </select>
+</mapper>

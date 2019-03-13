@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.UserInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.sys.pojo.UserInfo" >
+    <id column="USERID" property="userid" jdbcType="VARCHAR" />
+    <result column="USERCODE" property="usercode" jdbcType="VARCHAR" />
+    <result column="USERPWD" property="userpwd" jdbcType="VARCHAR" />
+    <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+    <result column="UNITID" property="unitid" jdbcType="VARCHAR" />
+    <result column="SEX" property="sex" jdbcType="VARCHAR" />
+    <result column="LINKTEL" property="linktel" jdbcType="CHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="State" property="state" jdbcType="CHAR" />
+    <result column="DESCRIBE" property="describe" jdbcType="VARCHAR" />
+    <result column="LOGINIP" property="loginip" jdbcType="VARCHAR" />
+    <result column="SSQ" property="ssq" jdbcType="VARCHAR" />
+    <result column="SSJ" property="ssj" jdbcType="VARCHAR" />
+    <result column="XZQ" property="xzq" jdbcType="VARCHAR" />
+    <result column="JIEDAO" property="jiedao" jdbcType="VARCHAR" />
+    <association property="parmItemssq" column="{piSetcode=XZQ,piItemcode=SSQ}" select="com.sys.mapper.ParmItemMapper.selectByMap"/>
+    <association property="parmItemssjd" column="{piSetcode=JIEDAO,piItemcode=SSJ}" select="com.sys.mapper.ParmItemMapper.selectByMap"/>
+  </resultMap>
+
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from USERINFO
+    where USERID = #{userid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.UserInfo" >
+    insert into USERINFO (USERID, USERCODE, USERPWD, 
+      USERNAME, UNITID, SEX, 
+      LINKTEL, EMAIL, "State", DESCRIBE,
+      LOGINIP, SSQ,SSJ)
+    values (#{userid,jdbcType=VARCHAR}, #{usercode,jdbcType=VARCHAR}, #{userpwd,jdbcType=VARCHAR}, 
+      #{username,jdbcType=VARCHAR}, #{unitid,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
+      #{linktel,jdbcType=CHAR}, #{email,jdbcType=VARCHAR}, #{state,jdbcType=CHAR}, #{describe,jdbcType=VARCHAR}, 
+      #{loginip,jdbcType=VARCHAR}, #{ssq,jdbcType=VARCHAR},#{ssj,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="findUserByUserCode" resultMap="BaseResultMap">
+      select  T.USERID, T.USERCODE, T.USERPWD,
+          T.USERNAME, T.UNITID, T.SEX, T.LINKTEL, T.EMAIL,  T."State", T.DESCRIBE,
+          T.LOGINIP, T.SSQ,NVL(T.SSJ,' ') as SSJ,'04' AS XZQ,'05' AS JIEDAO
+    from USERINFO T
+    where T.USERCODE=#{usercode}
+      <if test="userpwd != null and userpwd !=''">
+        and T.USERPWD=#{userpwd}
+      </if>
+  </select>
+
+  <update id="update" parameterType="com.sys.pojo.UserInfo" >
+    update USERINFO
+    <set>
+    <if test="usercode!=null and usercode!=''">
+      USERCODE = #{usercode,jdbcType=VARCHAR},
+    </if>
+    <if test="userpwd!=null and userpwd!=''">
+      USERPWD = #{userpwd,jdbcType=VARCHAR},
+    </if>
+    <if test="username!=null and username!=''">
+      USERNAME = #{username,jdbcType=VARCHAR},
+    </if>
+    <if test="unitid!=null and unitid!=''">
+      UNITID = #{unitid,jdbcType=VARCHAR},
+    </if>
+    <if test="sex!=null and sex!=''">
+      SEX = #{sex,jdbcType=VARCHAR},
+    </if>
+    <if test="linktel!=null and linktel!=''">
+      LINKTEL = #{linktel,jdbcType=CHAR},
+    </if>
+    <if test="email!=null and email!=''">
+      EMAIL = #{email,jdbcType=VARCHAR},
+    </if>
+    <if test="state!=null">
+      "State" = #{state,jdbcType=CHAR},
+    </if>
+    <if test="describe!=null and username!=''">
+      DESCRIBE = #{describe,jdbcType=VARCHAR},
+    </if>
+    <if test="loginip!=null and loginip!=''">
+      LOGINIP = #{loginip,jdbcType=VARCHAR},
+    </if>
+    <if test="ssq!=null and ssq!=''">
+      SSQ = #{ssq,jdbcType=VARCHAR}
+    </if>
+    </set>
+    where USERID = #{userid,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select USERID, USERCODE, USERPWD, USERNAME, UNITID, SEX, LINKTEL, EMAIL,  "State", DESCRIBE,
+    LOGINIP, SSQ,NVL(SSJ,' ') AS SSJ,'04' AS XZQ,'05' AS JIEDAO
+    from USERINFO
+    where USERID = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+      select T.USERID, T.USERCODE, T.USERPWD,
+    T.USERNAME, T.UNITID, T.SEX, T.LINKTEL, T.EMAIL,  T."State", T.DESCRIBE,
+    T.LOGINIP, T.SSQ,NVL(T.SSJ,' ') as SSJ,'04' AS XZQ,'05' AS JIEDAO
+    from USERINFO T
+  </select>
+
+  <select id="findAllUserInfo" parameterType="Map" resultMap="BaseResultMap">
+      select T.USERID, T.USERCODE, T.USERPWD,
+      T.USERNAME, T.UNITID, T.SEX, T.LINKTEL, T.EMAIL,  T."State", T.DESCRIBE,
+      T.LOGINIP, T.SSQ,NVL(T.SSJ,' ') as SSJ,'04' AS XZQ,'05' AS JIEDAO
+      from USERINFO T
+   <where>
+      <if test="username != null and username!=''">
+          AND   T.USERNAME=#{username}
+      </if>
+      <if test="ssq != null and ssq!=''">
+          AND  T.SSQ=#{ssq}
+      </if>
+      <if test="ssj != null and ssj!=''">
+          AND  T.SSJ=#{ssj}
+      </if>
+      <if test="linktel != null and linktel!=''">
+          AND   T.LINKTEL=#{linktel}
+      </if>
+      <if test="state != null and state!=''">
+          AND T."State"=#{state}
+      </if>
+      <if test="sex != null and sex!=''">
+          AND T.SEX=#{sex}
+      </if>
+   </where>
+  </select>
+
+  <select id="findAllUCountserInfo" parameterType="Map" resultType="java.lang.Integer">
+    SELECT count(1)
+    FROM USERINFO
+    <where>
+        <if test="username != null and username!=''">
+            AND  USERNAME=#{username}
+        </if>
+        <if test="ssq != null and ssq!=''">
+            AND  SSQ=#{ssq}
+        </if>
+        <if test="ssj != null and ssj!=''">
+            AND  SSJ=#{ssj}
+        </if>
+        <if test="linktel != null and linktel!=''">
+            AND   LINKTEL=#{linktel}
+        </if>
+        <if test="state != null and state!=''">
+            AND "State"=#{state}
+        </if>
+        <if test="sex != null and sex!=''">
+            AND SEX=#{sex}
+        </if>
+    </where>
+  </select>
+
+  <select id="findUserByRoleId" parameterType="Map" resultType="com.sys.pojo.UserInfo">
+     SELECT UF.USERID FROM USERINFO UF
+      WHERE UF.USERID IN
+      (SELECT UD.USERID FROM USERDUTY UD WHERE UD.DUTYID=#{dutyid})
+  </select>
+    <!--查询用户信息-->
+    <select id="getUserByMap" resultMap="BaseResultMap">
+        select  T.USERID, T.USERCODE, T.USERPWD,
+      T.USERNAME, T.UNITID, T.SEX, T.LINKTEL, T.EMAIL,  T."State", T.DESCRIBE,
+      T.LOGINIP, T.SSQ,NVL(T.SSJ,' ') as SSJ,'04' AS XZQ,'05' AS JIEDAO  from USERINFO T
+        <where>
+          <if test="usercode!=null and usercode!=''">
+              and T.USERCODE = #{usercode}
+          </if>
+        </where>
+    </select>
+</mapper>

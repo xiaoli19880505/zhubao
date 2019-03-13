@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.ApplyUserInfoFormMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.ApplyUserInfoForm">
+    <id column="UIFID" jdbcType="VARCHAR" property="uiFid" />
+    <result column="UIFNR" jdbcType="DECIMAL" property="uiFnr" />
+    <result column="UIFXFRQ" jdbcType="VARCHAR" property="uiFxfrq" />
+    <result column="UIFBT" jdbcType="VARCHAR" property="uifBt" />
+    <result column="UIFREAD" jdbcType="VARCHAR" property="uifRead" />
+    <association property="applyUserinfo" column="UIFUSERID" select="com.sys.mapper.ApplyUserinfoMapper.selectById"/>
+  </resultMap>
+
+  <!--在mapper文件中的头部引入缓存策略-->
+  <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+<!--插入实体-->
+  <insert id="insert">
+    insert into APPLY_USER_INFORM (UIFID, UIFNR, UIFXFRQ,
+      UIFBT, UIFREAD, UIFUSERID)
+    values (#{uiFid,jdbcType=VARCHAR}, #{uiFnr,jdbcType=VARCHAR}, #{uiFxfrq,jdbcType=VARCHAR},
+     #{uifBt,jdbcType=VARCHAR}, #{uifRead,jdbcType=VARCHAR},#{uifUserid,jdbcType=VARCHAR})
+  </insert>
+  <!--删除实体-->
+  <delete id="delete">
+    delete from APPLY_USER_INFORM
+    where UIFID=#{uiFid}
+  </delete>
+  <!--通过id查询实体-->
+  <select id="selectById"  resultMap="BaseResultMap">
+    select * from APPLY_USER_INFORM
+    where UIFID=#{uiFid}
+  </select>
+  <!--查询全部-->
+  <select id="select"  resultMap="BaseResultMap">
+    select * from APPLY_USER_INFORM
+  </select>
+
+  <select id="findAllFormByUid" parameterType="Map" resultMap="BaseResultMap">
+    select * from APPLY_USER_INFORM
+    where UIFUSERID=#{userid}
+    <if test="uifRead != null and uifRead != ''">
+      and  UIFREAD= #{uifRead}
+    </if>
+  </select>
+
+  <update id="update" parameterType="com.sys.pojo.ApplyUserInfoForm">
+    UPDATE APPLY_USER_INFORM
+    <set>
+      <if test="uiFnr!=null and uiFnr!=''">
+        UIFNR=#{uiFnr}
+      </if>
+      <if test="uiFxfrq!=null and uiFxfrq!=''">
+        UIFXFRQ=#{uiFxfrq},
+      </if>
+      <if test="uifBt!=null and uifBt!=''">
+        UIFBT=#{uifBt},
+      </if>
+      <if test="uifRead!=null and uifRead!=''">
+        UIFREAD=#{uifRead},
+      </if>
+      <if test="uifUserid!=null and uifUserid!=''">
+        UIFUSERID=#{uifUserid}
+      </if>
+    </set>
+    WHERE UIFID=#{uiFid}
+  </update>
+
+  <!--查询通知个数-->
+  <select id="findInformCountByMap" resultType="java.lang.Integer">
+    select count(*)  from APPLY_USER_INFORM
+    <include refid="sqlWhere"></include>
+  </select>
+  <!--查询条件-->
+  <sql id="sqlWhere">
+    <where>
+      <if test="userid!=null and userid!=''">
+        and UIFUSERID=#{userid}
+      </if>
+      <if test="readFlag!=null">
+        and UIFREAD=#{readFlag}
+      </if>
+    </where>
+  </sql>
+</mapper>

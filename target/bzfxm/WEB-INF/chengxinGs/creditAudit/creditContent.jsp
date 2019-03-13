@@ -1,0 +1,62 @@
+<%@ page language="java" contentType="text/html" pageEncoding="utf-8"%>
+<%
+    String path = request.getContextPath();
+    String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<jsp:include page="/WEB-INF/index/header.jsp" flush="true"></jsp:include>
+<body class="easyui-layout">
+<div data-options="region:'center',border:false">
+    <div class="easyui-panel resPanel" style="width: 100%;height: 98%;overflow: auto">
+        <form class="changeForm easyui-form" id="form" style="padding-top: 0;width:900px !important;">
+                <ul class="reportUl">
+                    <li class="readonly">
+                        <div style="text-align: left;font-size: 15px;margin-bottom: 10px">失信描述：</div>
+                        <div id="blgDesc" style="width: 100%;height: 200px;background: #d3d3d3"></div>
+                    </li>
+                    <li class="readonly">
+                        <div style="text-align: left;font-size: 15px;margin-bottom: 10px">附件展示列表：</div>
+                        <div id="fileList" style="text-align: left"></div>
+                    </li>
+                </ul>
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+        var datas=bank.biography().getParams("creditContent");
+        $.ajax({
+            url:'<%=basePath %>blivegs/selectCXInfo',
+            type:'post',
+            dataType:'json',
+            data:{
+                blgId:datas.row.blgId
+            },
+            success:function(data){
+                $("#blgDesc").html('');
+                for(var i=0;i<data.bliveGongsDetails.length;i++){
+                    $("#blgDesc").append('<p style="text-align: left;text-indent: 2em">'+(data.bliveGongsDetails)[i].blgdDesc+'</p>')
+                }
+                setFile(data);//添加附件；
+            },error:function(){
+                bank.alertMessage("数据库连接失败，请稍后再试")
+            }
+        })
+    });
+    function setFile(data){
+        if(data.annexFiles.length>0){
+            for(var i=0;i<data.annexFiles.length;i++){
+                $("#fileList").append('<img src="'+(data.annexFiles)[i].fileUrl+'" ' +
+                    'style="width:150px;height:150px;margin-right:20px;cursor:pointer">')
+            }
+
+        }else{
+            $("#fileList").append('未上传附件')
+        }
+        //图片预览插件
+        $('#fileList').viewer({
+            url: 'src'
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.ListNumberMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.ListNumber">
+    <id column="LN_ID" jdbcType="VARCHAR" property="lnId" />
+    <result column="LN_DATE" jdbcType="VARCHAR" property="lnDate" />
+    <result column="LN_LISTNUMBER" jdbcType="DECIMAL" property="lnListnumber" />
+    <result column="LN_TYPE" jdbcType="VARCHAR" property="lnType" />
+  </resultMap>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from LISTNUMBER
+    where LN_ID = #{lnId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.ListNumber">
+    insert into LISTNUMBER (LN_ID, LN_DATE, LN_LISTNUMBER, 
+      LN_TYPE)
+    values (#{lnId,jdbcType=VARCHAR}, #{lnDate,jdbcType=VARCHAR}, #{lnListnumber,jdbcType=DECIMAL}, 
+      #{lnType,jdbcType=VARCHAR})
+  </insert>
+  <update id="update" parameterType="com.sys.pojo.ListNumber">
+    update LISTNUMBER
+    set LN_DATE = #{lnDate,jdbcType=VARCHAR},
+      LN_LISTNUMBER = #{lnListnumber,jdbcType=DECIMAL},
+      LN_TYPE = #{lnType,jdbcType=VARCHAR}
+    where LN_ID = #{lnId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select LN_ID, LN_DATE, LN_LISTNUMBER, LN_TYPE
+    from LISTNUMBER
+    where LN_ID = #{lnId,jdbcType=VARCHAR}
+  </select>
+  <select id="select" resultMap="BaseResultMap">
+    select LN_ID, LN_DATE, LN_LISTNUMBER, LN_TYPE
+    from LISTNUMBER
+  </select>
+<!--条件查询当日业务量编码最大的数值-->
+  <select id="getByMap" resultMap="BaseResultMap">
+    SELECT LN_ID, LN_DATE, LN_LISTNUMBER, LN_TYPE from LISTNUMBER
+    <where>
+      <if test="date!=null and date!=''">
+        and LN_DATE=#{date}
+      </if>
+      <if test="type!=null and type!=''">
+        and LN_TYPE=#{type}
+      </if>
+    </where>
+  </select>
+  <!--更新当日业务量编码最大的数值-->
+  <select id="updateByMap">
+   update LISTNUMBER
+    set LN_DATE = #{lnDate,jdbcType=VARCHAR},
+      LN_LISTNUMBER = #{lnListnumber,jdbcType=DECIMAL},
+      LN_TYPE = #{lnType,jdbcType=VARCHAR}
+    where LN_ID = #{lnId,jdbcType=VARCHAR}
+  </select>
+</mapper>

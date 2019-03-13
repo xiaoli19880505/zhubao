@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.apply.ApplyChangeMapper">
+  <resultMap id="BaseResultMap" type="ApplyChange">
+    <id column="AC_ID" jdbcType="VARCHAR" property="acId" />
+    <result column="AC_USERID" jdbcType="VARCHAR" property="acUserid" />
+    <result column="AC_SQBH" jdbcType="VARCHAR" property="acSqbh" />
+    <result column="AC_TYPE" jdbcType="VARCHAR" property="acType" />
+    <result column="AC_TIME" jdbcType="TIMESTAMP" property="acTime" />
+    <result column="AC_SQID" jdbcType="VARCHAR" property="acSqid" />
+    <result column="AC_APPLY_TYPE" jdbcType="VARCHAR" property="acApplyType" />
+      <result column="AC_REMARK" jdbcType="VARCHAR" property="acRemark" />
+      <result column="USERNAME" jdbcType="VARCHAR" property="username" />
+      <result column="TYPENAME" jdbcType="VARCHAR" property="typename" />
+      <result column="ACTYPENAME" jdbcType="VARCHAR" property="acTypeName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    AC_ID, AC_USERID, AC_SQBH, AC_TYPE, AC_TIME, AC_SQID, AC_APPLY_TYPE,AC_REMARK
+  </sql>
+  <select id="select" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from APPLY_CHANGE
+  </select>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from APPLY_CHANGE
+    where AC_ID = #{acId,jdbcType=VARCHAR}
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from APPLY_CHANGE
+    where AC_ID = #{acId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="ApplyChange">
+    insert into APPLY_CHANGE (AC_ID, AC_USERID, AC_SQBH, 
+      AC_TYPE, AC_TIME, AC_SQID, 
+      AC_APPLY_TYPE,AC_REMARK)
+    values (#{acId,jdbcType=VARCHAR}, #{acUserid,jdbcType=VARCHAR}, #{acSqbh,jdbcType=VARCHAR}, 
+      #{acType,jdbcType=VARCHAR}, #{acTime,jdbcType=TIMESTAMP}, #{acSqid,jdbcType=VARCHAR}, 
+      #{acApplyType,jdbcType=VARCHAR},#{acRemark,jdbcType=VARCHAR})
+  </insert>
+ <!-- <insert id="insertSelective" parameterType="com.sys.pojo.ApplyChange">
+    insert into APPLY_CHANGE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="acId != null">
+        AC_ID,
+      </if>
+      <if test="acUserid != null">
+        AC_USERID,
+      </if>
+      <if test="acSqbh != null">
+        AC_SQBH,
+      </if>
+      <if test="acType != null">
+        AC_TYPE,
+      </if>
+      <if test="acTime != null">
+        AC_TIME,
+      </if>
+      <if test="acSqid != null">
+        AC_SQID,
+      </if>
+      <if test="acApplyType != null">
+        AC_APPLY_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="acId != null">
+        #{acId,jdbcType=VARCHAR},
+      </if>
+      <if test="acUserid != null">
+        #{acUserid,jdbcType=VARCHAR},
+      </if>
+      <if test="acSqbh != null">
+        #{acSqbh,jdbcType=VARCHAR},
+      </if>
+      <if test="acType != null">
+        #{acType,jdbcType=VARCHAR},
+      </if>
+      <if test="acTime != null">
+        #{acTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="acSqid != null">
+        #{acSqid,jdbcType=VARCHAR},
+      </if>
+      <if test="acApplyType != null">
+        #{acApplyType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>-->
+  <update id="update" parameterType="ApplyChange">
+    update APPLY_CHANGE
+    <set>
+      <if test="acUserid != null">
+        AC_USERID = #{acUserid,jdbcType=VARCHAR},
+      </if>
+      <if test="acSqbh != null">
+        AC_SQBH = #{acSqbh,jdbcType=VARCHAR},
+      </if>
+      <if test="acType != null">
+        AC_TYPE = #{acType,jdbcType=VARCHAR},
+      </if>
+      <if test="acTime != null">
+        AC_TIME = #{acTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="acSqid != null">
+        AC_SQID = #{acSqid,jdbcType=VARCHAR},
+      </if>
+      <if test="acApplyType != null">
+        AC_APPLY_TYPE = #{acApplyType,jdbcType=VARCHAR},
+      </if>
+        <if test="acRemark != null">
+            AC_REMARK = #{acRemark,jdbcType=VARCHAR},
+        </if>
+    </set>
+    where AC_ID = #{acId,jdbcType=VARCHAR}
+  </update>
+  <!--<update id="updateByPrimaryKey" parameterType="com.sys.pojo.ApplyChange">
+    update APPLY_CHANGE
+    set AC_USERID = #{acUserid,jdbcType=VARCHAR},
+      AC_SQBH = #{acSqbh,jdbcType=VARCHAR},
+      AC_TYPE = #{acType,jdbcType=VARCHAR},
+      AC_TIME = #{acTime,jdbcType=TIMESTAMP},
+      AC_SQID = #{acSqid,jdbcType=VARCHAR},
+      AC_APPLY_TYPE = #{acApplyType,jdbcType=VARCHAR}
+    where AC_ID = #{acId,jdbcType=VARCHAR}
+  </update>-->
+  <!--条件查询操作记录条目-->
+  <select id="selectByMap" resultMap="BaseResultMap">
+      select  AC.AC_ID, AC.AC_USERID,
+      AC.AC_TIME,AC.AC_SQBH,
+      AC.AC_SQID,UINFO.USERNAME,AC.AC_TYPE,AC.AC_APPLY_TYPE,AC.AC_REMARK,
+      CASE
+      WHEN AC.AC_TYPE='1' THEN '终审通过'
+      WHEN AC.AC_TYPE='2' THEN '摇号成功'
+      WHEN AC.AC_TYPE= '3' THEN '摇号放弃'
+      WHEN AC.AC_TYPE= '4' THEN '分房'
+      WHEN AC.AC_TYPE= '5' THEN '换房'
+      WHEN AC.AC_TYPE= '6' THEN '签订合同'
+      WHEN AC.AC_TYPE= '7' THEN '退房'
+      WHEN AC.AC_TYPE= '8' THEN '放弃'
+      end AS ACTYPENAME,
+      CASE WHEN AC.AC_APPLY_TYPE='1' THEN '经济适用住房'
+      WHEN AC.AC_APPLY_TYPE='2' THEN '低保特困补贴'
+      WHEN AC.AC_APPLY_TYPE='3' THEN '公租房(低保特困)'
+      WHEN AC.AC_APPLY_TYPE= '4' THEN '公租房(新就业)'
+      WHEN AC.AC_APPLY_TYPE= '5' THEN '公租房(新就业)'
+      end AS TYPENAME
+      from APPLY_CHANGE AC
+      INNER JOIN USERINFO UINFO ON AC.AC_USERID=UINFO.USERID
+      <where>
+          <if test="username!=null">
+              and UINFO.USERNAME=#{username}
+          </if>
+          <if test="acApplyType!=null">
+              and AC.AC_APPLY_TYPE=#{acApplyType}
+          </if>
+          <if test="acSqbh!=null">
+              and AC.AC_SQBH=#{acSqbh}
+          </if>
+          <if test="acType!=null">
+              and AC.AC_TYPE=#{acType}
+          </if>
+          <if test="beginTime!=null">
+              and AC.AC_TIME &gt;= to_date(#{beginTime},'yyyy-mm-dd')
+          </if>
+          <if test="endTime!=null">
+              and AC.AC_TIME &lt;= to_date(#{endTime},'yyyy-mm-dd')
+          </if>
+      </where>
+      order by AC.AC_TIME
+  </select>
+
+  <!--条件查询操作记录总数-->
+  <select id="selectCountByMap" resultType="java.lang.Integer">
+    select count(*)
+    from APPLY_CHANGE
+    <include refid="sqlWhere" />
+  </select>
+
+  <!--sql查询条件-->
+  <sql id="sqlWhere">
+    <where>
+      <if test="date!=null">
+        and to_char(AC_TIME,'yyyy-MM-dd') &gt;= to_char(#{date},'yyyy-MM-dd')
+      </if>
+      <if test="sfzh!=null and sfzh!=''">
+       and AC_SQID in(
+          select  AFM_SQID from APPLYFAMILYMEMBER where
+          AFM_SFZH=#{sfzh}
+        )
+      </if>
+      <if test="acApplyType!=null">
+        and AC_APPLY_TYPE=#{acApplyType}
+      </if>
+        <if test="acType!=null and acType!=''">
+            and AC_TYPE=#{acType}
+        </if>
+    </where>
+  </sql>
+</mapper>

@@ -1,0 +1,150 @@
+/************登       录**********/
+:root{
+	font-size: 14px;
+	width: 100%;
+}
+#loginBg{
+    background: #69cab7;
+    height: 100%;
+    background: -moz-linear-gradient(top,  #69cab7 0%, #3779cf 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#69cab7), color-stop(100%,#3779cf ));
+    background: -webkit-linear-gradient(top,   #69cab7 0%,#3779cf  100%);
+    background: -o-linear-gradient(top,   #69cab7 0%,#3779cf  100%);
+    background: -ms-linear-gradient(top,   #69cab7 0%,#3779cf  100%);
+    background: linear-gradient(to bottom,  #69cab7 0%,#3779cf  100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#69cab7', endColorstr='#3779cf',GradientType=0 );
+}
+:root #loginBg{filter:none;}
+.loginTitle{
+	position: relative;
+	height: 15rem;
+	line-height: 15rem;
+	color: #fff;
+	text-align: center;
+	font-size: 1.8rem;
+	font-weight: 100;
+}
+#loginBg .mui-input-group{
+	background: none;
+}
+#loginBg .mui-input-row {
+    border: 1px #EFEFF4 solid;
+    width: 80%;
+    margin: 0 auto 1.3rem;
+    border-radius: 10px;
+}
+#loginBg .mui-content-padded{
+	width: 80%;
+	margin: 0 auto;
+}
+#loginBg #login{
+	border-radius: 10px;
+	letter-spacing: 2px;
+	font-size: 1rem;
+	padding: 0.55rem 0 !important;
+}
+.mui-input-group:before, .mui-input-group:after{
+	opacity: 0;
+}
+#loginBg label,#loginBg input{
+	color: #fff;
+}
+#loginBg .mui-icon-eye:before {
+    color: #fff;
+}
+#loginBg .link-area{
+	text-align: center;
+	color: #fff;
+}
+#loginBg .link-area a{
+	text-align: center;
+	color: #fff;
+}
+#loginBg ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+	color:#fff;
+}
+#loginBg :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+	color:#fff;
+}
+#loginBg ::-moz-placeholder { /* Mozilla Firefox 19+ */
+	color:#fff;
+}
+#loginBg :-ms-input-placeholder { /* Internet Explorer 10-11 */
+	color:#fff;
+}
+/************注       册**********/
+
+/************忘记密码**********/
+
+/************修改密码**********/
+
+/************首       页**********/
+
+/************我的申请**********/
+.commonRow{
+	width: 100%;
+	padding: 5px 0;
+	/*border-bottom: solid 1px #c8c7cc;*/
+}
+.nbspan{
+	margin-left: 10px;
+}
+.readonlyRow{
+	background: #f2f2f2;
+}
+.commonRow .textbox-label,.readonlyRow .textbox-label{
+	font-family: 'Helvetica Neue', Helvetica, sans-serif;
+	padding: 11px 15px;
+}
+.commonRow .textbox-readonly,.commonRow  .textbox-readonly .combo-arrow{
+	background: #f2f2f2 !important;
+}
+
+.greenPan{
+	color: #fff;
+	font-size: 1rem;
+	background: #69cab7;
+	padding: 0.1rem 0.5rem;
+	border-radius: 5px;
+}
+.redPan{
+	color: #fff;
+	font-size: 1rem;
+	background:#f00;
+	padding: 0.1rem 0.5rem;
+	border-radius: 5px;
+}
+.reqSpan	{
+	color: #f00;
+}
+.uploader-list .thumbnail {
+	display: inline-block;
+	margin-right: 5px;
+}
+.uploader-list img{
+	width: 100px;
+	height: 100px;
+	margin-right: 5px;
+}
+.uploader-list .info {
+	font-weight: 400;
+	color: #ff7f50;
+	text-align: center;
+	width: 100px;
+}
+.state{
+	padding:3px 6px;
+	border-radius: 100px;
+	font-size: 12px;
+	line-height: 1;
+	float: right;
+}
+#picture ul li{
+	text-align: left;
+}
+/************我的审核**********/
+
+/************申请明细**********/
+
+/************审核明细**********/
+

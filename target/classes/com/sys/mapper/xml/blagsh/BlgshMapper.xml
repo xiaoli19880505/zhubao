@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.blagsh.BlgshMapper" >
+  <resultMap id="BaseResultMap" type="com.sys.pojo.blagsh.Blgsh" >
+    <id column="BS_ID" property="bsId" jdbcType="VARCHAR" />
+    <result column="BLG_SHYH" property="blgShyh" jdbcType="VARCHAR" />
+    <result column="BLG_SBRQ" property="blgSbrq" jdbcType="TIMESTAMP" />
+    <result column="BLG_STATE" property="blgState" jdbcType="VARCHAR" />
+    <result column="BLG_PASSDATE" property="blgPassdate" jdbcType="TIMESTAMP" />
+    <result column="BLG_PROCESSINSTANCEID" property="blgProcessinstanceid" jdbcType="VARCHAR" />
+    <result column="BLG_ID" property="blgId" jdbcType="VARCHAR" />
+    <result column="BLG_APVUSERS" property="blgApvusers" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    BS_ID, BLG_SHYH, BLG_SBRQ, BLG_STATE, BLG_PASSDATE, BLG_PROCESSINSTANCEID,
+    BLG_ID,BLG_APVUSERS
+  </sql>
+  <select id="selectByCondition" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from BLGSH
+    where 1=1
+    <if test="blgProcessinstanceid!=null and blgProcessinstanceid!=''">
+      and BLG_PROCESSINSTANCEID = #{blgProcessinstanceid}
+    </if>
+    <if test="blgId!=null and blgId!=''">
+      and BLG_ID = #{blgId}
+    </if>
+  </select>
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from BLGSH
+    where BS_ID = #{bsId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.blagsh.Blgsh" >
+    insert into BLGSH (BS_ID, BLG_SHYH, BLG_SBRQ, 
+      BLG_STATE, BLG_PASSDATE, BLG_PROCESSINSTANCEID, 
+      BLG_ID,BLG_APVUSERS)
+    values (#{bsId,jdbcType=VARCHAR}, #{blgShyh,jdbcType=VARCHAR}, #{blgSbrq,jdbcType=TIMESTAMP}, 
+      #{blgState,jdbcType=VARCHAR}, #{blgPassdate,jdbcType=TIMESTAMP}, #{blgProcessinstanceid,jdbcType=VARCHAR}, 
+      #{blgId,jdbcType=VARCHAR},#{blgApvusers,jdbcType=VARCHAR})
+  </insert>
+  <update id="update" parameterType="com.sys.pojo.blagsh.Blgsh" >
+    update BLGSH
+    set BLG_SHYH = #{blgShyh,jdbcType=VARCHAR},
+      BLG_SBRQ = #{blgSbrq,jdbcType=TIMESTAMP},
+      BLG_STATE = #{blgState,jdbcType=VARCHAR},
+      BLG_PASSDATE = #{blgPassdate,jdbcType=TIMESTAMP},
+      BLG_PROCESSINSTANCEID = #{blgProcessinstanceid,jdbcType=VARCHAR},
+      BLG_ID = #{blgId,jdbcType=VARCHAR},
+      BLG_APVUSERS = #{blgApvusers,jdbcType=VARCHAR}
+    where BS_ID = #{bsId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select <include refid="Base_Column_List" />
+    from BLGSH
+    where BS_ID = #{bsId,jdbcType=VARCHAR}
+  </select>
+  <select id="select" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from BLGSH
+  </select>
+</mapper>

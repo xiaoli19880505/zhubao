@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.apply.ApplyMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.apply.Apply">
+    <id column="AP_ID" jdbcType="VARCHAR" property="apId" />
+    <result column="AP_PH" jdbcType="DECIMAL" property="apPh" />
+    <result column="AP_SQBH" jdbcType="VARCHAR" property="apSqbh" />
+    <result column="AP_SQLB" jdbcType="VARCHAR" property="apSqlb" />
+    <result column="AP_SSQ" jdbcType="VARCHAR" property="apSsq" />
+    <result column="AP_JDBSC" jdbcType="VARCHAR" property="apJdbsc" />
+    <result column="AP_SQJWH" jdbcType="VARCHAR" property="apSqjwh" />
+    <result column="AP_SQRID" jdbcType="VARCHAR" property="apSqrid" />
+    <result column="AP_SQRPOID" jdbcType="VARCHAR" property="apSqrpoid" />
+    <result column="AP_SQHJNX" jdbcType="DECIMAL" property="apSqhjnx" />
+    <result column="AP_JTRK" jdbcType="DECIMAL" property="apJtrk" />
+    <result column="AP_JTNSR" jdbcType="DECIMAL" property="apJtnsr" />
+    <result column="AP_RJYSR" jdbcType="DECIMAL" property="apRjysr" />
+    <result column="AP_RJJZMJ" jdbcType="DECIMAL" property="apRjjzmj" />
+    <result column="AP_XZFXZ" jdbcType="VARCHAR" property="apXzfxz" />
+    <result column="AP_JTXZFQK" jdbcType="VARCHAR" property="apJtxzfqk" />
+    <result column="AP_JTZFBGQK" jdbcType="VARCHAR" property="apJtzfbgqk" />
+    <result column="AP_TSJT" jdbcType="DECIMAL" property="apTsjt" />
+    <result column="AP_ZT" jdbcType="DECIMAL" property="apZt" />
+    <result column="AP_BZFS" jdbcType="VARCHAR" property="apBzfs" />
+    <result column="AP_BTJE" jdbcType="VARCHAR" property="apBtje" />
+    <result column="AP_LC" jdbcType="DECIMAL" property="apLc" />
+    <result column="AP_WFJT" jdbcType="VARCHAR" property="apWfjt" />
+    <result column="AP_ZGH" jdbcType="VARCHAR" property="apZgh" />
+    <result column="AP_SXH" jdbcType="VARCHAR" property="apSxh" />
+    <result column="AP_LRSJ" jdbcType="VARCHAR" property="apLrsj" />
+    <result column="AP_LRR" jdbcType="VARCHAR" property="apLrr" />
+    <result column="AP_SMSJ" jdbcType="VARCHAR" property="apSmsj" />
+    <result column="AP_SMR" jdbcType="VARCHAR" property="apSmr" />
+    <result column="AP_BZSJ" jdbcType="VARCHAR" property="apBzsj" />
+    <result column="AP_FWID" jdbcType="VARCHAR" property="apFwid" />
+    <result column="AP_CXDA" jdbcType="DECIMAL" property="apCxda" />
+    <result column="AP_FLAG" jdbcType="DECIMAL" property="apFlag" />
+    <result column="AP_DBZBH" jdbcType="VARCHAR" property="apDbzbh" />
+    <result column="AP_LQRS" jdbcType="VARCHAR" property="apLqrs" />
+    <result column="AP_FZSJ" jdbcType="VARCHAR" property="apFzsj" />
+    <result column="AP_DALC" jdbcType="VARCHAR" property="apDalc" />
+    <result column="AP_WFJTSHR" jdbcType="VARCHAR" property="apWfjtshr" />
+    <result column="AP_WFJTSHSJ" jdbcType="VARCHAR" property="apWfjtshsj" />
+    <result column="SSQ_STR" jdbcType="VARCHAR" property="ssqStr" />
+    <result column="SSJ_STR" jdbcType="VARCHAR" property="ssjStr" />
+    <result column="C_ZT_NAME" jdbcType="VARCHAR" property="cZtName" />
+    <result column="AP_BASEIMG" jdbcType="VARCHAR" property="apBaseimg" />
+    <result column="C_HTBH" jdbcType="VARCHAR" property="cHtbh" />
+    <association property="applyUserinfo" javaType="com.sys.pojo.ApplyUserinfo">
+      <result column="USERNAME" property="username"/>
+      <result column="SFZH" property="sfzh"/>
+      <result column="SSQ" property="ssq"/>
+      <result column="SSJ" property="ssj"/>
+    </association>
+    <association property="approve" javaType="com.sys.pojo.apply.Approve">
+      <result column="APLDATE" property="apldate"/>
+      <result column="APLDATE_STR" property="apldateStr"/>
+    </association>
+    <association property="contractDetail" javaType="com.sys.pojo.contract.ContractDetail">
+      <result column="C_ZT" property="cZt"/>
+      <result column="C_TYPE" property="cType"/>
+    </association>
+    <association column="AP_ID"  property="applyUnit"
+                 select="com.sys.mapper.apply.ApplyUnitMapper.findByApplyId" />
+    <association column="AP_ID"  property="applyFamilyHouseChange"
+                 select="com.sys.mapper.apply.ApplyFamilyHouseChangeMapper.findByApplyId" />
+    <collection column="AP_ID" property="applyFamilyMembers" ofType="com.sys.pojo.apply.ApplyFamilyMember"
+                javaType="java.util.ArrayList"
+                select="com.sys.mapper.apply.ApplyFamilyMemberMapper.findByApplyId">
+    </collection>
+    <collection column="AP_ID" property="applyFamilyHouses" ofType="com.sys.pojo.apply.ApplyFamilyHouse"
+                javaType="java.util.ArrayList"
+                select="com.sys.mapper.apply.ApplyFamilyHouseMapper.findByApplyId">
+    </collection>
+    <collection column="AP_ID" property="volList" ofType="com.sys.pojo.Volelearc"
+                javaType="java.util.ArrayList"
+                select="com.sys.mapper.VolelearcMapper.findByAppyId">
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    AP_ID, AP_PH, AP_SQBH, AP_SQLB, AP_SSQ, AP_JDBSC, AP_SQJWH, AP_SQRID, AP_SQRPOID,
+    AP_SQHJNX, AP_JTRK, AP_JTNSR, AP_RJYSR, AP_RJJZMJ, AP_XZFXZ, AP_JTXZFQK, AP_JTZFBGQK,
+     AP_ZT, AP_BZFS, AP_BTJE, AP_LC, AP_WFJT, AP_ZGH, AP_SXH, AP_LRSJ, AP_LRR,
+    AP_SMSJ, AP_SMR, AP_BZSJ, AP_FWID, AP_CXDA, AP_FLAG, AP_DBZBH, AP_LQRS, AP_FZSJ,
+    AP_DALC, AP_WFJTSHR, AP_WFJTSHSJ,AP_BASEIMG,AP_TSJT
+  </sql>
+  <sql id="Base_Approve_Column_List">
+    APPROVE.APLDATE,to_char(APPROVE.APLDATE,'yyyy-mm-dd') APLDARW_STR
+  </sql>
+  <sql id="Base_ContDeta_Column_List">
+    CONTRACT_DETAIL.C_ZT,CONTRACT_DETAIL.C_TYPE
+  </sql>
+  <sql id="Base_User_Column_List">
+    APPLYUSERINFO.USERNAME,APPLYUSERINFO.SFZH,APPLYUSERINFO.SSQ,APPLYUSERINFO.SSJ
+  </sql>
+  <select id="selectByCondition" resultMap="BaseResultMap">
+    select
+      <include refid="Base_Column_List" />
+      ,
+      <!--<include refid="Base_Approve_Column_List" />
+      ,-->
+      <include refid="Base_ContDeta_Column_List" />
+      ,
+      <!--<include refid="Base_User_Column_List" />
+      ,-->
+    APPLYFAMILYMEMBER.AFM_XM USERNAME,
+    APPLYFAMILYMEMBER.AFM_SFZH SFZH,
+    APPLY.AP_SSQ SSQ,
+    APPLY.AP_JDBSC SSJ,
+      case
+　　     when CONTRACT_DETAIL.C_ZT is null then '未备案'
+         when CONTRACT_DETAIL.C_ZT=1 then '签约'
+         when CONTRACT_DETAIL.C_ZT=2 then '备案'
+         else '状态出错'
+       end C_ZT_NAME,
+       p1.PI_ITEMNAME SSQ_STR,
+       p2.PI_ITEMNAME SSJ_STR,
+    CONTRACT_DETAIL.C_HTBH  C_HTBH
+    from APPLY
+      left join CONTRACT_DETAIL
+        on APPLY.AP_ID = CONTRACT_DETAIL.C_SQID and (CONTRACT_DETAIL.C_ZFZT=0 or CONTRACT_DETAIL.C_ZFZT is null),
+        PARMITEM p1, PARMITEM p2,APPLYFAMILYMEMBER
+    where APPLYFAMILYMEMBER.AFM_ID=APPLY.AP_SQRID
+     and p1.pi_itemcode=APPLY.AP_SSQ
+     and p2.pi_itemcode=APPLY.AP_JDBSC
+    <if test="apSqlb != null">
+      AND AP_SQLB = #{apSqlb,jdbcType=VARCHAR}
+    </if>
+    <if test="applyUserinfo != null">
+      <if test="applyUserinfo.xzq != null and applyUserinfo.xzq != ''">
+        AND p1.PI_SETCODE = #{applyUserinfo.xzq,jdbcType=VARCHAR}
+      </if>
+      <if test="applyUserinfo.jiedao != null and applyUserinfo.jiedao != ''">
+        AND p2.PI_SETCODE = #{applyUserinfo.jiedao,jdbcType=VARCHAR}
+      </if>
+      <if test="applyUserinfo.username != null">
+        AND APPLYFAMILYMEMBER.AFM_XM = #{applyUserinfo.username,jdbcType=VARCHAR}
+      </if>
+      <if test="applyUserinfo.sfzh != null">
+        AND APPLYFAMILYMEMBER.AFM_SFZH = #{applyUserinfo.sfzh,jdbcType=VARCHAR}
+      </if>
+      <if test="apSsq != null">
+        AND APPLY.AP_SSQ = #{apSsq,jdbcType=VARCHAR}
+      </if>
+      <if test="apJdbsc != null">
+        AND APPLY.AP_JDBSC = #{apJdbsc,jdbcType=VARCHAR}
+      </if>
+      <if test="apLc != null">
+        AND APPLY.AP_LC &gt;= #{apLc,jdbcType=VARCHAR}
+      </if>
+      <if test="apZt != null">
+        AND (APPLY.AP_ZT &lt; #{apZt,jdbcType=VARCHAR} OR APPLY.AP_ZT is null)
+      </if>
+    </if>
+    AND EXISTS (select 1 from (select APPROVE.APLID SQID from APPROVE
+    union all select CONTRACT_DETAIL.C_SQID SQID from CONTRACT_DETAIL) t where t.sqid=APPLY.AP_ID)
+    order by APPLY.AP_LC
+  </select>
+
+  <delete id="delete" parameterType="java.lang.String">
+    delete from APPLY
+    where AP_ID = #{apId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.sys.pojo.apply.Apply">
+    insert into APPLY (AP_ID, AP_PH, AP_SQBH, 
+      AP_SQLB, AP_SSQ, AP_JDBSC, 
+      AP_SQJWH, AP_SQRID, AP_SQRPOID, 
+      AP_SQHJNX, AP_JTRK, AP_JTNSR, 
+      AP_RJYSR, AP_RJJZMJ, AP_XZFXZ, 
+      AP_JTXZFQK, AP_JTZFBGQK, AP_TSJT, 
+      AP_BZFS, AP_BTJE, AP_WFJT, AP_ZGH,
+      AP_SXH, AP_LRSJ, AP_LRR, 
+      AP_SMSJ, AP_SMR, AP_BZSJ, 
+      AP_FWID,AP_DBZBH, AP_LQRS, AP_FZSJ,
+      AP_DALC, AP_WFJTSHR, AP_WFJTSHSJ,AP_BASEIMG
+      )
+    values (#{apId,jdbcType=VARCHAR}, #{apPh,jdbcType=DECIMAL}, #{apSqbh,jdbcType=VARCHAR}, 
+      #{apSqlb,jdbcType=VARCHAR}, #{apSsq,jdbcType=VARCHAR}, #{apJdbsc,jdbcType=VARCHAR}, 
+      #{apSqjwh,jdbcType=VARCHAR}, #{apSqrid,jdbcType=VARCHAR}, #{apSqrpoid,jdbcType=VARCHAR}, 
+      #{apSqhjnx,jdbcType=DECIMAL}, #{apJtrk,jdbcType=DECIMAL}, #{apJtnsr,jdbcType=DECIMAL}, 
+      #{apRjysr,jdbcType=DECIMAL}, #{apRjjzmj,jdbcType=DECIMAL}, #{apXzfxz,jdbcType=VARCHAR}, 
+      #{apJtxzfqk,jdbcType=VARCHAR}, #{apJtzfbgqk,jdbcType=VARCHAR}, #{apTsjt,jdbcType=DECIMAL}, 
+      #{apBzfs,jdbcType=VARCHAR}, #{apBtje,jdbcType=VARCHAR}, #{apWfjt,jdbcType=VARCHAR}, #{apZgh,jdbcType=VARCHAR},
+      #{apSxh,jdbcType=VARCHAR}, #{apLrsj,jdbcType=VARCHAR}, #{apLrr,jdbcType=VARCHAR}, 
+      #{apSmsj,jdbcType=VARCHAR}, #{apSmr,jdbcType=VARCHAR}, #{apBzsj,jdbcType=VARCHAR}, 
+      #{apFwid,jdbcType=VARCHAR},#{apDbzbh,jdbcType=VARCHAR}, #{apLqrs,jdbcType=VARCHAR}, #{apFzsj,jdbcType=VARCHAR},
+      #{apDalc,jdbcType=VARCHAR}, #{apWfjtshr,jdbcType=VARCHAR}, #{apWfjtshsj,jdbcType=VARCHAR}, #{apBaseimg,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <update id="update" parameterType="com.sys.pojo.apply.Apply">
+    update APPLY
+    <set>
+      <if test="apPh!=null and apPh!=''">
+        AP_PH = #{apPh,jdbcType=DECIMAL},
+      </if>
+      <if test="apSqbh!=null and apSqbh!=''">
+      AP_SQBH = #{apSqbh,jdbcType=VARCHAR},
+      </if>
+      <if test="apSqlb!=null and apSqlb!=''">
+      AP_SQLB = #{apSqlb,jdbcType=VARCHAR},
+      </if>
+      <if test="apSsq!=null and apSsq!=''">
+      AP_SSQ = #{apSsq,jdbcType=VARCHAR},
+      </if>
+      <if test="apJdbsc!=null and apJdbsc!=''">
+      AP_JDBSC = #{apJdbsc,jdbcType=VARCHAR},
+      </if>
+      <if test="apSqjwh!=null and apSqjwh!=''">
+      AP_SQJWH = #{apSqjwh,jdbcType=VARCHAR},
+      </if>
+      <if test="apSqrid!=null and apSqrid!=''">
+      AP_SQRID = #{apSqrid,jdbcType=VARCHAR},
+      </if>
+      <if test="apSqrpoid!=null and apSqrpoid!=''">
+      AP_SQRPOID = #{apSqrpoid,jdbcType=VARCHAR},
+      </if>
+      <if test="apSqhjnx!=null and apSqhjnx!=''">
+      AP_SQHJNX = #{apSqhjnx,jdbcType=DECIMAL},
+      </if>
+      <if test="apJtrk!=null and apJtrk!=''">
+      AP_JTRK = #{apJtrk,jdbcType=DECIMAL},
+      </if>
+      <if test="apJtnsr!=null and apJtnsr!=''">
+      AP_JTNSR = #{apJtnsr,jdbcType=DECIMAL},
+      </if>
+      <if test="apRjysr!=null and apRjysr!=''">
+      AP_RJYSR = #{apRjysr,jdbcType=DECIMAL},
+      </if>
+      <if test="apRjjzmj!=null and apRjjzmj!=''">
+      AP_RJJZMJ = #{apRjjzmj,jdbcType=DECIMAL},
+      </if>
+      <if test="apXzfxz!=null and apXzfxz!=''">
+      AP_XZFXZ = #{apXzfxz,jdbcType=VARCHAR},
+      </if>
+      <if test="apJtxzfqk!=null and apJtxzfqk!=''">
+      AP_JTXZFQK = #{apJtxzfqk,jdbcType=VARCHAR},
+      </if>
+      <if test="apJtzfbgqk!=null and apJtzfbgqk!=''">
+      AP_JTZFBGQK = #{apJtzfbgqk,jdbcType=VARCHAR},
+      </if>
+      <!--<if test="apTsjt!=null and apTsjt!=''">-->
+      AP_TSJT = #{apTsjt,jdbcType=DECIMAL},
+      <!--</if>-->
+      <if test="apZt!=null and apZt!=''">
+      AP_ZT = #{apZt,jdbcType=DECIMAL},
+      </if>
+      <if test="apBzfs!=null and apBzfs!=''">
+      AP_BZFS = #{apBzfs,jdbcType=VARCHAR},
+      </if>
+      <if test="apBtje!=null and apBtje!=''">
+      AP_BTJE = #{apBtje,jdbcType=VARCHAR},
+      </if>
+      <if test="apLc!=null and apLc!=''">
+      AP_LC = #{apLc,jdbcType=DECIMAL},
+      </if>
+      <if test="apWfjt!=null and apWfjt!=''">
+      AP_WFJT = #{apWfjt,jdbcType=VARCHAR},
+      </if>
+      <if test="apZgh!=null and apZgh!=''">
+      AP_ZGH = #{apZgh,jdbcType=VARCHAR},
+      </if>
+      <if test="apSxh!=null and apSxh!=''">
+      AP_SXH = #{apSxh,jdbcType=VARCHAR},
+      </if>
+      <if test="apLrsj!=null and apLrsj!=''">
+      AP_LRSJ = #{apLrsj,jdbcType=VARCHAR},
+      </if>
+      <if test="apLrr!=null and apLrr!=''">
+      AP_LRR = #{apLrr,jdbcType=VARCHAR},
+      </if>
+      <if test="apSmsj!=null and apSmsj!=''">
+      AP_SMSJ = #{apSmsj,jdbcType=VARCHAR},
+      </if>
+      <if test="apSmr!=null and apSmr!=''">
+      AP_SMR = #{apSmr,jdbcType=VARCHAR},
+      </if>
+      <if test="apBzsj!=null and apBzsj!=''">
+      AP_BZSJ = #{apBzsj,jdbcType=VARCHAR},
+      </if>
+      <if test="apFwid!=null and apFwid!=''">
+      AP_FWID = #{apFwid,jdbcType=VARCHAR},
+      </if>
+      <if test="apCxda!=null and apCxda!=''">
+      AP_CXDA = #{apCxda,jdbcType=DECIMAL},
+      </if>
+      <if test="apFlag!=null and apFlag!=''">
+      AP_FLAG = #{apFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="apDbzbh!=null and apDbzbh!=''">
+      AP_DBZBH = #{apDbzbh,jdbcType=VARCHAR},
+      </if>
+      <if test="apLqrs!=null and apLqrs!=''">
+      AP_LQRS = #{apLqrs,jdbcType=VARCHAR},
+      </if>
+      <if test="apFzsj!=null and apFzsj!=''">
+      AP_FZSJ = #{apFzsj,jdbcType=VARCHAR},
+      </if>
+      <if test="apDalc!=null and apDalc!=''">
+      AP_DALC = #{apDalc,jdbcType=VARCHAR},
+      </if>
+      <if test="apWfjtshr!=null and apWfjtshr!=''">
+      AP_WFJTSHR = #{apWfjtshr,jdbcType=VARCHAR},
+      </if>
+      <if test="apWfjtshsj!=null and apWfjtshsj!=''">
+      AP_WFJTSHSJ = #{apWfjtshsj,jdbcType=VARCHAR},
+      </if>
+      <if test="apBaseimg!=null and apBaseimg!=''">
+        AP_BASEIMG = #{apBaseimg,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where AP_ID = #{apId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from APPLY
+    where AP_ID = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="select" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from APPLY
+  </select>
+
+  <!--条件查询申请单（主要是针对低保特困公租房的申请）-->
+  <select id="selectByMap" parameterType="Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from APPLY
+    <where>
+      <if test="apZt!=null and apZt!=''">
+        and AP_ZT = #{apZt}
+      </if>
+      <if test="apSqlb!=null and apSqlb!=''">
+        and AP_SQLB = #{apSqlb}
+      </if>
+      <if test="sqbh!=null and sqbh!=''">
+        and AP_SQBH = #{sqbh}
+      </if>
+      <if test="apId!=null and apId!=''">
+        and AP_ID = #{apId}
+      </if>
+      <if test="sfzh!=null and sfzh!=''">
+        and AP_ID in (
+        select AFM_SQID from APPLYFAMILYMEMBER
+        where AFM_SFZH=#{sfzh}
+        )
+      </if>
+    </where>
+  </select>
+
+  <!--条件查询申请单（主要是针对低保特困公租房的申请）-->
+  <select id="selectEntityByMap" parameterType="Map" resultType="com.sys.pojo.apply.Apply">
+    select
+    <include refid="Base_Column_List" />
+    from APPLY
+    <where>
+      <if test="apZt!=null and apZt!=''">
+        and AP_ZT = #{apZt}
+      </if>
+      <if test="apSqlb!=null and apSqlb!=''">
+        and AP_SQLB = #{apSqlb}
+      </if>
+      <if test="sqbh!=null and sqbh!=''">
+        and AP_SQBH = #{sqbh}
+      </if>
+      <if test="applyid!=null and applyid!=''">
+        and AP_ID = #{apId}
+      </if>
+      <if test="sfzh!=null and sfzh!=''">
+        and AP_ID in (
+        select AFM_SQID from APPLYFAMILYMEMBER
+        where AFM_SFZH=#{sfzh}
+        )
+      </if>
+    </where>
+  </select>
+
+  <!--更新状态-->
+  <update id="updateApLC" parameterType="Map">
+    update APPLY
+    <set>
+      <if test="lc!=null and lc!=''">
+        AP_LC=#{lc},
+      </if>
+      <if test="zt!=null and zt!=''">
+        AP_ZT=#{zt}
+      </if>
+    </set>
+    where AP_ID=#{applyid}
+  </update>
+
+  <!--批量更新申请单LC字段状态-->
+  <update id="updateApplyLcBatchByList"  parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+      update APPLY
+      <set>
+        AP_LC=3
+      </set>
+      where AP_SQBH = ''|| #{item.sqbh}
+    </foreach>
+  </update>
+
+  <!--批量更新申请单ZT状态为指定值-->
+  <update id="updateApplyZtBatchByList"  parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+      update APPLY
+      <set>
+        AP_ZT=#{item.apZt}
+      </set>
+      where AP_ID = ''||#{item.apId}
+    </foreach>
+  </update>
+
+  <!--查询老用户是否存在保障过期的经适房申请单个数-->
+ <!-- <select id="findOldApplyOverTimeCount">
+    select count(0) from APPLY apl
+    LEFT JOIN APPLYFAMILYMEMBER apf ON apf.AFM_SQID = apl.AP_ID
+    LEFT JOIN APPROVE apv ON apv.APLID=apl.AP_ID
+    <where>
+      apv.APLID is null
+      and apl.AP_SQLB=1
+      and apl.AP_ZT=5
+      <if test="sfzh!=null and sfzh!=''">
+        and apf.AFM_SFZH=#{sfzh}
+      </if>
+      <if test="date!=null and date!=''">
+        and to_char(AC_TIME,'yyyy-MM-dd') &gt;= to_char(#{date},'yyyy-MM-dd')
+      </if>
+    </where>
+  </select>-->
+</mapper>

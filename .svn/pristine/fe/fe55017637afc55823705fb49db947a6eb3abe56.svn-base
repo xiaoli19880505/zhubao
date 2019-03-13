@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.HomeUserInfoMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.HomeUserInfo">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="USER_ACCOUT" jdbcType="VARCHAR" property="userAccout" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="USER_PASSWORD" jdbcType="VARCHAR" property="userPassword" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="CREATE_PERSON" jdbcType="VARCHAR" property="createPerson" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="UPDATE_PERSON" jdbcType="VARCHAR" property="updatePerson" />
+    <result column="DELETE_FLAG" jdbcType="VARCHAR" property="deleteFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, USER_ACCOUT, USER_NAME, USER_PASSWORD, CREATE_TIME, CREATE_PERSON, UPDATE_TIME, 
+    UPDATE_PERSON, DELETE_FLAG
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from HOME_USER_INFO
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from HOME_USER_INFO
+    where 1=1
+    <if test="userAccout != null">
+      AND USER_ACCOUT = #{userAccout,jdbcType=VARCHAR}
+    </if>
+    <if test="userPassword != null">
+      AND USER_PASSWORD = #{userPassword,jdbcType=VARCHAR}
+    </if>
+    <if test="deleteFlag != null">
+      AND DELETE_FLAG = #{deleteFlag,jdbcType=VARCHAR}
+    </if>
+  </select>
+</mapper>

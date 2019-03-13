@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.contract.ContractTemplateMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.contract.ContractTemplate">
+    <result column="CT_ID" jdbcType="VARCHAR" property="ctId" />
+    <result column="CT_CODE" jdbcType="VARCHAR" property="ctCode" />
+    <result column="CT_NAME" jdbcType="VARCHAR" property="ctName" />
+    <result column="CT_URL" jdbcType="VARCHAR" property="ctUrl" />
+    <result column="CT_INPUT_INFO" jdbcType="VARCHAR" property="ctInputInfo" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="CREATE_PERSON" jdbcType="VARCHAR" property="createPerson" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="UPDATE_PERSON" jdbcType="VARCHAR" property="updatePerson" />
+    <result column="DELETE_FLAG" jdbcType="VARCHAR" property="deleteFlag" />
+    <result column="CREATE_TIME_STR" jdbcType="VARCHAR" property="createTimeStr" />
+    <result column="UPDATE_TIME_STR" jdbcType="VARCHAR" property="updateTimeStr" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    CT_ID, CT_CODE, CT_NAME, CT_URL, CT_INPUT_INFO, CREATE_TIME, CREATE_PERSON, UPDATE_TIME, UPDATE_PERSON,
+    DELETE_FLAG, to_char(CREATE_TIME,'yyyy-mm-dd') CREATE_TIME_STR, to_char(UPDATE_TIME,'yyyy-mm-dd') UPDATE_TIME_STR
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from CONTRACT_TEMPLATE
+    where CT_ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from CONTRACT_TEMPLATE
+    where 1=1
+    <if test="ctCode != null">
+      AND CT_CODE = #{ctCode,jdbcType=VARCHAR}
+    </if>
+    <if test="ctName != null">
+      AND CT_NAME like '%'|| #{ctName} ||'%'
+    </if>
+    <if test="deleteFlag != null">
+      AND DELETE_FLAG = #{deleteFlag,jdbcType=VARCHAR}
+    </if>
+  </select>
+</mapper>

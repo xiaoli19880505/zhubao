@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.HolidayMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.Holiday">
+    <id column="HID" jdbcType="VARCHAR" property="hid" />
+    <result column="YEAR" jdbcType="CHAR" property="year" />
+    <result column="MONTH" jdbcType="CHAR" property="month" />
+    <result column="DAY" jdbcType="CHAR" property="day" />
+    <result column="FULL_DATE" jdbcType="VARCHAR" property="fullDate" />
+    <result column="WEEK" jdbcType="CHAR" property="week" />
+    <result column="IS_WEEKDAY" jdbcType="CHAR" property="isWeekday" />
+    <result column="INSERT_TIME" jdbcType="TIMESTAMP" property="insertTime" />
+    <result column="INSERT_USERID" jdbcType="VARCHAR" property="insertUserid" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    HID, YEAR, MONTH, DAY, FULL_DATE, WEEK, IS_WEEKDAY, INSERT_TIME, INSERT_USERID, REMARK
+  </sql>
+  <!--分页查询-->
+  <select id="selectByMap" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from HOLIDAY
+    <where>
+      <if test="year!=null and year!=''">
+         and FULL_DATE like '%'||#{year}||'%'
+      </if>
+      <if test="type!=null and type!=''">
+        and IS_WEEKDAY=#{type}
+      </if>
+      <if test="date!=null and date!=''">
+        and FULL_DATE=#{date}
+      </if>
+    </where>
+  </select>
+
+  <!--分页查询-->
+  <select id="selectCountMap" resultType="java.lang.Integer">
+    select count(*)
+    from HOLIDAY
+    <where>
+      <if test="year!=null and year!=''">
+        and FULL_DATE like '%'||#{year}||'%'
+      </if>
+      <if test="type!=null and type!=''">
+        and IS_WEEKDAY=#{type}
+      </if>
+      <if test="date!=null and date!=''">
+        and FULL_DATE=#{date}
+      </if>
+    </where>
+  </select>
+
+
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from HOLIDAY
+    where HID = #{hid,jdbcType=VARCHAR}
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from HOLIDAY
+    where HID = #{hid,jdbcType=VARCHAR}
+  </delete>
+  <!--<insert id="insert" parameterType="com.sys.pojo.Holiday">
+    insert into HOLIDAY (HID, YEAR, MONTH, DAY, 
+      FULL_DATE, WEEK, IS_WEEKDAY, 
+      INSERT_TIME, INSERT_USERID, REMARK
+      )
+    values (#{hid,jdbcType=VARCHAR}, #{year,jdbcType=CHAR}, #{month,jdbcType=CHAR}, #{day,jdbcType=CHAR}, 
+      #{fullDate,jdbcType=VARCHAR}, #{week,jdbcType=CHAR}, #{isWeekday,jdbcType=CHAR}, 
+      #{insertTime,jdbcType=TIMESTAMP}, #{insertUserid,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>-->
+  <insert id="insert" parameterType="com.sys.pojo.Holiday">
+    insert into HOLIDAY
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="hid != null">
+        HID,
+      </if>
+      <if test="year != null">
+        YEAR,
+      </if>
+      <if test="month != null">
+        MONTH,
+      </if>
+      <if test="day != null">
+        DAY,
+      </if>
+      <if test="fullDate != null">
+        FULL_DATE,
+      </if>
+      <if test="week != null">
+        WEEK,
+      </if>
+      <if test="isWeekday != null">
+        IS_WEEKDAY,
+      </if>
+      <if test="insertTime != null">
+        INSERT_TIME,
+      </if>
+      <if test="insertUserid != null">
+        INSERT_USERID,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="hid != null">
+        #{hid,jdbcType=VARCHAR},
+      </if>
+      <if test="year != null">
+        #{year,jdbcType=CHAR},
+      </if>
+      <if test="month != null">
+        #{month,jdbcType=CHAR},
+      </if>
+      <if test="day != null">
+        #{day,jdbcType=CHAR},
+      </if>
+      <if test="fullDate != null">
+        #{fullDate,jdbcType=VARCHAR},
+      </if>
+      <if test="week != null">
+        #{week,jdbcType=CHAR},
+      </if>
+      <if test="isWeekday != null">
+        #{isWeekday,jdbcType=CHAR},
+      </if>
+      <if test="insertTime != null">
+        #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="insertUserid != null">
+        #{insertUserid,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="com.sys.pojo.Holiday">
+    update HOLIDAY
+    <set>
+      <if test="year != null">
+        YEAR = #{year,jdbcType=CHAR},
+      </if>
+      <if test="month != null">
+        MONTH = #{month,jdbcType=CHAR},
+      </if>
+      <if test="day != null">
+        DAY = #{day,jdbcType=CHAR},
+      </if>
+      <if test="fullDate != null">
+        FULL_DATE = #{fullDate,jdbcType=VARCHAR},
+      </if>
+      <if test="week != null">
+        WEEK = #{week,jdbcType=CHAR},
+      </if>
+      <if test="isWeekday != null">
+        IS_WEEKDAY = #{isWeekday,jdbcType=CHAR},
+      </if>
+      <if test="insertTime != null">
+        INSERT_TIME = #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="insertUserid != null">
+        INSERT_USERID = #{insertUserid,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where HID = #{hid,jdbcType=VARCHAR}
+  </update>
+  <!--<update id="updateByPrimaryKey" parameterType="com.sys.pojo.Holiday">
+    update HOLIDAY
+    set YEAR = #{year,jdbcType=CHAR},
+      MONTH = #{month,jdbcType=CHAR},
+      DAY = #{day,jdbcType=CHAR},
+      FULL_DATE = #{fullDate,jdbcType=VARCHAR},
+      WEEK = #{week,jdbcType=CHAR},
+      IS_WEEKDAY = #{isWeekday,jdbcType=CHAR},
+      INSERT_TIME = #{insertTime,jdbcType=TIMESTAMP},
+      INSERT_USERID = #{insertUserid,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where HID = #{hid,jdbcType=VARCHAR}
+  </update>-->
+</mapper>

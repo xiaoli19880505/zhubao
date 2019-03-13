@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.apply.ApplyFamilyMemberMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.apply.ApplyFamilyMember">
+    <id column="AFM_ID" jdbcType="VARCHAR" property="afmId" />
+    <result column="AFM_SQID" jdbcType="VARCHAR" property="afmSqid" />
+    <result column="AFM_XM" jdbcType="VARCHAR" property="afmXm" />
+    <result column="AFM_XB" jdbcType="VARCHAR" property="afmXb" />
+    <result column="AFM_CSNY" jdbcType="VARCHAR" property="afmCsny" />
+    <result column="AFM_SFZH" jdbcType="VARCHAR" property="afmSfzh" />
+    <result column="AFM_HYZK" jdbcType="VARCHAR" property="afmHyzk" />
+    <result column="AFM_GZDW" jdbcType="VARCHAR" property="afmGzdw" />
+    <result column="AFM_LXDH" jdbcType="VARCHAR" property="afmLxdh" />
+    <result column="AFM_NSR" jdbcType="DECIMAL" property="afmNsr" />
+    <result column="AFM_YSQRGX" jdbcType="VARCHAR" property="afmYsqrgx" />
+    <result column="AFM_FLAG" jdbcType="DECIMAL" property="afmFlag" />
+    <result column="AFM_ORDER" jdbcType="DECIMAL" property="afmOrder" />
+    <result column="AFM_SSQ" jdbcType="VARCHAR" property="afmSsq" />
+    <result column="AFM_LB" jdbcType="VARCHAR" property="afmLb" />
+  </resultMap>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from APPLYFAMILYMEMBER
+    where AFM_ID = #{afmId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.apply.ApplyFamilyMember">
+    insert into APPLYFAMILYMEMBER (AFM_ID, AFM_SQID, AFM_XM, 
+      AFM_XB, AFM_CSNY, AFM_SFZH, 
+      AFM_HYZK, AFM_GZDW, AFM_LXDH, 
+      AFM_NSR, AFM_YSQRGX, AFM_FLAG, 
+      AFM_ORDER, AFM_SSQ, AFM_LB
+      )
+    values (#{afmId,jdbcType=VARCHAR}, #{afmSqid,jdbcType=VARCHAR}, #{afmXm,jdbcType=VARCHAR}, 
+      #{afmXb,jdbcType=VARCHAR}, #{afmCsny,jdbcType=VARCHAR}, #{afmSfzh,jdbcType=VARCHAR}, 
+      #{afmHyzk,jdbcType=VARCHAR}, #{afmGzdw,jdbcType=VARCHAR}, #{afmLxdh,jdbcType=VARCHAR}, 
+      #{afmNsr,jdbcType=DECIMAL}, #{afmYsqrgx,jdbcType=VARCHAR}, #{afmFlag,jdbcType=DECIMAL}, 
+      #{afmOrder,jdbcType=DECIMAL}, #{afmSsq,jdbcType=VARCHAR}, #{afmLb,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="update" parameterType="com.sys.pojo.apply.ApplyFamilyMember">
+    update APPLYFAMILYMEMBER
+    set AFM_SQID = #{afmSqid,jdbcType=VARCHAR},
+      AFM_XM = #{afmXm,jdbcType=VARCHAR},
+      AFM_XB = #{afmXb,jdbcType=VARCHAR},
+      AFM_CSNY = #{afmCsny,jdbcType=VARCHAR},
+      AFM_SFZH = #{afmSfzh,jdbcType=VARCHAR},
+      AFM_HYZK = #{afmHyzk,jdbcType=VARCHAR},
+      AFM_GZDW = #{afmGzdw,jdbcType=VARCHAR},
+      AFM_LXDH = #{afmLxdh,jdbcType=VARCHAR},
+      AFM_NSR = #{afmNsr,jdbcType=DECIMAL},
+      AFM_YSQRGX = #{afmYsqrgx,jdbcType=VARCHAR},
+      AFM_FLAG = #{afmFlag,jdbcType=DECIMAL},
+      AFM_ORDER = #{afmOrder,jdbcType=DECIMAL},
+      AFM_SSQ = #{afmSsq,jdbcType=VARCHAR},
+      AFM_LB = #{afmLb,jdbcType=VARCHAR}
+    where AFM_ID = #{afmId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select AFM_ID, AFM_SQID, AFM_XM, AFM_XB, AFM_CSNY, AFM_SFZH, AFM_HYZK, AFM_GZDW, 
+    AFM_LXDH, AFM_NSR, AFM_YSQRGX, AFM_FLAG, AFM_ORDER, AFM_SSQ, AFM_LB
+    from APPLYFAMILYMEMBER
+    where AFM_ID = #{afmId,jdbcType=VARCHAR}
+  </select>
+  <select id="select" resultMap="BaseResultMap">
+    select AFM_ID, AFM_SQID, AFM_XM, AFM_XB, AFM_CSNY, AFM_SFZH, AFM_HYZK, AFM_GZDW, 
+    AFM_LXDH, AFM_NSR, AFM_YSQRGX, AFM_FLAG, AFM_ORDER, AFM_SSQ, AFM_LB
+    from APPLYFAMILYMEMBER
+  </select>
+  <select id="selectForApplicationPerson" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select AFM_ID, AFM_SQID, AFM_XM, AFM_XB, AFM_CSNY, AFM_SFZH, AFM_HYZK, AFM_GZDW,
+    AFM_LXDH, AFM_NSR, AFM_YSQRGX, AFM_FLAG, AFM_ORDER, AFM_SSQ, AFM_LB
+    from APPLYFAMILYMEMBER
+    where AFM_SQID = #{afmSqid,jdbcType=VARCHAR}
+    and (AFM_YSQRGX is null or AFM_YSQRGX='')
+  </select>
+  <select id="findByApplyId" resultMap="BaseResultMap">
+    select AFM_ID, AFM_SQID, AFM_XM, AFM_XB, AFM_CSNY, AFM_SFZH, AFM_HYZK, AFM_GZDW,
+    AFM_LXDH, AFM_NSR, AFM_YSQRGX, AFM_FLAG, AFM_ORDER, AFM_SSQ, AFM_LB
+    from APPLYFAMILYMEMBER
+    WHERE AFM_SQID=#{applyid}
+  </select>
+
+  <delete id="deleteFamilyMember" parameterType="java.lang.String">
+    delete from APPLYFAMILYMEMBER
+    where AFM_SQID = #{applyid,jdbcType=VARCHAR}
+  </delete>
+
+  <!--条件查询家庭成员列表-->
+  <select id="selectListByMap"  resultMap="BaseResultMap">
+    select AM.* from APPLYFAMILYMEMBER AM
+    <include refid="sqlWhere"></include>
+  </select>
+
+  <!--条件查询家庭成员数目-->
+  <select id="selectCountByMap" resultType="java.lang.Integer">
+    select count(0) from APPLYFAMILYMEMBER AM
+    LEFT JOIN APPROVE apo ON AM.AFM_SQID = apo.APLID
+    <include refid="sqlWhere"></include>
+  </select>
+
+  <!--查询条件-->
+  <sql id="sqlWhere">
+    <where>
+      <if test="sfzh!=null and sfzh!=''">
+        and AM.AFM_SFZH = #{sfzh}
+      </if>
+      <if test="approveExist=='no'.toString()">
+        and apo.APLID is null
+      </if>
+      <if test="approveExist=='yes'.toString()">
+        and apo.APLID is not null and apo.APTYPE not like '%'||'ns'||'%'
+      </if>
+    </where>
+  </sql>
+
+  <!--条件查询用户申请单的部分信息-->
+  <select id="selectApplyMap" resultType="java.util.Map">
+    select apl.AFF_ZT as appzt,
+      '4' as apptype
+     from APPLYFORFOREIGN apl
+     LEFT JOIN APPLYFAMILYMEMBER AM ON AM.AFM_SQID = apl.AFF_ID
+     <include refid="sqlWhere"></include>
+
+    union
+
+    select apl.AFG_ZT as appzt,
+    '5' as apptype
+    from APPLYFORGRADUATE apl
+    LEFT JOIN APPLYFAMILYMEMBER AM ON AM.AFM_SQID = apl.AFG_ID
+    <include refid="sqlWhere"></include>
+
+    union
+
+    select apl.AB_ZT as appzt,
+    '2' as apptype
+    from APPLY_BUTIE apl
+    LEFT JOIN APPLYFAMILYMEMBER AM ON AM.AFM_SQID = apl.AB_ID
+    <include refid="sqlWhere"></include>
+
+    union
+
+    select apl.AP_ZT as appzt,
+    apl.AP_SQLB as apptype
+    from APPLY apl
+    LEFT JOIN APPLYFAMILYMEMBER AM ON AM.AFM_SQID = apl.AP_ID
+    <include refid="sqlWhere"></include>
+  </select>
+
+  <!--批量更新家庭成员手机号-->
+  <update id="updateMemberBatch"  parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+      update APPLYFAMILYMEMBER
+      <set>
+        AFM_LXDH=#{item.afmLxdh}
+      </set>
+      <where>
+        <if test="item.afmSqid!=null">
+           and AFM_SQID = #{item.afmSqid}
+        </if>
+        <if test="item.afmSfzh!=null">
+          and AFM_SFZH = #{item.afmSfzh}
+        </if>
+      </where>
+    </foreach>
+  </update>
+
+</mapper>

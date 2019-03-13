@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.MenuInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.sys.pojo.MenuInfo" >
+      <id column="ME_ID" property="meId" jdbcType="VARCHAR" />
+      <result column="ME_CODE" property="meCode" jdbcType="VARCHAR" />
+      <result column="ME_NAME" property="meName" jdbcType="VARCHAR" />
+      <result column="ME_URL" property="meUrl" jdbcType="VARCHAR" />
+      <result column="ME_FAID" property="meFaid" jdbcType="VARCHAR" />
+      <result column="ME_ORDERNO" property="meOrderno" jdbcType="VARCHAR" />
+      <result column="ME_DESC" property="meDesc" jdbcType="VARCHAR" />
+      <result column="ME_STATE" property="state" jdbcType="VARCHAR" />
+      <result column="id" property="id" jdbcType="VARCHAR" />
+      <result column="text" property="text" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from MENUINFO
+    where ME_ID = #{meId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.MenuInfo" >
+    insert into MENUINFO (ME_ID, ME_CODE, ME_NAME, 
+      ME_URL, ME_FAID, ME_ORDERNO, 
+      ME_DESC)
+    values (#{meId,jdbcType=VARCHAR}, #{meCode,jdbcType=VARCHAR}, #{meName,jdbcType=VARCHAR}, 
+      #{meUrl,jdbcType=VARCHAR}, #{meFaid,jdbcType=VARCHAR}, #{meOrderno,jdbcType=VARCHAR}, 
+      #{meDesc,jdbcType=VARCHAR})
+  </insert>
+  <update id="update" parameterType="com.sys.pojo.MenuInfo" >
+    UPDATE MENUINFO
+    set ME_NAME=#{meName},ME_URL=#{meUrl},ME_DESC=#{meDesc}
+    <!--<set>
+        <if test="meName!=null and meName!=''">
+            ME_NAME=#{meName},
+        </if>
+        <if test="meUrl!=null and meUrl!=''">
+            ME_URL=#{meUrl},
+        </if>
+        <if test="meDesc!=null">
+            ME_DESC=#{meDesc}
+        </if>
+    </set>-->
+      WHERE ME_ID = #{meId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="findMenuInfoByUcode" resultMap="BaseResultMap">
+    select  distinct m.me_name as text,m.me_id as id,m.me_url,m.me_code,m.me_faid from userinfo u
+    inner join userduty d
+    on u.userid=d.userid
+    inner join menu_duty_info i
+    on d.dutyid=i.mr_dutyid
+    inner join menuinfo m
+    on m.me_id=i.mr_menuid
+    where u.usercode=#{userCode} and m.me_faid!='0'
+    order  by m.me_code
+  </select>
+
+  <select id="selectById"  parameterType="java.lang.String"  resultMap="BaseResultMap" >
+    select ME_ID, ME_CODE, ME_NAME, ME_URL, ME_FAID, ME_ORDERNO, ME_DESC
+    from MENUINFO
+    where ME_ID = #{meId}
+  </select>
+  <select id="select" resultMap="BaseResultMap" >
+    select ME_ID, ME_CODE, ME_NAME, ME_URL, ME_FAID, ME_ORDERNO, ME_DESC
+    from MENUINFO
+  </select>
+  <!-- 分页查询 -->
+  <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
+    select *
+    from MENUINFO
+    <if test="currPage!=null and pageSize!=null">
+      limit #{currPage},#{pageSize}
+    </if>
+
+  </select>
+
+  <!-- 查询总数 -->
+  <select id="selectCount" resultType="Long">
+    select
+    count(id)
+    from MENUINFO
+  </select>
+
+  <select id="findAllMouduleList" resultMap="BaseResultMap" parameterType="Map">
+    select * from MENUINFO
+    <where>
+      <if test="faid!=null">
+        ME_FAID=#{faid}
+      </if>
+    </where>
+  </select>
+  <select id="listChildrenType" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select * from MENUINFO where ME_FAID=#{faid} order by ME_ORDERNO asc
+  </select>
+  <select id="listModuleByPage" resultMap="BaseResultMap" >
+    select *
+    from MENUINFO
+    <if test="moduleid!=null and moduleid!=''">
+      WHERE  ME_FAID=#{moduleid}
+    </if>
+  </select>
+  <select id="countMenuInfo" resultType="int">
+    SELECT
+    COUNT (1)
+    from MENUINFO
+    <where>
+      <if test="meName!=null and meName!=''">
+        AND ME_NAME=#{meName}
+      </if>
+      <if test="meId!=null and meId!=''">
+        AND ME_ID!=#{meId}
+      </if>
+      <if test="meFaid!=null and meFaid!=''">
+        AND ME_FAID=#{meFaid}
+      </if>
+    </where>
+  </select>
+  <select id="getMaxCode" resultType="java.lang.String">
+    SELECT MAX (ME_CODE) FROM MENUINFO
+  </select>
+  <select id="getMaxOrder" resultType="java.lang.String">
+    SELECT MAX (ME_ORDERNO) FROM MENUINFO WHERE ME_FAID=#{faid}
+  </select>
+</mapper>

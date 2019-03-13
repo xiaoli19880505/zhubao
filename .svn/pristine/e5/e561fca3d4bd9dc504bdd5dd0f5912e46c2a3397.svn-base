@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.FactMappingMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.FactMapping">
+    <result column="FACTMAPPING_ID" jdbcType="VARCHAR" property="factmappingId" />
+    <result column="BUILDINGINFO_ID" jdbcType="VARCHAR" property="buildinginfoId" />
+    <result column="CONDOPLOT_ID" jdbcType="VARCHAR" property="condoplotId" />
+    <result column="F_HOCODE" jdbcType="VARCHAR" property="fHocode" />
+    <result column="F_MAPCODE" jdbcType="VARCHAR" property="fMapcode" />
+    <result column="F_BUNUM" jdbcType="VARCHAR" property="fBunum" />
+    <result column="F_HICODE" jdbcType="VARCHAR" property="fHicode" />
+    <result column="F_FLCODE" jdbcType="VARCHAR" property="fFlcode" />
+    <result column="F_ITSITE" jdbcType="VARCHAR" property="fItsite" />
+    <result column="F_HOSTRU" jdbcType="VARCHAR" property="fHostru" />
+    <result column="F_HOUSE" jdbcType="VARCHAR" property="fHouse" />
+    <result column="F_BULAY" jdbcType="DECIMAL" property="fBulay" />
+    <result column="F_CURLAYNAME" jdbcType="VARCHAR" property="fCurlayname" />
+    <result column="F_BUNAME" jdbcType="VARCHAR" property="fBuname" />
+    <result column="F_CECODE_L" jdbcType="VARCHAR" property="fCecodeL" />
+    <result column="F_CECODE" jdbcType="VARCHAR" property="fCecode" />
+    <result column="F_RONUM" jdbcType="VARCHAR" property="fRonum" />
+    <result column="F_CONACRE2" jdbcType="DECIMAL" property="fConacre2" />
+    <result column="F_INACRE2" jdbcType="DECIMAL" property="fInacre2" />
+    <result column="F_APACRE2" jdbcType="DECIMAL" property="fApacre2" />
+    <result column="F_CONDONUM" jdbcType="VARCHAR" property="fCondonum" />
+    <result column="F_LAYHIG" jdbcType="DECIMAL" property="fLayhig" />
+    <result column="H_LAYTYPE" jdbcType="VARCHAR" property="hLaytype" />
+    <result column="HOUSEMODEL_ID" jdbcType="CHAR" property="housemodelId" />
+    <result column="F_HOSTATE" jdbcType="VARCHAR" property="fHostate" />
+    <result column="F_PREBUNUM" jdbcType="VARCHAR" property="fPrebunum" />
+    <result column="F_COMMUNITY" jdbcType="VARCHAR" property="fCommunity" />
+    <result column="F_ITSITEDETAIL" jdbcType="VARCHAR" property="fItsitedetail" />
+    <result column="F_CURLAY" jdbcType="DECIMAL" property="fCurlay" />
+    <result column="F_ROOMNUM" jdbcType="VARCHAR" property="fRoomnum" />
+    <result column="BDCHOCODE" jdbcType="VARCHAR" property="bdchocode" />
+    <result column="F_CONACRE" jdbcType="DECIMAL" property="fConacre" />
+    <result column="F_INACRE" jdbcType="DECIMAL" property="fInacre" />
+    <result column="F_APACRE" jdbcType="DECIMAL" property="fApacre" />
+    <result column="XHOCODE" jdbcType="VARCHAR" property="xhocode" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="INPUTFLAG" jdbcType="VARCHAR" property="inputflag"/>
+    <result column="RATIONFLAG" jdbcType="VARCHAR" property="rationflag"/>
+    <result column="ORDERFLAG" jdbcType="VARCHAR" property="orderflag"/>
+    <result column="SH_APPLYID" jdbcType="VARCHAR" property="sh_applyid"/>
+    <result column="APLUSERID" jdbcType="VARCHAR" property="apluserid"/>
+    <result column="SH_FYLX" jdbcType="VARCHAR" property="shFylx"/>
+    <result column="SH_SSQ" jdbcType="VARCHAR" property="shSsq"/>
+    <result column="FYLXNAME" jdbcType="VARCHAR" property="fylxname"/>
+    <result column="AFM_XM" jdbcType="VARCHAR" property="afmXm"/>
+    <result column="ITNAME" jdbcType="VARCHAR" property="itName"/>
+    <result column="NUMB" jdbcType="VARCHAR" property="num"/>
+    <!-- 新加房源信息 -->
+    <result column="IC_DIST" jdbcType="VARCHAR" property="icDist"/><!-- 区域 -->
+    <result column="F_ROOM_ADDRESS" jdbcType="VARCHAR" property="fRoomAddress"/><!-- 楼号-单元-室 -->
+    <association property="applyUserinfo" column="APLUSERID" select="com.sys.mapper.ApplyUserinfoMapper.selectById"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    FACTMAPPING_ID,
+    BUILDINGINFO_ID,
+    CONDOPLOT_ID,
+    F_HOCODE,
+    F_MAPCODE,
+    F_BUNUM,
+    F_HICODE,
+    F_FLCODE,
+    F_ITSITE,
+    F_HOSTRU,
+    F_HOUSE,
+    F_BULAY,
+    F_CURLAYNAME,
+    F_BUNAME,
+    F_CECODE_L,
+    F_CECODE,
+    F_RONUM,
+    F_CONACRE2,
+    F_INACRE2,
+    F_APACRE2,
+    F_CONDONUM,
+    F_LAYHIG,
+    H_LAYTYPE,
+    HOUSEMODEL_ID,
+    F_HOSTATE,
+    F_PREBUNUM,
+    F_COMMUNITY,
+    F_ITSITEDETAIL,
+    F_CURLAY,
+    F_ROOMNUM,
+    BDCHOCODE,
+    F_CONACRE,
+    F_INACRE,
+    F_APACRE,
+    XHOCODE,
+    REMARK
+  </sql>
+
+
+
+
+  <insert id="insert" parameterType="com.sys.pojo.FactMapping">
+    insert into FACTMAPPING (FACTMAPPING_ID, BUILDINGINFO_ID, CONDOPLOT_ID, 
+      F_HOCODE, F_MAPCODE, F_BUNUM, 
+      F_HICODE, F_FLCODE, F_ITSITE, 
+      F_HOSTRU, F_HOUSE, F_BULAY, 
+      F_CURLAYNAME, F_BUNAME, F_CECODE_L, 
+      F_CECODE, F_RONUM, F_CONACRE2, 
+      F_INACRE2, F_APACRE2, F_CONDONUM, 
+      F_LAYHIG, H_LAYTYPE, HOUSEMODEL_ID, 
+      F_HOSTATE, F_PREBUNUM, F_COMMUNITY, 
+      F_ITSITEDETAIL, F_CURLAY, F_ROOMNUM, 
+      BDCHOCODE, F_CONACRE, F_INACRE, 
+      F_APACRE, XHOCODE, REMARK
+      )
+    values (#{factmappingId,jdbcType=CHAR}, #{buildinginfoId,jdbcType=CHAR}, #{condoplotId,jdbcType=CHAR}, 
+      #{fHocode,jdbcType=VARCHAR}, #{fMapcode,jdbcType=VARCHAR}, #{fBunum,jdbcType=VARCHAR}, 
+      #{fHicode,jdbcType=CHAR}, #{fFlcode,jdbcType=CHAR}, #{fItsite,jdbcType=VARCHAR}, 
+      #{fHostru,jdbcType=VARCHAR}, #{fHouse,jdbcType=VARCHAR}, #{fBulay,jdbcType=DECIMAL}, 
+      #{fCurlayname,jdbcType=VARCHAR}, #{fBuname,jdbcType=VARCHAR}, #{fCecodeL,jdbcType=CHAR}, 
+      #{fCecode,jdbcType=VARCHAR}, #{fRonum,jdbcType=VARCHAR}, #{fConacre2,jdbcType=DECIMAL}, 
+      #{fInacre2,jdbcType=DECIMAL}, #{fApacre2,jdbcType=DECIMAL}, #{fCondonum,jdbcType=VARCHAR}, 
+      #{fLayhig,jdbcType=DECIMAL}, #{hLaytype,jdbcType=VARCHAR}, #{housemodelId,jdbcType=CHAR}, 
+      #{fHostate,jdbcType=VARCHAR}, #{fPrebunum,jdbcType=VARCHAR}, #{fCommunity,jdbcType=VARCHAR}, 
+      #{fItsitedetail,jdbcType=VARCHAR}, #{fCurlay,jdbcType=DECIMAL}, #{fRoomnum,jdbcType=VARCHAR}, 
+      #{bdchocode,jdbcType=VARCHAR}, #{fConacre,jdbcType=DECIMAL}, #{fInacre,jdbcType=DECIMAL}, 
+      #{fApacre,jdbcType=DECIMAL}, #{xhocode,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <select id="getFactMappingBySqId" parameterType="com.sys.pojo.FactMapping" resultMap="BaseResultMap">
+    select fm.FACTMAPPING_ID,fm.F_COMMUNITY,
+       fm.F_ITSITEDETAIL,
+       replace(fm.F_BUNAME,'#楼','') ||'-'||
+       fm.F_CECODE ||'-'||
+       fm.F_RONUM F_ROOM_ADDRESS,
+       fm.F_CONACRE2,
+       ici.IC_DIST from SourceHouse sh,FactMapping fm,ItemCodeInfo ici where
+        sh.sh_fwid=fm.factmapping_id and ici.itemcodeinfo_id=sh.sh_xmid
+        and sh.sh_applyid=#{sh_applyid}
+  </select>
+
+
+  <insert id="insertFactList" parameterType="java.util.List">
+    insert into FACTMAPPING (FACTMAPPING_ID, BUILDINGINFO_ID, CONDOPLOT_ID,
+    F_HOCODE, F_MAPCODE, F_BUNUM,
+    F_HICODE, F_FLCODE, F_ITSITE,
+    F_HOSTRU, F_HOUSE, F_BULAY,
+    F_CURLAYNAME, F_BUNAME, F_CECODE_L,
+    F_CECODE, F_RONUM, F_CONACRE2,
+    F_INACRE2, F_APACRE2, F_CONDONUM,
+    F_LAYHIG, H_LAYTYPE, HOUSEMODEL_ID,
+    F_HOSTATE, F_PREBUNUM, F_COMMUNITY,
+    F_ITSITEDETAIL, F_CURLAY, F_ROOMNUM,
+    BDCHOCODE, F_CONACRE, F_INACRE,
+    F_APACRE, XHOCODE, REMARK
+    )
+    <foreach close=")" collection="list" item="item" index="index" open="(" separator="union">
+      SELECT
+      #{item.factmappingId,jdbcType=VARCHAR}, #{item.buildinginfoId,jdbcType=VARCHAR}, #{item.condoplotId,jdbcType=VARCHAR},
+      #{item.fHocode,jdbcType=VARCHAR}, #{item.fMapcode,jdbcType=VARCHAR}, #{item.fBunum,jdbcType=VARCHAR},
+      #{item.fHicode,jdbcType=VARCHAR}, #{item.fFlcode,jdbcType=VARCHAR}, #{item.fItsite,jdbcType=VARCHAR},
+      #{item.fHostru,jdbcType=VARCHAR}, #{item.fHouse,jdbcType=VARCHAR}, #{item.fBulay,jdbcType=DECIMAL},
+      #{item.fCurlayname,jdbcType=VARCHAR}, #{item.fBuname,jdbcType=VARCHAR}, #{item.fCecodeL,jdbcType=VARCHAR},
+      #{item.fCecode,jdbcType=VARCHAR}, #{item.fRonum,jdbcType=VARCHAR}, #{item.fConacre2,jdbcType=DECIMAL},
+      #{item.fInacre2,jdbcType=DECIMAL}, #{item.fApacre2,jdbcType=DECIMAL}, #{item.fCondonum,jdbcType=VARCHAR},
+      #{item.fLayhig,jdbcType=DECIMAL}, #{item.hLaytype,jdbcType=VARCHAR}, #{item.housemodelId,jdbcType=VARCHAR},
+      #{item.fHostate,jdbcType=VARCHAR}, #{item.fPrebunum,jdbcType=VARCHAR}, #{item.fCommunity,jdbcType=VARCHAR},
+      #{item.fItsitedetail,jdbcType=VARCHAR}, #{item.fCurlay,jdbcType=DECIMAL}, #{item.fRoomnum,jdbcType=VARCHAR},
+      #{item.bdchocode,jdbcType=VARCHAR}, #{item.fConacre,jdbcType=DECIMAL}, #{item.fInacre,jdbcType=DECIMAL},
+      #{item.fApacre,jdbcType=DECIMAL}, #{item.xhocode,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR}
+      from DUAL
+    </foreach>
+  </insert>
+
+
+
+
+
+  <insert id="insertSelective" parameterType="com.sys.pojo.FactMapping">
+    insert into FACTMAPPING
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="factmappingId != null">
+        FACTMAPPING_ID,
+      </if>
+      <if test="buildinginfoId != null">
+        BUILDINGINFO_ID,
+      </if>
+      <if test="condoplotId != null">
+        CONDOPLOT_ID,
+      </if>
+      <if test="fHocode != null">
+        F_HOCODE,
+      </if>
+      <if test="fMapcode != null">
+        F_MAPCODE,
+      </if>
+      <if test="fBunum != null">
+        F_BUNUM,
+      </if>
+      <if test="fHicode != null">
+        F_HICODE,
+      </if>
+      <if test="fFlcode != null">
+        F_FLCODE,
+      </if>
+      <if test="fItsite != null">
+        F_ITSITE,
+      </if>
+      <if test="fHostru != null">
+        F_HOSTRU,
+      </if>
+      <if test="fHouse != null">
+        F_HOUSE,
+      </if>
+      <if test="fBulay != null">
+        F_BULAY,
+      </if>
+      <if test="fCurlayname != null">
+        F_CURLAYNAME,
+      </if>
+      <if test="fBuname != null">
+        F_BUNAME,
+      </if>
+      <if test="fCecodeL != null">
+        F_CECODE_L,
+      </if>
+      <if test="fCecode != null">
+        F_CECODE,
+      </if>
+      <if test="fRonum != null">
+        F_RONUM,
+      </if>
+      <if test="fConacre2 != null">
+        F_CONACRE2,
+      </if>
+      <if test="fInacre2 != null">
+        F_INACRE2,
+      </if>
+      <if test="fApacre2 != null">
+        F_APACRE2,
+      </if>
+      <if test="fCondonum != null">
+        F_CONDONUM,
+      </if>
+      <if test="fLayhig != null">
+        F_LAYHIG,
+      </if>
+      <if test="hLaytype != null">
+        H_LAYTYPE,
+      </if>
+      <if test="housemodelId != null">
+        HOUSEMODEL_ID,
+      </if>
+      <if test="fHostate != null">
+        F_HOSTATE,
+      </if>
+      <if test="fPrebunum != null">
+        F_PREBUNUM,
+      </if>
+      <if test="fCommunity != null">
+        F_COMMUNITY,
+      </if>
+      <if test="fItsitedetail != null">
+        F_ITSITEDETAIL,
+      </if>
+      <if test="fCurlay != null">
+        F_CURLAY,
+      </if>
+      <if test="fRoomnum != null">
+        F_ROOMNUM,
+      </if>
+      <if test="bdchocode != null">
+        BDCHOCODE,
+      </if>
+      <if test="fConacre != null">
+        F_CONACRE,
+      </if>
+      <if test="fInacre != null">
+        F_INACRE,
+      </if>
+      <if test="fApacre != null">
+        F_APACRE,
+      </if>
+      <if test="xhocode != null">
+        XHOCODE,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="factmappingId != null">
+        #{factmappingId,jdbcType=CHAR},
+      </if>
+      <if test="buildinginfoId != null">
+        #{buildinginfoId,jdbcType=CHAR},
+      </if>
+      <if test="condoplotId != null">
+        #{condoplotId,jdbcType=CHAR},
+      </if>
+      <if test="fHocode != null">
+        #{fHocode,jdbcType=VARCHAR},
+      </if>
+      <if test="fMapcode != null">
+        #{fMapcode,jdbcType=VARCHAR},
+      </if>
+      <if test="fBunum != null">
+        #{fBunum,jdbcType=VARCHAR},
+      </if>
+      <if test="fHicode != null">
+        #{fHicode,jdbcType=CHAR},
+      </if>
+      <if test="fFlcode != null">
+        #{fFlcode,jdbcType=CHAR},
+      </if>
+      <if test="fItsite != null">
+        #{fItsite,jdbcType=VARCHAR},
+      </if>
+      <if test="fHostru != null">
+        #{fHostru,jdbcType=VARCHAR},
+      </if>
+      <if test="fHouse != null">
+        #{fHouse,jdbcType=VARCHAR},
+      </if>
+      <if test="fBulay != null">
+        #{fBulay,jdbcType=DECIMAL},
+      </if>
+      <if test="fCurlayname != null">
+        #{fCurlayname,jdbcType=VARCHAR},
+      </if>
+      <if test="fBuname != null">
+        #{fBuname,jdbcType=VARCHAR},
+      </if>
+      <if test="fCecodeL != null">
+        #{fCecodeL,jdbcType=CHAR},
+      </if>
+      <if test="fCecode != null">
+        #{fCecode,jdbcType=VARCHAR},
+      </if>
+      <if test="fRonum != null">
+        #{fRonum,jdbcType=VARCHAR},
+      </if>
+      <if test="fConacre2 != null">
+        #{fConacre2,jdbcType=DECIMAL},
+      </if>
+      <if test="fInacre2 != null">
+        #{fInacre2,jdbcType=DECIMAL},
+      </if>
+      <if test="fApacre2 != null">
+        #{fApacre2,jdbcType=DECIMAL},
+      </if>
+      <if test="fCondonum != null">
+        #{fCondonum,jdbcType=VARCHAR},
+      </if>
+      <if test="fLayhig != null">
+        #{fLayhig,jdbcType=DECIMAL},
+      </if>
+      <if test="hLaytype != null">
+        #{hLaytype,jdbcType=VARCHAR},
+      </if>
+      <if test="housemodelId != null">
+        #{housemodelId,jdbcType=CHAR},
+      </if>
+      <if test="fHostate != null">
+        #{fHostate,jdbcType=VARCHAR},
+      </if>
+      <if test="fPrebunum != null">
+        #{fPrebunum,jdbcType=VARCHAR},
+      </if>
+      <if test="fCommunity != null">
+        #{fCommunity,jdbcType=VARCHAR},
+      </if>
+      <if test="fItsitedetail != null">
+        #{fItsitedetail,jdbcType=VARCHAR},
+      </if>
+      <if test="fCurlay != null">
+        #{fCurlay,jdbcType=DECIMAL},
+      </if>
+      <if test="fRoomnum != null">
+        #{fRoomnum,jdbcType=VARCHAR},
+      </if>
+      <if test="bdchocode != null">
+        #{bdchocode,jdbcType=VARCHAR},
+      </if>
+      <if test="fConacre != null">
+        #{fConacre,jdbcType=DECIMAL},
+      </if>
+      <if test="fInacre != null">
+        #{fInacre,jdbcType=DECIMAL},
+      </if>
+      <if test="fApacre != null">
+        #{fApacre,jdbcType=DECIMAL},
+      </if>
+      <if test="xhocode != null">
+        #{xhocode,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="findFactByItemid" parameterType="Map" resultMap="BaseResultMap">
+    select
+    FACTMAPPING_ID,F_CONDONUM,F_CONACRE,
+    case when SOURCEHOUSE.SH_FYLX is null then '1' else '0' end as INPUTFLAG,
+    case when SOURCEHOUSE.SH_SSQ is null then '1' else '0' end as RATIONFLAG,
+    case when SOURCEHOUSE.SH_FWID is null then '0' else '1' end as InPutState,
+    case
+          when SOURCEHOUSE.SH_FYLX='1' then '经适房'
+          when SOURCEHOUSE.SH_FYLX='2' then '公租房（低保特困）'
+          when SOURCEHOUSE.SH_FYLX='3' then '公租房（外来务工，新就业）'
+    end as FYLXNAME,
+    SOURCEHOUSE.SH_FWID
+    from FACTMAPPING left join SOURCEHOUSE on FACTMAPPING.FACTMAPPING_ID=SOURCEHOUSE.SH_FWID
+    <where>
+      BUILDINGINFO_ID = #{buildid}
+          <if test="fylx != null and fylx != ''">
+            AND  SOURCEHOUSE.SH_FYLX=#{fylx}
+          </if>
+    </where>
+    order by F_CONDONUM,to_number(F_RONUM)
+  </select>
+
+  <select id="findFactlxByBid" parameterType="Map" resultMap="BaseResultMap">
+    select
+    FACTMAPPING_ID,F_CONDONUM,f_conacre,
+    case when SOURCEHOUSE.SH_FYLX is null then '1' else '0' end as INPUTFLAG,
+    case when SOURCEHOUSE.SH_SSQ is null then '1' else '0' end as RATIONFLAG,
+    case when SOURCEHOUSE.sh_fwid is null then '0' else '1' end as InPutState,
+    case
+          when SOURCEHOUSE.SH_FYLX='1' then '经适房'
+          when SOURCEHOUSE.SH_FYLX='2' then '公租房（低保特困）'
+          when SOURCEHOUSE.SH_FYLX='3' then '公租房（外来务工，新就业）'
+    end as FYLXNAME,
+    SOURCEHOUSE.SH_FWID
+    from factmapping
+    INNER join sourcehouse on factmapping.factmapping_id=sourcehouse.sh_fwid
+    where BUILDINGINFO_ID = #{lpid}  AND  sourcehouse.sh_fylx=#{fylx}
+    AND  sourcehouse.SH_XMID=#{xmid}
+    order by f_cecode,to_number(f_ronum)
+  </select>
+
+
+  <select id="findFactByBuildingInfoId" parameterType="Map" resultMap="BaseResultMap">
+    SELECT FACTMAPPING_ID,BUILDINGINFO_ID,F_HOSTRU,F_HOUSE,F_BULAY,F_CURLAYNAME,F_CECODE,F_RONUM,F_CONDONUM,F_CONACRE, SH_FYLX,SH_SSQ,
+      CASE WHEN SOURCEHOUSE.SH_FWID IS NULL THEN 'TRUE' ELSE 'FALSE' END AS INPUTFLAG,
+      CASE WHEN SOURCEHOUSE.SH_SSQ IS NULL THEN 'TRUE' ELSE 'FALSE' END AS RATIONFLAG,
+      CASE WHEN SOURCEHOUSE.SH_FWID IS NULL THEN 'FALSE' ELSE 'TRUE' END AS INPUTSTATE,
+      CASE WHEN SH_FYLX='1' THEN '经适房' WHEN SH_FYLX='2' THEN '公租房(低保特困)' WHEN SH_FYLX= '3' THEN '公租房(新就业,外来务工)' end AS FYLXNAME,
+      SOURCEHOUSE.SH_FWID
+      FROM FACTMAPPING LEFT JOIN SOURCEHOUSE ON FACTMAPPING.FACTMAPPING_ID=SOURCEHOUSE.SH_FWID
+      WHERE BUILDINGINFO_ID=#{buildid} AND SH_FWID IS NOT NULL
+      ORDER BY F_CECODE,TO_NUMBER(F_RONUM)
+  </select>
+  <select id="findFactByMap" parameterType="Map" resultMap="BaseResultMap">
+    SELECT FACTMAPPING_ID,BUILDINGINFO_ID,F_HOSTRU,F_HOUSE,F_BULAY,F_CURLAYNAME,F_CECODE,F_RONUM,APR.APLUSERID,
+    F_CONDONUM,F_CONACRE, SH_FYLX,SH_SSQ,AFM_XM,AFM_SFZH,SH_APPLYID,SOURCEHOUSE.SH_FWID,
+    CASE WHEN SOURCEHOUSE.SH_FWID IS NULL OR SOURCEHOUSE.SH_FWID=''  THEN 'TRUE' ELSE 'FALSE' END AS INPUTFLAG,
+    CASE WHEN SOURCEHOUSE.SH_FWID IS NULL OR SOURCEHOUSE.SH_FWID='' THEN 'FALSE' ELSE 'TRUE' END AS INPUTSTATE,
+    CASE WHEN SOURCEHOUSE.SH_SSQ IS NULL OR SOURCEHOUSE.SH_SSQ='' THEN 'TRUE' ELSE 'FALSE' END AS RATIONFLAG,
+    CASE WHEN SOURCEHOUSE.SH_APPLYID IS NULL OR SOURCEHOUSE.SH_APPLYID='' THEN 'TRUE' ELSE 'FALSE' END AS ORDERFLAG,
+    CASE WHEN SH_FYLX='1' THEN '经适房' WHEN SH_FYLX='2' THEN '公租房(低保特困)' WHEN SH_FYLX= '3' THEN '公租房(新就业,外来务工)' end AS FYLXNAME,
+    CASE WHEN SH_SSQ='0' THEN '市区' WHEN SH_SSQ='1' THEN '云龙区' WHEN SH_SSQ='2' THEN '鼓楼区' WHEN SH_SSQ='3' THEN '泉山区' WHEN SH_SSQ='4' THEN '经济技术开发区' END AS SSQ
+    FROM SOURCEHOUSE INNER JOIN FACTMAPPING ON SOURCEHOUSE.SH_FWID = FACTMAPPING.FACTMAPPING_ID
+    LEFT JOIN APPLYFAMILYMEMBER ON SOURCEHOUSE.SH_APPLYID=APPLYFAMILYMEMBER.AFM_SQID AND AFM_YSQRGX ='本人'
+    LEFT JOIN APPROVE APR ON APR.APLID=APPLYFAMILYMEMBER.AFM_SQID
+    WHERE BUILDINGINFO_ID=#{buildid}
+    AND SOURCEHOUSE.SH_SSQ IS NOT NULL
+    AND SOURCEHOUSE.SH_FLAG!=0
+    <if test="fylx!=null and fylx!=''">
+    AND SH_FYLX=#{fylx}
+    </if>
+    <if test="ssq!=null and ssq!=''">
+      AND SH_SSQ=#{ssq}
+    </if>
+
+    ORDER BY F_CECODE,TO_NUMBER(F_RONUM)
+  </select>
+
+  <select id="selectById" parameterType="Map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from FACTMAPPING
+    where FACTMAPPING_ID = #{factmappingId,jdbcType=CHAR}
+  </select>
+
+  <select id="findFactMappingByName" resultType="java.lang.Integer">
+    select COUNT (1)
+    from FACTMAPPING
+    where F_CONDONUM = #{buname,jdbcType=CHAR}
+  </select>
+
+  <delete id="deleteByList" parameterType="java.util.List">
+    DELETE FROM FACTMAPPING WHERE FACTMAPPING_ID IN
+    <foreach collection="list" item="item" index="no" open="("
+             separator="," close=")">
+      #{item}
+    </foreach>
+
+  </delete>
+  <select id="findFactMappingByBuId" resultType="java.lang.Integer">
+    select COUNT (1)
+    from FACTMAPPING
+    where BUILDINGINFO_ID = #{buid,jdbcType=CHAR}
+  </select>
+  <select id="findFactByApplyid" parameterType="Map" resultMap="BaseResultMap">
+    SELECT ITE.IC_ITNAME ITNAME,
+       FAC.F_BUNAME F_BUNAME,
+       FAC.F_CECODE || '单元' F_CECODE,
+       FAC.F_RONUM || '室' F_RONUM
+    FROM SOURCEHOUSE SOR
+    LEFT JOIN FACTMAPPING FAC
+      ON SOR.SH_FWID = FAC.FACTMAPPING_ID
+    LEFT JOIN ITEMCODEINFO ITE
+      ON SOR.SH_XMID = ITE.ITEMCODEINFO_ID
+    LEFT JOIN BUILDINGINFO BUL
+      ON BUL.BUILDINGINFO_ID = SOR.SH_LPID
+   WHERE SOR.SH_APPLYID = #{applyid}
+  </select>
+
+<!--查询用户分配房源的数量-->
+  <select id="findFactCountByApplyid" parameterType="Map" resultType="java.lang.Integer">
+    SELECT count(*)
+    FROM SOURCEHOUSE SOR
+    LEFT JOIN FACTMAPPING FAC
+      ON SOR.SH_FWID = FAC.FACTMAPPING_ID
+    LEFT JOIN ITEMCODEINFO ITE
+      ON SOR.SH_XMID = ITE.ITEMCODEINFO_ID
+    LEFT JOIN BUILDINGINFO BUL
+      ON BUL.BUILDINGINFO_ID = SOR.SH_LPID
+   WHERE SOR.SH_APPLYID = #{applyid}
+  </select>
+
+  <select id="findFactByFwId" parameterType="Map" resultMap="BaseResultMap">
+     SELECT ITE.IC_ITNAME ITNAME,
+    substr(FAC.F_BUNAME,1,instr(FAC.F_BUNAME,'#')-1) AS F_BUNAME,
+    FAC.F_CECODE,
+    FAC.F_RONUM ,FAC.F_CONACRE,LOT.NUM AS NUMB
+     FROM FACTMAPPING FAC
+    LEFT JOIN SOURCEHOUSE SOR ON FAC.FACTMAPPING_ID =SOR.SH_FWID
+    LEFT JOIN ITEMCODEINFO ITE
+    ON SOR.SH_XMID = ITE.ITEMCODEINFO_ID
+    LEFT JOIN BUILDINGINFO BUL
+    ON BUL.BUILDINGINFO_ID = SOR.SH_LPID
+    LEFT JOIN APPROVE APO ON SOR.SH_APPLYID=APO.APLID
+    LEFT JOIN LOTNUM LOT ON APO.APLBH=LOT.SQBH
+    WHERE FAC.FACTMAPPING_ID IN
+    <foreach collection="list" item="item" index="no" open="("
+             separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+</mapper>

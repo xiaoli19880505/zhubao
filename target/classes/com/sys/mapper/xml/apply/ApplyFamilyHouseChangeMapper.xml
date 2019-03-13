@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.apply.ApplyFamilyHouseChangeMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.apply.ApplyFamilyHouseChange">
+    <id column="AFHC_ID" jdbcType="VARCHAR" property="afhcId" />
+    <result column="AFHC_SQID" jdbcType="VARCHAR" property="afhcSqid" />
+    <result column="AFHC_FWID" jdbcType="VARCHAR" property="afhcFwid" />
+    <result column="AFHC_YZFZL" jdbcType="VARCHAR" property="afhcYzfzl" />
+    <result column="AFHC_CQR" jdbcType="VARCHAR" property="afhcCqr" />
+    <result column="AFHC_JZMJ" jdbcType="VARCHAR" property="afhcJzmj" />
+    <result column="AFHC_BGFS" jdbcType="VARCHAR" property="afhcBgfs" />
+    <result column="AFHC_BGSJ" jdbcType="VARCHAR" property="afhcBgsj" />
+    <result column="AFHC_ZRBCJE" jdbcType="VARCHAR" property="afhcZrbcje" />
+    <result column="AFHC_AZFZL" jdbcType="VARCHAR" property="afhcAzfzl" />
+    <result column="AFHC_AZFJZMJ" jdbcType="VARCHAR" property="afhcAzfjzmj" />
+    <result column="AFHC_FLAG" jdbcType="DECIMAL" property="afhcFlag" />
+  </resultMap>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from APPLYFAMILYHOUSECHANGE
+    where AFHC_ID = #{afhcId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.apply.ApplyFamilyHouseChange">
+    insert into APPLYFAMILYHOUSECHANGE (AFHC_ID, AFHC_SQID, AFHC_FWID, 
+      AFHC_YZFZL, AFHC_CQR, AFHC_JZMJ, 
+      AFHC_BGFS, AFHC_BGSJ, AFHC_ZRBCJE, 
+      AFHC_AZFZL, AFHC_AZFJZMJ, AFHC_FLAG
+      )
+    values (#{afhcId,jdbcType=VARCHAR}, #{afhcSqid,jdbcType=VARCHAR}, #{afhcFwid,jdbcType=VARCHAR}, 
+      #{afhcYzfzl,jdbcType=VARCHAR}, #{afhcCqr,jdbcType=VARCHAR}, #{afhcJzmj,jdbcType=VARCHAR}, 
+      #{afhcBgfs,jdbcType=VARCHAR}, #{afhcBgsj,jdbcType=VARCHAR}, #{afhcZrbcje,jdbcType=VARCHAR}, 
+      #{afhcAzfzl,jdbcType=VARCHAR}, #{afhcAzfjzmj,jdbcType=VARCHAR}, #{afhcFlag,jdbcType=DECIMAL}
+      )
+  </insert>
+  <update id="update" parameterType="com.sys.pojo.apply.ApplyFamilyHouseChange">
+    update APPLYFAMILYHOUSECHANGE
+    <set>
+    <if test="afhcFwid!=null">
+      AFHC_FWID = #{afhcFwid,jdbcType=VARCHAR},
+    </if>
+    <if test="afhcYzfzl!=null ">
+      AFHC_YZFZL = #{afhcYzfzl,jdbcType=VARCHAR},
+    </if>
+    <if test="afhcCqr!=null ">
+      AFHC_CQR = #{afhcCqr,jdbcType=VARCHAR},
+    </if>
+    <if test="afhcJzmj!=null">
+      AFHC_JZMJ = #{afhcJzmj,jdbcType=VARCHAR},
+    </if>
+    <if test="afhcBgfs!=null">
+      AFHC_BGFS = #{afhcBgfs,jdbcType=VARCHAR},
+    </if>
+    <if test="afhcBgsj!=null">
+      AFHC_BGSJ = #{afhcBgsj,jdbcType=VARCHAR},
+    </if>
+    <if test="afhcZrbcje!=null">
+      AFHC_ZRBCJE = #{afhcZrbcje,jdbcType=VARCHAR},
+    </if>
+    <if test="afhcAzfzl!=null">
+      AFHC_AZFZL = #{afhcAzfzl,jdbcType=VARCHAR},
+    </if>
+    <if test="afhcAzfjzmj!=null ">
+      AFHC_AZFJZMJ = #{afhcAzfjzmj,jdbcType=VARCHAR},
+    </if>
+    <if test="afhcFlag!=null">
+      AFHC_FLAG = #{afhcFlag,jdbcType=DECIMAL}
+    </if>
+  </set>
+    where AFHC_ID = #{afhcId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select AFHC_ID, AFHC_SQID, AFHC_FWID, AFHC_YZFZL, AFHC_CQR, AFHC_JZMJ, AFHC_BGFS, 
+    AFHC_BGSJ, AFHC_ZRBCJE, AFHC_AZFZL, AFHC_AZFJZMJ, AFHC_FLAG
+    from APPLYFAMILYHOUSECHANGE
+    where AFHC_ID = #{afhcId,jdbcType=VARCHAR}
+  </select>
+  <select id="select" resultMap="BaseResultMap">
+    select AFHC_ID, AFHC_SQID, AFHC_FWID, AFHC_YZFZL, AFHC_CQR, AFHC_JZMJ, AFHC_BGFS, 
+    AFHC_BGSJ, AFHC_ZRBCJE, AFHC_AZFZL, AFHC_AZFJZMJ, AFHC_FLAG
+    from APPLYFAMILYHOUSECHANGE
+  </select>
+  <select id="findByApplyId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select AFHC_ID, AFHC_SQID, AFHC_FWID, AFHC_YZFZL, AFHC_CQR, AFHC_JZMJ, AFHC_BGFS,
+    AFHC_BGSJ, AFHC_ZRBCJE, AFHC_AZFZL, AFHC_AZFJZMJ, AFHC_FLAG
+    from APPLYFAMILYHOUSECHANGE
+    where AFHC_SQID = #{afhcSqid,jdbcType=VARCHAR}
+  </select>
+</mapper>

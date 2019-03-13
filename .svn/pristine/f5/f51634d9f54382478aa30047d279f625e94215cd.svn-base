@@ -1,0 +1,841 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.contract.ContractMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.contract.Contract">
+    <id column="C_ID" jdbcType="VARCHAR" property="cId" />
+    <result column="C_FWID" jdbcType="VARCHAR" property="cFwid" />
+    <result column="C_HTBH" jdbcType="VARCHAR" property="cHtbh" />
+    <result column="C_HTQYRQ" jdbcType="VARCHAR" property="cHtqyrq" />
+    <result column="C_HTQYSJ" jdbcType="VARCHAR" property="cHtqysj" />
+    <result column="C_HTBARQ" jdbcType="VARCHAR" property="cHtbarq" />
+    <result column="C_HTBASJ" jdbcType="VARCHAR" property="cHtbasj" />
+    <result column="C_QYCZY" jdbcType="VARCHAR" property="cQyczy" />
+    <result column="C_BACZY" jdbcType="VARCHAR" property="cBaczy" />
+    <result column="C_LC" jdbcType="DECIMAL" property="cLc" />
+    <result column="C_ZT" jdbcType="DECIMAL" property="cZt" />
+    <result column="C_SQID" jdbcType="VARCHAR" property="cSqid" />
+    <result column="C_HTLX" jdbcType="VARCHAR" property="cHtlx" />
+    <result column="C_COL1" jdbcType="VARCHAR" property="cCol1" />
+    <result column="C_COL2" jdbcType="VARCHAR" property="cCol2" />
+    <result column="C_COL3" jdbcType="VARCHAR" property="cCol3" />
+    <result column="C_COL4" jdbcType="VARCHAR" property="cCol4" />
+    <result column="C_COL5" jdbcType="VARCHAR" property="cCol5" />
+    <result column="C_COL6" jdbcType="VARCHAR" property="cCol6" />
+    <result column="C_COL7" jdbcType="VARCHAR" property="cCol7" />
+    <result column="C_COL8" jdbcType="VARCHAR" property="cCol8" />
+    <result column="C_COL9" jdbcType="VARCHAR" property="cCol9" />
+    <result column="C_COL10" jdbcType="VARCHAR" property="cCol10" />
+    <result column="C_COL11" jdbcType="VARCHAR" property="cCol11" />
+    <result column="C_COL12" jdbcType="VARCHAR" property="cCol12" />
+    <result column="C_COL13" jdbcType="VARCHAR" property="cCol13" />
+    <result column="C_COL14" jdbcType="VARCHAR" property="cCol14" />
+    <result column="C_COL15" jdbcType="VARCHAR" property="cCol15" />
+    <result column="C_COL16" jdbcType="VARCHAR" property="cCol16" />
+    <result column="C_COL17" jdbcType="VARCHAR" property="cCol17" />
+    <result column="C_COL18" jdbcType="VARCHAR" property="cCol18" />
+    <result column="C_COL19" jdbcType="VARCHAR" property="cCol19" />
+    <result column="C_COL20" jdbcType="VARCHAR" property="cCol20" />
+    <result column="C_COL21" jdbcType="VARCHAR" property="cCol21" />
+    <result column="C_COL22" jdbcType="VARCHAR" property="cCol22" />
+    <result column="C_COL23" jdbcType="VARCHAR" property="cCol23" />
+    <result column="C_COL24" jdbcType="VARCHAR" property="cCol24" />
+    <result column="C_COL25" jdbcType="VARCHAR" property="cCol25" />
+    <result column="C_COL26" jdbcType="VARCHAR" property="cCol26" />
+    <result column="C_COL27" jdbcType="VARCHAR" property="cCol27" />
+    <result column="C_COL28" jdbcType="VARCHAR" property="cCol28" />
+    <result column="C_COL29" jdbcType="VARCHAR" property="cCol29" />
+    <result column="C_COL30" jdbcType="VARCHAR" property="cCol30" />
+    <result column="C_COL31" jdbcType="VARCHAR" property="cCol31" />
+    <result column="C_COL32" jdbcType="VARCHAR" property="cCol32" />
+    <result column="C_COL33" jdbcType="VARCHAR" property="cCol33" />
+    <result column="C_COL34" jdbcType="VARCHAR" property="cCol34" />
+    <result column="C_COL35" jdbcType="VARCHAR" property="cCol35" />
+    <result column="C_COL36" jdbcType="VARCHAR" property="cCol36" />
+    <result column="C_COL37" jdbcType="VARCHAR" property="cCol37" />
+    <result column="C_COL38" jdbcType="VARCHAR" property="cCol38" />
+    <result column="C_COL39" jdbcType="VARCHAR" property="cCol39" />
+    <result column="C_COL40" jdbcType="VARCHAR" property="cCol40" />
+    <result column="C_SSQ" jdbcType="VARCHAR" property="cSsq" />
+    <result column="C_ZFZT" jdbcType="DECIMAL" property="cZfzt" />
+    <result column="C_STIME" jdbcType="OTHER" property="cStime" />
+    <result column="C_ETIME" jdbcType="OTHER" property="cEtime" />
+    <result column="C_RENT" jdbcType="DECIMAL" property="cRent" />
+    <result column="C_RENTENDDATE" jdbcType="OTHER" property="cRentenddate" />
+    <result column="C_PROPERTYCHARGEENDDATE" jdbcType="OTHER" property="cPropertychargeenddate" />
+    <result column="C_BASEMENTACRE" jdbcType="DECIMAL" property="cBasementacre" />
+    <result column="C_BALCONYACRE" jdbcType="DECIMAL" property="cBalconyacre" />
+    <result column="C_LOFTACRE" jdbcType="DECIMAL" property="cLoftacre" />
+    <result column="C_LOFTEAVESHIGHT" jdbcType="DECIMAL" property="cLofteaveshight" />
+    <result column="C_USEACRE" jdbcType="DECIMAL" property="cUseacre" />
+    <result column="C_HTNSSJ" jdbcType="TIMESTAMP" property="cHtnssj" />
+    <result column="C_HTKSSJ" jdbcType="TIMESTAMP" property="cHtkssj" />
+    <result column="C_HTJSSJ" jdbcType="TIMESTAMP" property="cHtjssj" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    C_ID, C_FWID, C_HTBH, C_HTQYRQ, C_HTQYSJ, C_HTBARQ, C_HTBASJ, C_QYCZY, C_BACZY, C_LC, 
+    C_ZT, C_SQID, C_HTLX, C_COL1, C_COL2, C_COL3, C_COL4, C_COL5, C_COL6, C_COL7, C_COL8, 
+    C_COL9, C_COL10, C_COL11, C_COL12, C_COL13, C_COL14, C_COL15, C_COL16, C_COL17, C_COL18, 
+    C_COL19, C_COL20, C_COL21, C_COL22, C_COL23, C_COL24, C_COL25, C_COL26, C_COL27, 
+    C_COL28, C_COL29, C_COL30, C_COL31, C_COL32, C_COL33, C_COL34, C_COL35, C_COL36, 
+    C_COL37, C_COL38, C_COL39, C_COL40, C_SSQ, C_ZFZT, C_STIME, C_ETIME, C_RENT, C_RENTENDDATE, 
+    C_PROPERTYCHARGEENDDATE, C_BASEMENTACRE, C_BALCONYACRE, C_LOFTACRE, C_LOFTEAVESHIGHT, 
+    C_USEACRE, C_HTNSSJ, C_HTKSSJ, C_HTJSSJ
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from CONTRACT
+    where C_ID = #{cId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from CONTRACT
+    where C_ID = #{cId,jdbcType=VARCHAR}
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from CONTRACT
+    where C_ID = #{cId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.contract.Contract">
+    insert into CONTRACT (C_ID, C_FWID, C_HTBH, 
+      C_HTQYRQ, C_HTQYSJ, C_HTBARQ, 
+      C_HTBASJ, C_QYCZY, C_BACZY, 
+      C_LC, C_ZT, C_SQID, C_HTLX, 
+      C_COL1, C_COL2, C_COL3, 
+      C_COL4, C_COL5, C_COL6, 
+      C_COL7, C_COL8, C_COL9, 
+      C_COL10, C_COL11, C_COL12, 
+      C_COL13, C_COL14, C_COL15, 
+      C_COL16, C_COL17, C_COL18, 
+      C_COL19, C_COL20, C_COL21, 
+      C_COL22, C_COL23, C_COL24, 
+      C_COL25, C_COL26, C_COL27, 
+      C_COL28, C_COL29, C_COL30, 
+      C_COL31, C_COL32, C_COL33, 
+      C_COL34, C_COL35, C_COL36, 
+      C_COL37, C_COL38, C_COL39, 
+      C_COL40, C_SSQ, C_ZFZT, 
+      C_STIME, C_ETIME, C_RENT, 
+      C_RENTENDDATE, C_PROPERTYCHARGEENDDATE, C_BASEMENTACRE, 
+      C_BALCONYACRE, C_LOFTACRE, C_LOFTEAVESHIGHT, 
+      C_USEACRE, C_HTNSSJ, C_HTKSSJ, 
+      C_HTJSSJ)
+    values (#{cId,jdbcType=VARCHAR}, #{cFwid,jdbcType=VARCHAR}, #{cHtbh,jdbcType=VARCHAR}, 
+      #{cHtqyrq,jdbcType=VARCHAR}, #{cHtqysj,jdbcType=VARCHAR}, #{cHtbarq,jdbcType=VARCHAR}, 
+      #{cHtbasj,jdbcType=VARCHAR}, #{cQyczy,jdbcType=VARCHAR}, #{cBaczy,jdbcType=VARCHAR}, 
+      #{cLc,jdbcType=DECIMAL}, #{cZt,jdbcType=DECIMAL}, #{cSqid,jdbcType=VARCHAR}, #{cHtlx,jdbcType=VARCHAR}, 
+      #{cCol1,jdbcType=VARCHAR}, #{cCol2,jdbcType=VARCHAR}, #{cCol3,jdbcType=VARCHAR}, 
+      #{cCol4,jdbcType=VARCHAR}, #{cCol5,jdbcType=VARCHAR}, #{cCol6,jdbcType=VARCHAR}, 
+      #{cCol7,jdbcType=VARCHAR}, #{cCol8,jdbcType=VARCHAR}, #{cCol9,jdbcType=VARCHAR}, 
+      #{cCol10,jdbcType=VARCHAR}, #{cCol11,jdbcType=VARCHAR}, #{cCol12,jdbcType=VARCHAR}, 
+      #{cCol13,jdbcType=VARCHAR}, #{cCol14,jdbcType=VARCHAR}, #{cCol15,jdbcType=VARCHAR}, 
+      #{cCol16,jdbcType=VARCHAR}, #{cCol17,jdbcType=VARCHAR}, #{cCol18,jdbcType=VARCHAR}, 
+      #{cCol19,jdbcType=VARCHAR}, #{cCol20,jdbcType=VARCHAR}, #{cCol21,jdbcType=VARCHAR}, 
+      #{cCol22,jdbcType=VARCHAR}, #{cCol23,jdbcType=VARCHAR}, #{cCol24,jdbcType=VARCHAR}, 
+      #{cCol25,jdbcType=VARCHAR}, #{cCol26,jdbcType=VARCHAR}, #{cCol27,jdbcType=VARCHAR}, 
+      #{cCol28,jdbcType=VARCHAR}, #{cCol29,jdbcType=VARCHAR}, #{cCol30,jdbcType=VARCHAR}, 
+      #{cCol31,jdbcType=VARCHAR}, #{cCol32,jdbcType=VARCHAR}, #{cCol33,jdbcType=VARCHAR}, 
+      #{cCol34,jdbcType=VARCHAR}, #{cCol35,jdbcType=VARCHAR}, #{cCol36,jdbcType=VARCHAR}, 
+      #{cCol37,jdbcType=VARCHAR}, #{cCol38,jdbcType=VARCHAR}, #{cCol39,jdbcType=VARCHAR}, 
+      #{cCol40,jdbcType=VARCHAR}, #{cSsq,jdbcType=VARCHAR}, #{cZfzt,jdbcType=DECIMAL}, 
+      #{cStime,jdbcType=OTHER}, #{cEtime,jdbcType=OTHER}, #{cRent,jdbcType=DECIMAL}, 
+      #{cRentenddate,jdbcType=OTHER}, #{cPropertychargeenddate,jdbcType=OTHER}, #{cBasementacre,jdbcType=DECIMAL}, 
+      #{cBalconyacre,jdbcType=DECIMAL}, #{cLoftacre,jdbcType=DECIMAL}, #{cLofteaveshight,jdbcType=DECIMAL}, 
+      #{cUseacre,jdbcType=DECIMAL}, #{cHtnssj,jdbcType=TIMESTAMP}, #{cHtkssj,jdbcType=TIMESTAMP}, 
+      #{cHtjssj,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sys.pojo.contract.Contract">
+    insert into CONTRACT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cId != null">
+        C_ID,
+      </if>
+      <if test="cFwid != null">
+        C_FWID,
+      </if>
+      <if test="cHtbh != null">
+        C_HTBH,
+      </if>
+      <if test="cHtqyrq != null">
+        C_HTQYRQ,
+      </if>
+      <if test="cHtqysj != null">
+        C_HTQYSJ,
+      </if>
+      <if test="cHtbarq != null">
+        C_HTBARQ,
+      </if>
+      <if test="cHtbasj != null">
+        C_HTBASJ,
+      </if>
+      <if test="cQyczy != null">
+        C_QYCZY,
+      </if>
+      <if test="cBaczy != null">
+        C_BACZY,
+      </if>
+      <if test="cLc != null">
+        C_LC,
+      </if>
+      <if test="cZt != null">
+        C_ZT,
+      </if>
+      <if test="cSqid != null">
+        C_SQID,
+      </if>
+      <if test="cHtlx != null">
+        C_HTLX,
+      </if>
+      <if test="cCol1 != null">
+        C_COL1,
+      </if>
+      <if test="cCol2 != null">
+        C_COL2,
+      </if>
+      <if test="cCol3 != null">
+        C_COL3,
+      </if>
+      <if test="cCol4 != null">
+        C_COL4,
+      </if>
+      <if test="cCol5 != null">
+        C_COL5,
+      </if>
+      <if test="cCol6 != null">
+        C_COL6,
+      </if>
+      <if test="cCol7 != null">
+        C_COL7,
+      </if>
+      <if test="cCol8 != null">
+        C_COL8,
+      </if>
+      <if test="cCol9 != null">
+        C_COL9,
+      </if>
+      <if test="cCol10 != null">
+        C_COL10,
+      </if>
+      <if test="cCol11 != null">
+        C_COL11,
+      </if>
+      <if test="cCol12 != null">
+        C_COL12,
+      </if>
+      <if test="cCol13 != null">
+        C_COL13,
+      </if>
+      <if test="cCol14 != null">
+        C_COL14,
+      </if>
+      <if test="cCol15 != null">
+        C_COL15,
+      </if>
+      <if test="cCol16 != null">
+        C_COL16,
+      </if>
+      <if test="cCol17 != null">
+        C_COL17,
+      </if>
+      <if test="cCol18 != null">
+        C_COL18,
+      </if>
+      <if test="cCol19 != null">
+        C_COL19,
+      </if>
+      <if test="cCol20 != null">
+        C_COL20,
+      </if>
+      <if test="cCol21 != null">
+        C_COL21,
+      </if>
+      <if test="cCol22 != null">
+        C_COL22,
+      </if>
+      <if test="cCol23 != null">
+        C_COL23,
+      </if>
+      <if test="cCol24 != null">
+        C_COL24,
+      </if>
+      <if test="cCol25 != null">
+        C_COL25,
+      </if>
+      <if test="cCol26 != null">
+        C_COL26,
+      </if>
+      <if test="cCol27 != null">
+        C_COL27,
+      </if>
+      <if test="cCol28 != null">
+        C_COL28,
+      </if>
+      <if test="cCol29 != null">
+        C_COL29,
+      </if>
+      <if test="cCol30 != null">
+        C_COL30,
+      </if>
+      <if test="cCol31 != null">
+        C_COL31,
+      </if>
+      <if test="cCol32 != null">
+        C_COL32,
+      </if>
+      <if test="cCol33 != null">
+        C_COL33,
+      </if>
+      <if test="cCol34 != null">
+        C_COL34,
+      </if>
+      <if test="cCol35 != null">
+        C_COL35,
+      </if>
+      <if test="cCol36 != null">
+        C_COL36,
+      </if>
+      <if test="cCol37 != null">
+        C_COL37,
+      </if>
+      <if test="cCol38 != null">
+        C_COL38,
+      </if>
+      <if test="cCol39 != null">
+        C_COL39,
+      </if>
+      <if test="cCol40 != null">
+        C_COL40,
+      </if>
+      <if test="cSsq != null">
+        C_SSQ,
+      </if>
+      <if test="cZfzt != null">
+        C_ZFZT,
+      </if>
+      <if test="cStime != null">
+        C_STIME,
+      </if>
+      <if test="cEtime != null">
+        C_ETIME,
+      </if>
+      <if test="cRent != null">
+        C_RENT,
+      </if>
+      <if test="cRentenddate != null">
+        C_RENTENDDATE,
+      </if>
+      <if test="cPropertychargeenddate != null">
+        C_PROPERTYCHARGEENDDATE,
+      </if>
+      <if test="cBasementacre != null">
+        C_BASEMENTACRE,
+      </if>
+      <if test="cBalconyacre != null">
+        C_BALCONYACRE,
+      </if>
+      <if test="cLoftacre != null">
+        C_LOFTACRE,
+      </if>
+      <if test="cLofteaveshight != null">
+        C_LOFTEAVESHIGHT,
+      </if>
+      <if test="cUseacre != null">
+        C_USEACRE,
+      </if>
+      <if test="cHtnssj != null">
+        C_HTNSSJ,
+      </if>
+      <if test="cHtkssj != null">
+        C_HTKSSJ,
+      </if>
+      <if test="cHtjssj != null">
+        C_HTJSSJ,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cId != null">
+        #{cId,jdbcType=VARCHAR},
+      </if>
+      <if test="cFwid != null">
+        #{cFwid,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtbh != null">
+        #{cHtbh,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtqyrq != null">
+        #{cHtqyrq,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtqysj != null">
+        #{cHtqysj,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtbarq != null">
+        #{cHtbarq,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtbasj != null">
+        #{cHtbasj,jdbcType=VARCHAR},
+      </if>
+      <if test="cQyczy != null">
+        #{cQyczy,jdbcType=VARCHAR},
+      </if>
+      <if test="cBaczy != null">
+        #{cBaczy,jdbcType=VARCHAR},
+      </if>
+      <if test="cLc != null">
+        #{cLc,jdbcType=DECIMAL},
+      </if>
+      <if test="cZt != null">
+        #{cZt,jdbcType=DECIMAL},
+      </if>
+      <if test="cSqid != null">
+        #{cSqid,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtlx != null">
+        #{cHtlx,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol1 != null">
+        #{cCol1,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol2 != null">
+        #{cCol2,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol3 != null">
+        #{cCol3,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol4 != null">
+        #{cCol4,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol5 != null">
+        #{cCol5,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol6 != null">
+        #{cCol6,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol7 != null">
+        #{cCol7,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol8 != null">
+        #{cCol8,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol9 != null">
+        #{cCol9,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol10 != null">
+        #{cCol10,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol11 != null">
+        #{cCol11,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol12 != null">
+        #{cCol12,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol13 != null">
+        #{cCol13,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol14 != null">
+        #{cCol14,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol15 != null">
+        #{cCol15,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol16 != null">
+        #{cCol16,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol17 != null">
+        #{cCol17,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol18 != null">
+        #{cCol18,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol19 != null">
+        #{cCol19,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol20 != null">
+        #{cCol20,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol21 != null">
+        #{cCol21,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol22 != null">
+        #{cCol22,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol23 != null">
+        #{cCol23,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol24 != null">
+        #{cCol24,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol25 != null">
+        #{cCol25,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol26 != null">
+        #{cCol26,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol27 != null">
+        #{cCol27,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol28 != null">
+        #{cCol28,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol29 != null">
+        #{cCol29,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol30 != null">
+        #{cCol30,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol31 != null">
+        #{cCol31,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol32 != null">
+        #{cCol32,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol33 != null">
+        #{cCol33,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol34 != null">
+        #{cCol34,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol35 != null">
+        #{cCol35,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol36 != null">
+        #{cCol36,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol37 != null">
+        #{cCol37,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol38 != null">
+        #{cCol38,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol39 != null">
+        #{cCol39,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol40 != null">
+        #{cCol40,jdbcType=VARCHAR},
+      </if>
+      <if test="cSsq != null">
+        #{cSsq,jdbcType=VARCHAR},
+      </if>
+      <if test="cZfzt != null">
+        #{cZfzt,jdbcType=DECIMAL},
+      </if>
+      <if test="cStime != null">
+        #{cStime,jdbcType=OTHER},
+      </if>
+      <if test="cEtime != null">
+        #{cEtime,jdbcType=OTHER},
+      </if>
+      <if test="cRent != null">
+        #{cRent,jdbcType=DECIMAL},
+      </if>
+      <if test="cRentenddate != null">
+        #{cRentenddate,jdbcType=OTHER},
+      </if>
+      <if test="cPropertychargeenddate != null">
+        #{cPropertychargeenddate,jdbcType=OTHER},
+      </if>
+      <if test="cBasementacre != null">
+        #{cBasementacre,jdbcType=DECIMAL},
+      </if>
+      <if test="cBalconyacre != null">
+        #{cBalconyacre,jdbcType=DECIMAL},
+      </if>
+      <if test="cLoftacre != null">
+        #{cLoftacre,jdbcType=DECIMAL},
+      </if>
+      <if test="cLofteaveshight != null">
+        #{cLofteaveshight,jdbcType=DECIMAL},
+      </if>
+      <if test="cUseacre != null">
+        #{cUseacre,jdbcType=DECIMAL},
+      </if>
+      <if test="cHtnssj != null">
+        #{cHtnssj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cHtkssj != null">
+        #{cHtkssj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cHtjssj != null">
+        #{cHtjssj,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateSelective" parameterType="com.sys.pojo.contract.Contract">
+    update CONTRACT
+    <set>
+      <if test="cFwid != null">
+        C_FWID = #{cFwid,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtbh != null">
+        C_HTBH = #{cHtbh,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtqyrq != null">
+        C_HTQYRQ = #{cHtqyrq,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtqysj != null">
+        C_HTQYSJ = #{cHtqysj,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtbarq != null">
+        C_HTBARQ = #{cHtbarq,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtbasj != null">
+        C_HTBASJ = #{cHtbasj,jdbcType=VARCHAR},
+      </if>
+      <if test="cQyczy != null">
+        C_QYCZY = #{cQyczy,jdbcType=VARCHAR},
+      </if>
+      <if test="cBaczy != null">
+        C_BACZY = #{cBaczy,jdbcType=VARCHAR},
+      </if>
+      <if test="cLc != null">
+        C_LC = #{cLc,jdbcType=DECIMAL},
+      </if>
+      <if test="cZt != null">
+        C_ZT = #{cZt,jdbcType=DECIMAL},
+      </if>
+      <if test="cSqid != null">
+        C_SQID = #{cSqid,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtlx != null">
+        C_HTLX = #{cHtlx,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol1 != null">
+        C_COL1 = #{cCol1,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol2 != null">
+        C_COL2 = #{cCol2,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol3 != null">
+        C_COL3 = #{cCol3,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol4 != null">
+        C_COL4 = #{cCol4,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol5 != null">
+        C_COL5 = #{cCol5,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol6 != null">
+        C_COL6 = #{cCol6,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol7 != null">
+        C_COL7 = #{cCol7,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol8 != null">
+        C_COL8 = #{cCol8,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol9 != null">
+        C_COL9 = #{cCol9,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol10 != null">
+        C_COL10 = #{cCol10,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol11 != null">
+        C_COL11 = #{cCol11,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol12 != null">
+        C_COL12 = #{cCol12,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol13 != null">
+        C_COL13 = #{cCol13,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol14 != null">
+        C_COL14 = #{cCol14,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol15 != null">
+        C_COL15 = #{cCol15,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol16 != null">
+        C_COL16 = #{cCol16,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol17 != null">
+        C_COL17 = #{cCol17,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol18 != null">
+        C_COL18 = #{cCol18,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol19 != null">
+        C_COL19 = #{cCol19,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol20 != null">
+        C_COL20 = #{cCol20,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol21 != null">
+        C_COL21 = #{cCol21,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol22 != null">
+        C_COL22 = #{cCol22,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol23 != null">
+        C_COL23 = #{cCol23,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol24 != null">
+        C_COL24 = #{cCol24,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol25 != null">
+        C_COL25 = #{cCol25,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol26 != null">
+        C_COL26 = #{cCol26,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol27 != null">
+        C_COL27 = #{cCol27,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol28 != null">
+        C_COL28 = #{cCol28,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol29 != null">
+        C_COL29 = #{cCol29,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol30 != null">
+        C_COL30 = #{cCol30,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol31 != null">
+        C_COL31 = #{cCol31,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol32 != null">
+        C_COL32 = #{cCol32,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol33 != null">
+        C_COL33 = #{cCol33,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol34 != null">
+        C_COL34 = #{cCol34,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol35 != null">
+        C_COL35 = #{cCol35,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol36 != null">
+        C_COL36 = #{cCol36,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol37 != null">
+        C_COL37 = #{cCol37,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol38 != null">
+        C_COL38 = #{cCol38,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol39 != null">
+        C_COL39 = #{cCol39,jdbcType=VARCHAR},
+      </if>
+      <if test="cCol40 != null">
+        C_COL40 = #{cCol40,jdbcType=VARCHAR},
+      </if>
+      <if test="cSsq != null">
+        C_SSQ = #{cSsq,jdbcType=VARCHAR},
+      </if>
+      <if test="cZfzt != null">
+        C_ZFZT = #{cZfzt,jdbcType=DECIMAL},
+      </if>
+      <if test="cStime != null">
+        C_STIME = #{cStime,jdbcType=OTHER},
+      </if>
+      <if test="cEtime != null">
+        C_ETIME = #{cEtime,jdbcType=OTHER},
+      </if>
+      <if test="cRent != null">
+        C_RENT = #{cRent,jdbcType=DECIMAL},
+      </if>
+      <if test="cRentenddate != null">
+        C_RENTENDDATE = #{cRentenddate,jdbcType=OTHER},
+      </if>
+      <if test="cPropertychargeenddate != null">
+        C_PROPERTYCHARGEENDDATE = #{cPropertychargeenddate,jdbcType=OTHER},
+      </if>
+      <if test="cBasementacre != null">
+        C_BASEMENTACRE = #{cBasementacre,jdbcType=DECIMAL},
+      </if>
+      <if test="cBalconyacre != null">
+        C_BALCONYACRE = #{cBalconyacre,jdbcType=DECIMAL},
+      </if>
+      <if test="cLoftacre != null">
+        C_LOFTACRE = #{cLoftacre,jdbcType=DECIMAL},
+      </if>
+      <if test="cLofteaveshight != null">
+        C_LOFTEAVESHIGHT = #{cLofteaveshight,jdbcType=DECIMAL},
+      </if>
+      <if test="cUseacre != null">
+        C_USEACRE = #{cUseacre,jdbcType=DECIMAL},
+      </if>
+      <if test="cHtnssj != null">
+        C_HTNSSJ = #{cHtnssj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cHtkssj != null">
+        C_HTKSSJ = #{cHtkssj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cHtjssj != null">
+        C_HTJSSJ = #{cHtjssj,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where C_ID = #{cId,jdbcType=VARCHAR}
+  </update>
+  <update id="update" parameterType="com.sys.pojo.contract.Contract">
+    update CONTRACT
+    set C_FWID = #{cFwid,jdbcType=VARCHAR},
+      C_HTBH = #{cHtbh,jdbcType=VARCHAR},
+      C_HTQYRQ = #{cHtqyrq,jdbcType=VARCHAR},
+      C_HTQYSJ = #{cHtqysj,jdbcType=VARCHAR},
+      C_HTBARQ = #{cHtbarq,jdbcType=VARCHAR},
+      C_HTBASJ = #{cHtbasj,jdbcType=VARCHAR},
+      C_QYCZY = #{cQyczy,jdbcType=VARCHAR},
+      C_BACZY = #{cBaczy,jdbcType=VARCHAR},
+      C_LC = #{cLc,jdbcType=DECIMAL},
+      C_ZT = #{cZt,jdbcType=DECIMAL},
+      C_SQID = #{cSqid,jdbcType=VARCHAR},
+      C_HTLX = #{cHtlx,jdbcType=VARCHAR},
+      C_COL1 = #{cCol1,jdbcType=VARCHAR},
+      C_COL2 = #{cCol2,jdbcType=VARCHAR},
+      C_COL3 = #{cCol3,jdbcType=VARCHAR},
+      C_COL4 = #{cCol4,jdbcType=VARCHAR},
+      C_COL5 = #{cCol5,jdbcType=VARCHAR},
+      C_COL6 = #{cCol6,jdbcType=VARCHAR},
+      C_COL7 = #{cCol7,jdbcType=VARCHAR},
+      C_COL8 = #{cCol8,jdbcType=VARCHAR},
+      C_COL9 = #{cCol9,jdbcType=VARCHAR},
+      C_COL10 = #{cCol10,jdbcType=VARCHAR},
+      C_COL11 = #{cCol11,jdbcType=VARCHAR},
+      C_COL12 = #{cCol12,jdbcType=VARCHAR},
+      C_COL13 = #{cCol13,jdbcType=VARCHAR},
+      C_COL14 = #{cCol14,jdbcType=VARCHAR},
+      C_COL15 = #{cCol15,jdbcType=VARCHAR},
+      C_COL16 = #{cCol16,jdbcType=VARCHAR},
+      C_COL17 = #{cCol17,jdbcType=VARCHAR},
+      C_COL18 = #{cCol18,jdbcType=VARCHAR},
+      C_COL19 = #{cCol19,jdbcType=VARCHAR},
+      C_COL20 = #{cCol20,jdbcType=VARCHAR},
+      C_COL21 = #{cCol21,jdbcType=VARCHAR},
+      C_COL22 = #{cCol22,jdbcType=VARCHAR},
+      C_COL23 = #{cCol23,jdbcType=VARCHAR},
+      C_COL24 = #{cCol24,jdbcType=VARCHAR},
+      C_COL25 = #{cCol25,jdbcType=VARCHAR},
+      C_COL26 = #{cCol26,jdbcType=VARCHAR},
+      C_COL27 = #{cCol27,jdbcType=VARCHAR},
+      C_COL28 = #{cCol28,jdbcType=VARCHAR},
+      C_COL29 = #{cCol29,jdbcType=VARCHAR},
+      C_COL30 = #{cCol30,jdbcType=VARCHAR},
+      C_COL31 = #{cCol31,jdbcType=VARCHAR},
+      C_COL32 = #{cCol32,jdbcType=VARCHAR},
+      C_COL33 = #{cCol33,jdbcType=VARCHAR},
+      C_COL34 = #{cCol34,jdbcType=VARCHAR},
+      C_COL35 = #{cCol35,jdbcType=VARCHAR},
+      C_COL36 = #{cCol36,jdbcType=VARCHAR},
+      C_COL37 = #{cCol37,jdbcType=VARCHAR},
+      C_COL38 = #{cCol38,jdbcType=VARCHAR},
+      C_COL39 = #{cCol39,jdbcType=VARCHAR},
+      C_COL40 = #{cCol40,jdbcType=VARCHAR},
+      C_SSQ = #{cSsq,jdbcType=VARCHAR},
+      C_ZFZT = #{cZfzt,jdbcType=DECIMAL},
+      C_STIME = #{cStime,jdbcType=OTHER},
+      C_ETIME = #{cEtime,jdbcType=OTHER},
+      C_RENT = #{cRent,jdbcType=DECIMAL},
+      C_RENTENDDATE = #{cRentenddate,jdbcType=OTHER},
+      C_PROPERTYCHARGEENDDATE = #{cPropertychargeenddate,jdbcType=OTHER},
+      C_BASEMENTACRE = #{cBasementacre,jdbcType=DECIMAL},
+      C_BALCONYACRE = #{cBalconyacre,jdbcType=DECIMAL},
+      C_LOFTACRE = #{cLoftacre,jdbcType=DECIMAL},
+      C_LOFTEAVESHIGHT = #{cLofteaveshight,jdbcType=DECIMAL},
+      C_USEACRE = #{cUseacre,jdbcType=DECIMAL},
+      C_HTNSSJ = #{cHtnssj,jdbcType=TIMESTAMP},
+      C_HTKSSJ = #{cHtkssj,jdbcType=TIMESTAMP},
+      C_HTJSSJ = #{cHtjssj,jdbcType=TIMESTAMP}
+    where C_ID = #{cId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.apply.ApplyUnitMapper" >
+  <resultMap id="BaseResultMap" type="com.sys.pojo.apply.ApplyUnit" >
+    <id column="UNITID" property="unitid" jdbcType="VARCHAR" />
+    <result column="LEGELREP" property="legelrep" jdbcType="VARCHAR" />
+    <result column="BSLS" property="bsls" jdbcType="VARCHAR" />
+    <result column="ENTAG" property="entag" jdbcType="VARCHAR" />
+    <result column="TEL" property="tel" jdbcType="VARCHAR" />
+    <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+    <result column="APLID" property="aplid" jdbcType="VARCHAR" />
+    <result column="APLTYPE" property="apltype" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from APLLYUNIT
+    where UNITID = #{unitid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.apply.ApplyUnit" >
+    insert into APLLYUNIT (UNITID, LEGELREP, BSLS, 
+      ENTAG, TEL, ADDRESS, 
+      APLID, APLTYPE)
+    values (#{unitid,jdbcType=VARCHAR}, #{legelrep,jdbcType=VARCHAR}, #{bsls,jdbcType=VARCHAR}, 
+      #{entag,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{aplid,jdbcType=VARCHAR}, #{apltype,jdbcType=VARCHAR})
+  </insert>
+  <update id="update" parameterType="com.sys.pojo.apply.ApplyUnit" >
+    update APLLYUNIT
+    <set>
+      <if test="legelrep!=null">
+        LEGELREP = #{legelrep,jdbcType=VARCHAR},
+      </if>
+      <if test="bsls!=null">
+      BSLS = #{bsls,jdbcType=VARCHAR},
+      </if>
+      <if test="entag!=null">
+      ENTAG = #{entag,jdbcType=VARCHAR},
+      </if>
+      <if test="tel!=null">
+      TEL = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="address!=null">
+      ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="apltype!=null">
+      APLTYPE = #{apltype,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where UNITID = #{unitid,jdbcType=VARCHAR}
+  </update>
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select UNITID, LEGELREP, BSLS, ENTAG, TEL, ADDRESS, APLID, APLTYPE
+    from APLLYUNIT
+    where UNITID = #{unitid,jdbcType=VARCHAR}
+  </select>
+  <select id="select" resultMap="BaseResultMap" >
+    select UNITID, LEGELREP, BSLS, ENTAG, TEL, ADDRESS, APLID, APLTYPE
+    from APLLYUNIT
+  </select>
+
+  <select id="findByApplyId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select UNITID, LEGELREP, BSLS, ENTAG, TEL, ADDRESS, APLID, APLTYPE
+    from APLLYUNIT
+    where APLID = #{aplid,jdbcType=VARCHAR}
+  </select>
+
+  <!--通过申请单id删除单位信息-->
+  <delete id="deleteByMap">
+    DELETE  from APLLYUNIT
+    <where>
+      <if test="applyid!=null and applyid!=''">
+        and APLID=#{applyid}
+      </if>
+    </where>
+  </delete>
+</mapper>

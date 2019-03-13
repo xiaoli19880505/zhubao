@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.MenuRoleInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.sys.pojo.MenuRoleInfo" >
+    <id column="MR_ID" property="mrId" jdbcType="VARCHAR" />
+    <result column="MR_MENUID" property="mrMenuid" jdbcType="VARCHAR" />
+    <result column="MR_DUTYID" property="mrDutyid" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from MENU_DUTY_INFO
+    where MR_ID = #{mrId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.MenuRoleInfo" >
+    insert into MENU_DUTY_INFO (MR_ID, MR_MENUID, MR_DUTYID
+      )
+    values (#{mrId,jdbcType=VARCHAR}, #{mrMenuid,jdbcType=VARCHAR}, #{mrDutyid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.sys.pojo.MenuRoleInfo" >
+    update MENU_DUTY_INFO
+    set MR_MENUID = #{mrMenuid,jdbcType=VARCHAR},
+      MR_DUTYID = #{mrDutyid,jdbcType=VARCHAR}
+    where MR_ID = #{mrId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select MR_ID, MR_MENUID, MR_DUTYID
+    from MENU_DUTY_INFO
+    where MR_ID = #{mrId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select MR_ID, MR_MENUID, MR_DUTYID
+    from MENU_DUTY_INFO
+  </select>
+
+  <select id="findCountByMenuId" resultType="int" >
+    select COUNT (1)
+    from MENU_DUTY_INFO
+    <where>
+      <if test="meId!=null and meId!=''">
+          AND MR_MENUID=#{meId}
+      </if>
+      <if test="dutyid!=null and dutyid!=''">
+        AND MR_DUTYID=#{dutyid}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectByRoleId" resultMap="BaseResultMap" >
+    select MR_ID, MR_MENUID, MR_DUTYID
+    from MENU_DUTY_INFO
+    WHERE MR_DUTYID=#{dutyid}
+  </select>
+
+  <delete id="deleteMenuRoleByRoleId" parameterType="java.lang.String">
+    DELETE FROM MENU_DUTY_INFO WHERE MR_DUTYID=#{dutyid}
+  </delete>
+  <insert id="insertList" parameterType="java.util.List">
+    insert into MENU_DUTY_INFO (MR_ID, MR_MENUID, MR_DUTYID)
+    <foreach close=")" collection="list" item="item" index="index" open="(" separator="union">
+      select
+      #{item.mrId,jdbcType=VARCHAR},
+      #{item.mrMenuid,jdbcType=VARCHAR},
+      #{item.mrDutyid,jdbcType=VARCHAR}
+      from DUAL
+    </foreach>
+  </insert>
+
+</mapper>

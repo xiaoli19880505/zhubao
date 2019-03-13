@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.UserTaskMapper">
+	<resultMap type="com.sys.pojo.UserTask" id="UserTaskResult">
+		<result property="id" column="TASKID"/>
+		<result property="taskno" column="TASKNO"/>
+		<result property="taskname" column="TASKNAME"/>
+		<result property="roleid" column="ROLEID"/>
+		<result property="desc" column="TASKDESC"/>
+		<result property="flowno" column="FLOWNO"/>
+		<association column="ROLEID" property="roleInfo"
+					 select="com.sys.mapper.RoleInfoMapper.selectById"/>
+	</resultMap>
+	<!--插入实体-->
+	<insert id="insert">
+		insert into USERTASK(TASKID,TASKNO,TASKNAME,ROLEID,TASKDESC,FLOWNO) values
+		(#{id,jdbcType=VARCHAR},#{taskno,jdbcType=VARCHAR},#{taskname,jdbcType=VARCHAR},
+			#{roleid,jdbcType=VARCHAR},#{desc,jdbcType=VARCHAR},#{flowno,jdbcType=VARCHAR})
+	</insert>
+
+	<insert id="addTaskList">
+		insert into USERTASK(TASKID,TASKNO,TASKNAME,ROLEID,TASKDESC,FLOWNO) values
+		<foreach collection="list" item="task" separator=",">
+			(#{task.id,jdbcType=VARCHAR},#{task.taskno,jdbcType=VARCHAR},#{task.taskname,jdbcType=VARCHAR},
+			#{task.roleid,jdbcType=VARCHAR},#{task.desc,jdbcType=VARCHAR},#{task.flowno,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+	<delete id="deleteTask" parameterType="java.util.Map">
+		delete from USERTASK
+		<where>
+			<if test="flowno!=null and flowno!=''">
+				and FLOWNO = #{flowno}
+			</if>
+		</where>
+	</delete>
+	
+	<select id="getTaskList" resultMap="UserTaskResult">
+		select * from USERTASK
+		<where>
+			<if test="flowno!=null and flowno!=''">
+				and FLOWNO = #{flowno,jdbcType=VARCHAR}
+			</if>
+			<if test="taskno!=null and taskno!=''">
+				and TASKNO = #{taskno,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	
+	
+	
+</mapper> 

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.serialnum.SerialNumHeadMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.serialnum.SerialNumHead">
+    <id column="SN_ID" jdbcType="VARCHAR" property="snId" />
+    <result column="SN_CODE" jdbcType="VARCHAR" property="snCode" />
+    <result column="SN_DESC" jdbcType="VARCHAR" property="snDesc" />
+    <result column="SN_SIZE" jdbcType="DECIMAL" property="snSize" />
+    <result column="SN_PREFIX" jdbcType="VARCHAR" property="snPrefix" />
+    <result column="SN_DATE_STRUCTURE" jdbcType="VARCHAR" property="snDateStructure" />
+    <result column="SN_START" jdbcType="DECIMAL" property="snStart" />
+    <result column="SN_STEP_SIZE" jdbcType="DECIMAL" property="snStepSize" />
+    <result column="SN_MAX_VALUE" jdbcType="DECIMAL" property="snMaxValue" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="CREATE_PERSON" jdbcType="VARCHAR" property="createPerson" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="UPDATE_PERSON" jdbcType="VARCHAR" property="updatePerson" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    SN_ID, SN_CODE, SN_DESC, SN_SIZE, SN_PREFIX, SN_DATE_STRUCTURE, SN_START, SN_STEP_SIZE, 
+    SN_MAX_VALUE, CREATE_TIME, CREATE_PERSON, UPDATE_TIME, UPDATE_PERSON
+  </sql>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from SERIAL_NUM_HEAD
+    where SN_ID = #{snId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectBySNCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from SERIAL_NUM_HEAD
+    where SN_CODE = #{snCode,jdbcType=VARCHAR}
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from SERIAL_NUM_HEAD
+    where SN_ID = #{snId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.serialnum.SerialNumHead">
+    insert into SERIAL_NUM_HEAD (SN_ID, SN_CODE, SN_DESC, 
+      SN_SIZE, SN_PREFIX, SN_DATE_STRUCTURE, 
+      SN_START, SN_STEP_SIZE, SN_MAX_VALUE, 
+      CREATE_TIME, CREATE_PERSON, UPDATE_TIME, 
+      UPDATE_PERSON)
+    values (#{snId,jdbcType=VARCHAR}, #{snCode,jdbcType=VARCHAR}, #{snDesc,jdbcType=VARCHAR}, 
+      #{snSize,jdbcType=DECIMAL}, #{snPrefix,jdbcType=VARCHAR}, #{snDateStructure,jdbcType=VARCHAR}, 
+      #{snStart,jdbcType=DECIMAL}, #{snStepSize,jdbcType=DECIMAL}, #{snMaxValue,jdbcType=DECIMAL}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updatePerson,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sys.pojo.serialnum.SerialNumHead">
+    insert into SERIAL_NUM_HEAD
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="snId != null">
+        SN_ID,
+      </if>
+      <if test="snCode != null">
+        SN_CODE,
+      </if>
+      <if test="snDesc != null">
+        SN_DESC,
+      </if>
+      <if test="snSize != null">
+        SN_SIZE,
+      </if>
+      <if test="snPrefix != null">
+        SN_PREFIX,
+      </if>
+      <if test="snDateStructure != null">
+        SN_DATE_STRUCTURE,
+      </if>
+      <if test="snStart != null">
+        SN_START,
+      </if>
+      <if test="snStepSize != null">
+        SN_STEP_SIZE,
+      </if>
+      <if test="snMaxValue != null">
+        SN_MAX_VALUE,
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME,
+      </if>
+      <if test="createPerson != null">
+        CREATE_PERSON,
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME,
+      </if>
+      <if test="updatePerson != null">
+        UPDATE_PERSON,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="snId != null">
+        #{snId,jdbcType=VARCHAR},
+      </if>
+      <if test="snCode != null">
+        #{snCode,jdbcType=VARCHAR},
+      </if>
+      <if test="snDesc != null">
+        #{snDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="snSize != null">
+        #{snSize,jdbcType=DECIMAL},
+      </if>
+      <if test="snPrefix != null">
+        #{snPrefix,jdbcType=VARCHAR},
+      </if>
+      <if test="snDateStructure != null">
+        #{snDateStructure,jdbcType=VARCHAR},
+      </if>
+      <if test="snStart != null">
+        #{snStart,jdbcType=DECIMAL},
+      </if>
+      <if test="snStepSize != null">
+        #{snStepSize,jdbcType=DECIMAL},
+      </if>
+      <if test="snMaxValue != null">
+        #{snMaxValue,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null">
+        #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null">
+        #{updatePerson,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateSelective" parameterType="com.sys.pojo.serialnum.SerialNumHead">
+    update SERIAL_NUM_HEAD
+    <set>
+      <if test="snCode != null">
+        SN_CODE = #{snCode,jdbcType=VARCHAR},
+      </if>
+      <if test="snDesc != null">
+        SN_DESC = #{snDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="snSize != null">
+        SN_SIZE = #{snSize,jdbcType=DECIMAL},
+      </if>
+      <if test="snPrefix != null">
+        SN_PREFIX = #{snPrefix,jdbcType=VARCHAR},
+      </if>
+      <if test="snDateStructure != null">
+        SN_DATE_STRUCTURE = #{snDateStructure,jdbcType=VARCHAR},
+      </if>
+      <if test="snStart != null">
+        SN_START = #{snStart,jdbcType=DECIMAL},
+      </if>
+      <if test="snStepSize != null">
+        SN_STEP_SIZE = #{snStepSize,jdbcType=DECIMAL},
+      </if>
+      <if test="snMaxValue != null">
+        SN_MAX_VALUE = #{snMaxValue,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null">
+        CREATE_PERSON = #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null">
+        UPDATE_PERSON = #{updatePerson,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where SN_ID = #{snId,jdbcType=VARCHAR}
+  </update>
+  <update id="update" parameterType="com.sys.pojo.serialnum.SerialNumHead">
+    update SERIAL_NUM_HEAD
+    set SN_CODE = #{snCode,jdbcType=VARCHAR},
+      SN_DESC = #{snDesc,jdbcType=VARCHAR},
+      SN_SIZE = #{snSize,jdbcType=DECIMAL},
+      SN_PREFIX = #{snPrefix,jdbcType=VARCHAR},
+      SN_DATE_STRUCTURE = #{snDateStructure,jdbcType=VARCHAR},
+      SN_START = #{snStart,jdbcType=DECIMAL},
+      SN_STEP_SIZE = #{snStepSize,jdbcType=DECIMAL},
+      SN_MAX_VALUE = #{snMaxValue,jdbcType=DECIMAL},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      CREATE_PERSON = #{createPerson,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      UPDATE_PERSON = #{updatePerson,jdbcType=VARCHAR}
+    where SN_ID = #{snId,jdbcType=VARCHAR}
+  </update>
+</mapper>

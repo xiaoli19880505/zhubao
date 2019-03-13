@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.report.LowSecurityReportMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.report.ReportPojo">
+    <id column="AB_ID" jdbcType="VARCHAR" property="abId"/>
+    <result column="AB_YHKH" jdbcType="VARCHAR" property="abYhkh"/><!-- 银行卡号 -->
+    <result column="AFM_XM" jdbcType="VARCHAR" property="afmXm"/><!-- 申请人姓名 -->
+    <result column="AFM_SFZH" jdbcType="VARCHAR" property="sfzh"/><!-- 申请人身份证 -->
+    <result column="HOUSEHOLDS_NUM" jdbcType="VARCHAR" property="householdsNum"/><!-- 户数 -->
+    <result column="AFM_XB" jdbcType="VARCHAR" property="afmXb"/><!-- 申请人性别 -->
+    <result column="SEX_STR" jdbcType="VARCHAR" property="sexStr"/><!-- 申请人性别 -->
+    <result column="AFH_ZFXZ" jdbcType="VARCHAR" property="afhZfxz"/><!-- 住房现状 -->
+    <result column="AB_BTXZ" jdbcType="VARCHAR" property="abBtxz"/><!-- 住房性质 -->
+    <result column="AFH_ZFXZ_STR" jdbcType="VARCHAR" property="afhZfxzStr"/><!-- 住房性质 -->
+    <result column="AFH_ZL" jdbcType="VARCHAR" property="afhZl"/><!-- 房屋坐落 -->
+    <result column="AB_RJJZMJ" jdbcType="VARCHAR" property="abRjjzmj"/><!-- 人均面积 -->
+    <result column="SUBSIDY_NUM" jdbcType="DECIMAL" property="subsidyNum"/><!-- 补贴人数 -->
+    <result column="AFM_LXDH" jdbcType="VARCHAR" property="afmLxdh"/><!-- 联系电话 -->
+    <result column="AB_BTJE" jdbcType="VARCHAR" property="abBtje"/><!-- 补贴金额 -->
+    <result column="AB_ZT" jdbcType="DECIMAL" property="abZt"/><!-- 状态 -->
+    <result column="AB_LC" jdbcType="DECIMAL" property="abLc"/><!-- 状态 -->
+  </resultMap>
+  <select id="selectByCondition" parameterType="Map" resultMap="BaseResultMap">
+    select
+    APPLY_BUTIE.AB_ID,
+    APPLY_BUTIE.AB_YHKH,
+    APPLYFAMILYMEMBER.AFM_XM,
+    APPLYFAMILYMEMBER.AFM_XB,
+    APPLYFAMILYMEMBER.AFM_SFZH,
+    APPLYFAMILYHOUSE.AFH_ZL,
+    APPLYFAMILYMEMBER.AFM_LXDH,
+    APPLYFAMILYHOUSE.AFH_ZFXZ,
+    APPLY_BUTIE.AB_RJJZMJ,
+    CONTRACT_DETAIL.SUBSIDY_NUM,
+    case
+      when APPLYFAMILYHOUSE.AFH_ZFXZ is null or APPLYFAMILYHOUSE.AFH_ZFXZ in (1,2,3) then '无房'
+      when APPLYFAMILYHOUSE.AFH_ZFXZ=4 then '自有私房'
+      when APPLYFAMILYHOUSE.AFH_ZFXZ=5 then '借住'
+      else '无房'
+    end AFH_ZFXZ_STR,
+    case
+      when APPLY_BUTIE.AB_TSJT in (4,5) then '低保'
+      <if test="abBtje!= null">
+        when APPLY_BUTIE.AB_TSJT not in (4,5) then '低收入'
+      </if>
+      else '' end AB_BTXZ,
+    PARMITEM.PI_ITEMNAME,
+    APPLY_BUTIE.AB_BTJE,
+    to_char(CONTRACT_DETAIL.C_HTBARQ,'yyyymm')
+    from APPLY_BUTIE
+    left join CONTRACT_DETAIL on CONTRACT_DETAIL.C_SQID=APPLY_BUTIE.AB_ID,
+    APPLYFAMILYMEMBER,
+    APPLYFAMILYHOUSE,
+    PARMITEM
+    where APPLY_BUTIE.AB_SQRID=APPLYFAMILYMEMBER.AFM_ID
+    and APPLY_BUTIE.AB_ID=APPLYFAMILYHOUSE.AFH_SQID
+    and PARMITEM.PI_SETCODE='01'
+    and PARMITEM.PI_ITEMCODE=APPLYFAMILYHOUSE.AFH_ZFXZ
+    <if test="effectiveYearAndMonth != null"><!-- 合同有效期日期 -->
+      and to_date(substr(APPLY_BUTIE.AB_KSRQ, 0, 7),'yyyy-mm') &lt;= to_date(#{effectiveYearAndMonth,jdbcType=VARCHAR},'yyyymm')
+      and to_date(substr(APPLY_BUTIE.AB_JSRQ, 0, 7),'yyyy-mm') &gt;= to_date(#{effectiveYearAndMonth,jdbcType=VARCHAR},'yyyymm')
+    </if>
+    <if test="yearAndMonth != null">
+      and to_char(CONTRACT_DETAIL.C_HTBARQ,'yyyymm')=#{yearAndMonth,jdbcType=VARCHAR}<!-- 合同备案日期 -->
+    </if>
+    <if test="abZt != null">
+      and APPLY_BUTIE.AB_ZT = #{abZt,jdbcType=VARCHAR}
+    </if>
+    <if test="abLc != null">
+      and APPLY_BUTIE.AB_LC = #{abLc,jdbcType=VARCHAR}
+    </if>
+    <if test="abBtje != null">
+      and APPLY_BUTIE.AB_BTJE &lt;= #{abBtje,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+  <select id="selectForSum" parameterType="Map" resultMap="BaseResultMap">
+    select
+    --APPLYFAMILYHOUSE.AFH_ZFXZ,--住房性质
+    sum(0) HOUSEHOLDS_NUM,
+    sum(APPLY_BUTIE.AB_JTRK), --家庭人口
+    sum(CONTRACT_DETAIL.SUBSIDY_NUM), --补贴人数
+    sum(APPLY_BUTIE.AB_BTJE) --补贴金额
+    from APPLY_BUTIE
+    left join CONTRACT_DETAIL on CONTRACT_DETAIL.C_SQID=APPLY_BUTIE.AB_ID,
+    APPLYFAMILYMEMBER,
+    APPLYFAMILYHOUSE
+    where APPLY_BUTIE.AB_SQRID=APPLYFAMILYMEMBER.AFM_ID
+    and APPLY_BUTIE.AB_ID=APPLYFAMILYHOUSE.AFH_SQID
+    <if test="effectiveYearAndMonth!= null"><!-- 合同有效期日期 -->
+      and to_date(substr(APPLY_BUTIE.AB_KSRQ, 0, 7),'yyyy-mm') &lt;= to_date(#{effectiveYearAndMonth,jdbcType=VARCHAR},'yyyymm')
+      and to_date(substr(APPLY_BUTIE.AB_JSRQ, 0, 7),'yyyy-mm') &gt;= to_date(#{effectiveYearAndMonth,jdbcType=VARCHAR},'yyyymm')
+    </if>
+    <if test="yearAndMonth!= null">
+      and to_char(CONTRACT_DETAIL.C_HTBARQ,'yyyymm')=#{yearAndMonth,jdbcType=VARCHAR}<!-- 合同备案日期 -->
+    </if>
+    <if test="abZt!= null">
+      and APPLY_BUTIE.AB_ZT = #{abZt,jdbcType=VARCHAR}
+    </if>
+    <if test="abLc!= null">
+      and APPLY_BUTIE.AB_LC = #{abLc,jdbcType=VARCHAR}
+    </if>
+    <if test="abBtje!= null">
+      and APPLY_BUTIE.AB_BTJE &lt;= #{abBtje,jdbcType=VARCHAR}
+    </if>
+  </select>
+</mapper>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.ParmItemMapper" >
+  <resultMap id="ParmItemResultMap" type="com.sys.pojo.ParmItem" >
+      <result column="id" property="id"/>
+      <result column="PI_SETCODE" property="piSetcode" jdbcType="VARCHAR" />
+    <result column="PI_ITEMCODE" property="piItemcode" jdbcType="VARCHAR" />
+    <result column="PI_ITEMNAME" property="piItemname" jdbcType="VARCHAR" />
+    <result column="PI_COLORVALUE" property="piColorvalue" jdbcType="VARCHAR" />
+    <result column="PI_ITEMVALUE" property="piItemvalue" />
+      <result column="text" property="text"/>
+    <result column="PI_PARENTSETCODE" property="piParentsetcode" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <select id="findAllParmImteByshu"  resultMap="ParmItemResultMap">
+      select t.pi_itemcode as id ,t.pi_setcode,t.pi_itemname as text,t.pi_itemcode,t.pi_parentsetcode,t.rowid
+      from PARMITEM t
+      where   t.pi_setcode='04' OR  t.pi_setcode='05' and t.pi_itemcode!='0'
+      ORDER  by t.pi_itemcode
+  </select>
+    <select id="selectByPage"  resultMap="ParmItemResultMap">
+        select T.PI_SETCODE,T.PI_ITEMNAME,T.PI_ITEMCODE,T.PI_PARENTSETCODE
+        from PARMITEM T
+        <where>
+            <if test="piSetcode!=null and piSetcode!=''">
+              AND PI_SETCODE=#{piSetcode}
+        </if>
+    </where>
+        ORDER  by t.PI_ITEMCODE
+    </select>
+
+    <select id="getMaxPiItemCode" resultType="java.lang.String">
+        SELECT NVL(Max(PI_ITEMCODE),0) FROM PARMITEM
+        <where>
+            <if test="piSetcode!=null and piSetcode">
+                AND PI_SETCODE=#{piSetcode}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.sys.pojo.ParmItem">
+        insert into PARMITEM (PI_SETCODE, PI_ITEMCODE, PI_ITEMNAME, PI_PARENTSETCODE)
+        values (#{piSetcode,jdbcType=VARCHAR}, #{piItemcode,jdbcType=VARCHAR}, #{piItemname,jdbcType=VARCHAR},
+        #{piParentsetcode,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="update" parameterType="com.sys.pojo.ParmItem">
+        UPDATE PARMITEM
+        <set>
+            <if test="piItemname!=null and piItemname!=''">
+                PI_ITEMNAME=#{piItemname},
+            </if>
+            <if test="piParentsetcode!=null and piParentsetcode!=''">
+                PI_PARENTSETCODE=#{piParentsetcode}
+            </if>
+        </set>
+        WHERE PI_SETCODE=#{piSetcode} AND PI_ITEMCODE=#{piItemcode}
+    </update>
+    <select id="selectBySetCodeAndItemCode" parameterType="Map" resultMap="ParmItemResultMap">
+        SELECT * FROM PARMITEM
+        <where>
+        <if test="piSetcode!=null and piSetcode!=''">
+            AND PI_SETCODE=#{piSetcode}
+        </if>
+        <if test="piItemcode!=null and piItemcode!=''">
+            AND PI_ITEMCODE=#{piItemcode}
+        </if>
+        <if test="piItemname!=null and piItemname!=''">
+            AND PI_ITEMNAME=#{piItemname}
+        </if>
+        </where>
+    </select>
+
+    <select id="selectBySetCodeAndParentCode" parameterType="Map" resultMap="ParmItemResultMap">
+        SELECT * FROM PARMITEM
+        <where>
+            <if test="piSetcode!=null and piSetcode!=''">
+                AND PI_SETCODE=#{piSetcode}
+            </if>
+            <if test="piParentsetcode!=null and piParentsetcode!=''">
+                AND PI_PARENTSETCODE=#{piParentsetcode}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deletParmItem" parameterType="Map">
+        DELETE FROM PARMITEM WHERE PI_SETCODE=#{parmSetcode} AND PI_ITEMCODE=#{piItemcode}
+    </delete>
+    <select id="countParm" resultType="int">
+        SELECT  COUNT (1) FROM PARMITEM
+        <where>
+            <if test="piSetcode!=null and piSetcode!=''">
+                AND PI_SETCODE=#{piSetcode}
+            </if>
+            <if test="piItemname!=null and piItemname!=''">
+                AND PI_ITEMNAME=#{piItemname}
+            </if>
+            <if test="piItemcode!=null and piItemcode!=''">
+                AND PI_ITEMCODE!=#{piItemcode}
+            </if>
+        </where>
+    </select>
+
+    <select id="findAllQu" resultMap="ParmItemResultMap">
+        select  PI_ITEMCODE,PI_ITEMNAME from parmitem
+        where PI_SETCODE='04' and PI_PARENTSETCODE is not null
+        <if test="itemCode!=null and itemCode!=''">
+            PI_ITEMCODE=#{itemCode}
+        </if>
+    </select>
+
+    <select id="findAllQuByUid"  parameterType="java.lang.String"   resultMap="ParmItemResultMap">
+        select  PI_ITEMCODE,PI_ITEMNAME from parmitem
+        where PI_SETCODE='04' and
+            PI_ITEMCODE=#{itemCode}
+    </select>
+
+
+
+    <select id="findAllJdByUid" parameterType="java.lang.String" resultMap="ParmItemResultMap">
+          select PI_ITEMCODE,PI_ITEMNAME from parmitem
+        where PI_SETCODE='05' and PI_ITEMCODE=#{itemCode}
+    </select>
+
+
+    <select id="findAllJd" resultMap="ParmItemResultMap">
+        select PI_ITEMCODE,PI_ITEMNAME from parmitem
+        where PI_SETCODE='05' and PI_PARENTSETCODE=#{qid}
+    </select>
+
+    <select id="selectById"   parameterType="java.lang.String"  resultMap="ParmItemResultMap">
+        select * from PARMITEM
+        where PI_ITEMCODE=#{id}
+    </select>
+
+    <select id="selectByMap" parameterType="Map" resultMap="ParmItemResultMap">
+        SELECT * FROM PARMITEM
+        <where>
+            <if test="piSetcode!=null and piSetcode!=''">
+                AND PI_SETCODE=#{piSetcode}
+            </if>
+            <if test="piItemcode!=null and piItemcode!=''">
+                AND PI_ITEMCODE=#{piItemcode}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectGxExceptPeiou" resultMap="ParmItemResultMap">
+        SELECT * FROM PARMITEM P  WHERE P.PI_SETCODE='13' AND P.PI_ITEMCODE!='0' ORDER BY P.PI_ITEMCODE
+    </select>
+    <select id="selectSsqExceptCenter" resultMap="ParmItemResultMap">
+        SELECT * FROM PARMITEM P  WHERE P.PI_SETCODE='04' AND P.PI_ITEMCODE!='0' ORDER BY P.PI_ITEMCODE
+    </select>
+
+    <select id="selectSwitch" resultMap="ParmItemResultMap">
+       SELECT * FROM PARMITEM t WHERE t.pi_setcode='20'
+    </select>
+
+    <select id="xzqOrder" resultMap="ParmItemResultMap">
+       SELECT * FROM PARMITEM p
+        where p.pi_setcode='04'
+        order by decode(p.pi_itemcode,'0',1,'2',2,'1',3,'3',4,'4',5)
+    </select>
+    <select id="findFamylyOnlypozn" resultMap="ParmItemResultMap">
+        select t.* from PARMITEM t where t.pi_setcode='13'and pi_itemcode in('0','3')
+    </select>
+
+</mapper>

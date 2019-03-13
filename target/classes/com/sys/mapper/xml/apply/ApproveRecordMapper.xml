@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.apply.ApproveRecordMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.apply.ApproveRecord">
+    <id column="APC_ID" jdbcType="VARCHAR" property="apcId" />
+    <result column="APPLY_ID" jdbcType="VARCHAR" property="applyId" />
+    <result column="APPROVE_ID" jdbcType="VARCHAR" property="approveId" />
+    <result column="APC_COMMENT" jdbcType="VARCHAR" property="apcComment" />
+    <result column="APPROVETIME" jdbcType="TIMESTAMP" property="approvetime" />
+    <result column="APPROVETIME_STR" jdbcType="VARCHAR" property="approvetimeStr" />
+    <result column="NAME_URL" jdbcType="VARCHAR" property="nameUrl" />
+    <result column="APPROVE_TYPE" jdbcType="VARCHAR" property="approveType" />
+    <result column="APREMARK" jdbcType="VARCHAR" property="apremark" />
+    <result column="APPLY_TYPE" jdbcType="VARCHAR" property="applyType" />
+    <result column="APPROVE_NODE" jdbcType="VARCHAR" property="approveNode" />
+    <result column="APPROVE_USERID" jdbcType="VARCHAR" property="approveUserid" />
+    <result column="BASE_IMG" jdbcType="VARCHAR" property="baseImg" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    APC_ID, APPLY_ID, APPROVE_ID, APC_COMMENT, APPROVETIME, NAME_URL, APPROVE_TYPE, APREMARK, 
+    APPLY_TYPE, APPROVE_NODE, APPROVE_USERID,BASE_IMG
+  </sql>
+  <select id="selectByIdy" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from APPROVE_RECORD
+    where APC_ID = #{apcId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="select" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />,to_char(approvetime,'YYYY"年"MM"月"DD"日"') APPROVETIME_STR
+    from APPROVE_RECORD
+    where 1=1
+    <if test="applyId!=null">
+      and APPLY_ID =#{applyId}
+    </if>
+    order by APPROVETIME
+    <if test="orderBy!=null"><!-- 排序 -->
+      ${orderBy}
+    </if>
+  </select>
+
+  <delete id="delete" parameterType="java.lang.String">
+    delete from APPROVE_RECORD
+    where APC_ID = #{apcId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.apply.ApproveRecord">
+    insert into APPROVE_RECORD (APC_ID, APPLY_ID, APPROVE_ID, 
+      APC_COMMENT, APPROVETIME, NAME_URL, 
+      APPROVE_TYPE, APREMARK, APPLY_TYPE, 
+      APPROVE_NODE, APPROVE_USERID, BASE_IMG)
+    values (#{apcId,jdbcType=VARCHAR}, #{applyId,jdbcType=VARCHAR}, #{approveId,jdbcType=VARCHAR}, 
+      #{apcComment,jdbcType=VARCHAR}, #{approvetime,jdbcType=TIMESTAMP}, #{nameUrl,jdbcType=VARCHAR}, 
+      #{approveType,jdbcType=VARCHAR}, #{apremark,jdbcType=VARCHAR}, #{applyType,jdbcType=VARCHAR}, 
+      #{approveNode,jdbcType=VARCHAR}, #{approveUserid,jdbcType=VARCHAR}, #{baseImg,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sys.pojo.apply.ApproveRecord">
+    insert into APPROVE_RECORD
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="apcId != null">
+        APC_ID,
+      </if>
+      <if test="applyId != null">
+        APPLY_ID,
+      </if>
+      <if test="approveId != null">
+        APPROVE_ID,
+      </if>
+      <if test="apcComment != null">
+        APC_COMMENT,
+      </if>
+      <if test="approvetime != null">
+        APPROVETIME,
+      </if>
+      <if test="nameUrl != null">
+        NAME_URL,
+      </if>
+      <if test="approveType != null">
+        APPROVE_TYPE,
+      </if>
+      <if test="apremark != null">
+        APREMARK,
+      </if>
+      <if test="applyType != null">
+        APPLY_TYPE,
+      </if>
+      <if test="approveNode != null">
+        APPROVE_NODE,
+      </if>
+      <if test="approveUserid != null">
+        APPROVE_USERID,
+      </if>
+      <if test="baseImg != null">
+        BASE_IMG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="apcId != null">
+        #{apcId,jdbcType=VARCHAR},
+      </if>
+      <if test="applyId != null">
+        #{applyId,jdbcType=VARCHAR},
+      </if>
+      <if test="approveId != null">
+        #{approveId,jdbcType=VARCHAR},
+      </if>
+      <if test="apcComment != null">
+        #{apcComment,jdbcType=VARCHAR},
+      </if>
+      <if test="approvetime != null">
+        #{approvetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="nameUrl != null">
+        #{nameUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="approveType != null">
+        #{approveType,jdbcType=VARCHAR},
+      </if>
+      <if test="apremark != null">
+        #{apremark,jdbcType=VARCHAR},
+      </if>
+      <if test="applyType != null">
+        #{applyType,jdbcType=VARCHAR},
+      </if>
+      <if test="approveNode != null">
+        #{approveNode,jdbcType=VARCHAR},
+      </if>
+      <if test="approveUserid != null">
+        #{approveUserid,jdbcType=VARCHAR},
+      </if>
+      <if test="baseImg != null">
+        #{baseImg,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sys.pojo.apply.ApproveRecord">
+    update APPROVE_RECORD
+    <set>
+      <if test="applyId != null">
+        APPLY_ID = #{applyId,jdbcType=VARCHAR},
+      </if>
+      <if test="approveId != null">
+        APPROVE_ID = #{approveId,jdbcType=VARCHAR},
+      </if>
+      <if test="apcComment != null">
+        APC_COMMENT = #{apcComment,jdbcType=VARCHAR},
+      </if>
+      <if test="approvetime != null">
+        APPROVETIME = #{approvetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="nameUrl != null">
+        NAME_URL = #{nameUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="approveType != null">
+        APPROVE_TYPE = #{approveType,jdbcType=VARCHAR},
+      </if>
+      <if test="apremark != null">
+        APREMARK = #{apremark,jdbcType=VARCHAR},
+      </if>
+      <if test="applyType != null">
+        APPLY_TYPE = #{applyType,jdbcType=VARCHAR},
+      </if>
+      <if test="approveNode != null">
+        APPROVE_NODE = #{approveNode,jdbcType=VARCHAR},
+      </if>
+      <if test="approveUserid != null">
+        APPROVE_USERID = #{approveUserid,jdbcType=VARCHAR},
+      </if>
+      <if test="baseImg != null">
+        BASE_IMG = #{baseImg,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where APC_ID = #{apcId,jdbcType=VARCHAR}
+  </update>
+  <update id="update" parameterType="com.sys.pojo.apply.ApproveRecord">
+    update APPROVE_RECORD
+    set APPLY_ID = #{applyId,jdbcType=VARCHAR},
+      APPROVE_ID = #{approveId,jdbcType=VARCHAR},
+      APC_COMMENT = #{apcComment,jdbcType=VARCHAR},
+      APPROVETIME = #{approvetime,jdbcType=TIMESTAMP},
+      NAME_URL = #{nameUrl,jdbcType=VARCHAR},
+      APPROVE_TYPE = #{approveType,jdbcType=VARCHAR},
+      APREMARK = #{apremark,jdbcType=VARCHAR},
+      APPLY_TYPE = #{applyType,jdbcType=VARCHAR},
+      APPROVE_NODE = #{approveNode,jdbcType=VARCHAR},
+      APPROVE_USERID = #{approveUserid,jdbcType=VARCHAR},
+      BASE_IMG = #{baseImg,jdbcType=VARCHAR}
+    where APC_ID = #{apcId,jdbcType=VARCHAR}
+  </update>
+</mapper>

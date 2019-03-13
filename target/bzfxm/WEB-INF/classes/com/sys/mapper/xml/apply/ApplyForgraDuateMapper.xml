@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.apply.ApplyForgraDuateMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.apply.ApplyForgraDuate">
+    <id column="AFG_ID" jdbcType="VARCHAR" property="afgId" />
+    <result column="AFG_SQBH" jdbcType="VARCHAR" property="afgSqbh" />
+    <result column="AFG_SQRID" jdbcType="VARCHAR" property="afgSqrid" />
+    <result column="AFG_SSQ" jdbcType="VARCHAR" property="afgSsq" />
+    <result column="SSQ_STR" jdbcType="VARCHAR" property="ssqStr" />
+    <result column="SSJ_STR" jdbcType="VARCHAR" property="ssjStr"/>
+    <result column="AFG_DWMC" jdbcType="VARCHAR" property="afgDwmc" />
+    <result column="AFG_DWDZ" jdbcType="VARCHAR" property="afgDwdz" />
+    <result column="AFG_BYYX" jdbcType="VARCHAR" property="afgByyx" />
+    <result column="AFG_BYSJ" jdbcType="VARCHAR" property="afgBysj" />
+    <result column="AFG_XL" jdbcType="VARCHAR" property="afgXl" />
+    <result column="AFG_HJDZ" jdbcType="VARCHAR" property="afgHjdz" />
+    <result column="AFG_SQHJNX" jdbcType="DECIMAL" property="afgSqhjnx" />
+    <result column="AFG_JTRKS" jdbcType="DECIMAL" property="afgJtrks" />
+    <result column="AFG_GRNSR" jdbcType="DECIMAL" property="afgGrnsr" />
+    <result column="AFG_JTNSR" jdbcType="DECIMAL" property="afgJtnsr" />
+    <result column="AFG_RJYSR" jdbcType="DECIMAL" property="afgRjysr" />
+    <result column="AFG_LDHTKSSJ" jdbcType="VARCHAR" property="afgLdhtkssj" />
+    <result column="AFG_LDHTJSSJ" jdbcType="VARCHAR" property="afgLdhtjssj" />
+    <result column="AFG_SBJNSJ" jdbcType="VARCHAR" property="afgSbjnsj" />
+    <result column="AFG_GJJJNSJ" jdbcType="VARCHAR" property="afgGjjjnsj" />
+    <result column="AFG_RJZFMJ" jdbcType="DECIMAL" property="afgRjzfmj" />
+    <result column="AFG_XZFXZ" jdbcType="VARCHAR" property="afgXzfxz" />
+    <result column="AFG_XZFQK" jdbcType="VARCHAR" property="afgXzfqk" />
+    <result column="AFG_ZT" jdbcType="DECIMAL" property="afgZt" />
+    <result column="AFG_LC" jdbcType="DECIMAL" property="afgLc" />
+    <result column="AFG_WFJT" jdbcType="VARCHAR" property="afgWfjt" />
+    <result column="AFG_LRSJ" jdbcType="VARCHAR" property="afgLrsj" />
+    <result column="AFG_LRR" jdbcType="VARCHAR" property="afgLrr" />
+    <result column="AFG_SMSJ" jdbcType="VARCHAR" property="afgSmsj" />
+    <result column="AFG_SMR" jdbcType="VARCHAR" property="afgSmr" />
+    <result column="AFG_BZSJ" jdbcType="VARCHAR" property="afgBzsj" />
+    <result column="AFG_CXDA" jdbcType="DECIMAL" property="afgCxda" />
+    <result column="AFG_FLAG" jdbcType="DECIMAL" property="afgFlag" />
+    <result column="AFG_DALC" jdbcType="VARCHAR" property="afgDalc" />
+    <result column="C_ZT_STR" jdbcType="VARCHAR" property="cZtStr" />
+    <result column="C_HTBH" jdbcType="VARCHAR" property="cHtbh" />
+    <result column="SSQ_STR" jdbcType="VARCHAR" property="ssqStr" />
+    <result column="SSJ_STR" jdbcType="VARCHAR" property="ssjStr" />
+    <result column="C_ZT_NAME" jdbcType="VARCHAR" property="cZtName" />
+    <result column="AFG_BASEIMG" jdbcType="VARCHAR" property="afgBaseimg" />
+    <association property="applyUserinfo" javaType="com.sys.pojo.ApplyUserinfo">
+      <result column="USERNAME" property="username"/>
+      <result column="SFZH" property="sfzh"/>
+      <result column="SSQ" property="ssq"/>
+      <result column="SSJ" property="ssj"/>
+    </association>
+    <association property="approve" javaType="com.sys.pojo.apply.Approve">
+      <result column="APLDATE" property="apldate"/>
+      <result column="APLDATE_STR" property="apldateStr"/>
+    </association>
+    <association property="contractDetail" javaType="com.sys.pojo.contract.ContractDetail">
+      <result column="C_ZT" property="cZt"/>
+    </association>
+    <association column="AFG_ID"  property="applyUnit"
+                 select="com.sys.mapper.apply.ApplyUnitMapper.findByApplyId" />
+    <collection column="AFG_ID" property="applyFamilyHouses" ofType="com.sys.pojo.apply.ApplyFamilyHouse"
+                javaType="java.util.ArrayList"
+                select="com.sys.mapper.apply.ApplyFamilyHouseMapper.findByApplyId">
+    </collection>
+    <collection column="AFG_ID" property="applyFamilyMembers" ofType="com.sys.pojo.apply.ApplyFamilyMember"
+                javaType="java.util.ArrayList"
+                select="com.sys.mapper.apply.ApplyFamilyMemberMapper.findByApplyId">
+    </collection>
+    <collection column="AFG_ID" property="volList" ofType="com.sys.pojo.Volelearc"
+                javaType="java.util.ArrayList"
+                select="com.sys.mapper.VolelearcMapper.findByAppyId">
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    AFG_ID, AFG_SQBH, AFG_SQRID, AFG_SSQ, AFG_DWMC, AFG_DWDZ, AFG_BYYX, AFG_BYSJ, AFG_XL,
+    AFG_HJDZ, AFG_SQHJNX, AFG_JTRKS, AFG_GRNSR, AFG_JTNSR, AFG_RJYSR, AFG_LDHTKSSJ, AFG_LDHTJSSJ, 
+    AFG_SBJNSJ, AFG_GJJJNSJ, AFG_RJZFMJ, AFG_XZFXZ, AFG_XZFQK, AFG_ZT, AFG_LC, AFG_WFJT, 
+    AFG_LRSJ, AFG_LRR, AFG_SMSJ, AFG_SMR, AFG_BZSJ, AFG_CXDA, AFG_FLAG, AFG_DALC, AFG_BASEIMG
+  </sql>
+
+  <sql id="Base_Approve_Column_List">
+    APPROVE.APLDATE,to_char(APPROVE.APLDATE,'yyyy-mm-dd') APLDARW_STR
+  </sql>
+
+  <sql id="Base_ContDeta_Column_List">
+    CONTRACT_DETAIL.C_ZT,CONTRACT_DETAIL.C_TYPE
+  </sql>
+
+  <sql id="Base_User_Column_List">
+    APPLYUSERINFO.USERNAME,APPLYUSERINFO.SFZH,APPLYUSERINFO.SSQ,APPLYUSERINFO.SSJ
+  </sql>
+
+  <select id="selectByMap" parameterType="Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from APPLYFORGRADUATE
+    where AFG_ID = #{afgId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from APPLYFORGRADUATE
+    where AFG_ID = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <!--<include refid="Base_User_Column_List" />
+    ,-->
+    <!--<include refid="Base_Approve_Column_List" />
+    ,-->
+    <include refid="Base_ContDeta_Column_List" />
+    ,
+    case
+    　when CONTRACT_DETAIL.C_ZT is null then '未备案'
+      when CONTRACT_DETAIL.C_ZT=1 then '签约'
+      when CONTRACT_DETAIL.C_ZT=2 then '备案'
+      else '状态出错'
+    end C_ZT_STR,
+    APPLYFAMILYMEMBER.AFM_XM USERNAME,
+    APPLYFAMILYMEMBER.AFM_SFZH SFZH,
+    APPLYFORGRADUATE.AFG_SSQ SSQ,
+    APPLYFORGRADUATE.AFG_DWDZ SSJ,
+    p1.PI_ITEMNAME SSQ_STR,
+    p2.PI_ITEMNAME SSJ_STR,
+    CONTRACT_DETAIL.C_HTBH  C_HTBH
+    from APPLYFORGRADUATE
+    left join CONTRACT_DETAIL on APPLYFORGRADUATE.AFG_ID=CONTRACT_DETAIL.C_SQID and (CONTRACT_DETAIL.C_ZFZT=0 or CONTRACT_DETAIL.C_ZFZT is null),
+    PARMITEM p1,PARMITEM p2,APPLYFAMILYMEMBER
+    where APPLYFAMILYMEMBER.AFM_ID=APPLYFORGRADUATE.AFG_SQRID
+      and p1.PI_ITEMCODE=APPLYFORGRADUATE.AFG_SSQ
+      and p2.PI_ITEMCODE=APPLYFORGRADUATE.AFG_DWDZ
+    <if test="applyUserinfo != null">
+      <if test="applyUserinfo.xzq != null and applyUserinfo.xzq != ''">
+        AND p1.PI_SETCODE = #{applyUserinfo.xzq,jdbcType=VARCHAR}
+      </if>
+      <if test="applyUserinfo.jiedao != null and applyUserinfo.jiedao != ''">
+        AND p2.PI_SETCODE = #{applyUserinfo.jiedao,jdbcType=VARCHAR}
+      </if>
+      <if test="applyUserinfo.username != null">
+        AND APPLYFAMILYMEMBER.AFM_XM = #{applyUserinfo.username,jdbcType=VARCHAR}
+      </if>
+      <if test="applyUserinfo.sfzh != null">
+        AND APPLYFAMILYMEMBER.AFM_SFZH = #{applyUserinfo.sfzh,jdbcType=VARCHAR}
+      </if>
+      <if test="afgSsq != null">
+        AND APPLYFORGRADUATE.AFG_SSQ = #{afgSsq,jdbcType=VARCHAR}
+      </if>
+      <if test="afgDwdz != null">
+        AND APPLYFORGRADUATE.AFG_DWDZ = #{afgDwdz,jdbcType=VARCHAR}
+      </if>
+      <if test="afgLc != null">
+        AND APPLYFORGRADUATE.AFG_LC &gt;= #{afgLc,jdbcType=VARCHAR}
+      </if>
+      <if test="afgZt != null">
+        AND (APPLYFORGRADUATE.AFG_ZT &lt; #{afgZt,jdbcType=VARCHAR} OR APPLYFORGRADUATE.AFG_ZT is null)
+      </if>
+    </if>
+    AND EXISTS (select 1 from (select APPROVE.APLID SQID from APPROVE
+    union all select CONTRACT_DETAIL.C_SQID SQID from CONTRACT_DETAIL) t where t.sqid=APPLYFORGRADUATE.AFG_ID)
+    order by APPLYFORGRADUATE.AFG_LC
+  </select>
+
+  <update id="update" parameterType="com.sys.pojo.apply.ApplyForgraDuate">
+    update APPLYFORGRADUATE
+    <set>
+      <if test="afgSqbh != null">
+        AFG_SQBH = #{afgSqbh,jdbcType=VARCHAR},
+      </if>
+      <if test="afgSqrid != null">
+        AFG_SQRID = #{afgSqrid,jdbcType=VARCHAR},
+      </if>
+      <if test="afgSsq != null">
+        AFG_SSQ = #{afgSsq,jdbcType=VARCHAR},
+      </if>
+      <if test="afgDwmc != null">
+        AFG_DWMC = #{afgDwmc,jdbcType=VARCHAR},
+      </if>
+      <if test="afgDwdz != null">
+        AFG_DWDZ = #{afgDwdz,jdbcType=VARCHAR},
+      </if>
+      <if test="afgByyx != null">
+        AFG_BYYX = #{afgByyx,jdbcType=VARCHAR},
+      </if>
+      <if test="afgBysj != null">
+        AFG_BYSJ = #{afgBysj,jdbcType=VARCHAR},
+      </if>
+      <if test="afgXl != null">
+        AFG_XL = #{afgXl,jdbcType=VARCHAR},
+      </if>
+      <if test="afgHjdz != null">
+        AFG_HJDZ = #{afgHjdz,jdbcType=VARCHAR},
+      </if>
+      <if test="afgSqhjnx != null">
+        AFG_SQHJNX = #{afgSqhjnx,jdbcType=DECIMAL},
+      </if>
+      <if test="afgJtrks != null">
+        AFG_JTRKS = #{afgJtrks,jdbcType=DECIMAL},
+      </if>
+      <if test="afgGrnsr != null">
+        AFG_GRNSR = #{afgGrnsr,jdbcType=DECIMAL},
+      </if>
+      <if test="afgJtnsr != null">
+        AFG_JTNSR = #{afgJtnsr,jdbcType=DECIMAL},
+      </if>
+      <if test="afgRjysr != null">
+        AFG_RJYSR = #{afgRjysr,jdbcType=DECIMAL},
+      </if>
+      <if test="afgLdhtkssj != null">
+        AFG_LDHTKSSJ = #{afgLdhtkssj,jdbcType=VARCHAR},
+      </if>
+      <if test="afgLdhtjssj != null">
+        AFG_LDHTJSSJ = #{afgLdhtjssj,jdbcType=VARCHAR},
+      </if>
+      <if test="afgSbjnsj != null">
+        AFG_SBJNSJ = #{afgSbjnsj,jdbcType=VARCHAR},
+      </if>
+      <if test="afgGjjjnsj != null">
+        AFG_GJJJNSJ = #{afgGjjjnsj,jdbcType=VARCHAR},
+      </if>
+      <if test="afgRjzfmj != null">
+        AFG_RJZFMJ = #{afgRjzfmj,jdbcType=DECIMAL},
+      </if>
+      <if test="afgXzfxz != null">
+        AFG_XZFXZ = #{afgXzfxz,jdbcType=VARCHAR},
+      </if>
+      <if test="afgXzfqk != null">
+        AFG_XZFQK = #{afgXzfqk,jdbcType=VARCHAR},
+      </if>
+      <if test="afgZt != null">
+        AFG_ZT = #{afgZt,jdbcType=DECIMAL},
+      </if>
+      <if test="afgLc != null">
+        AFG_LC = #{afgLc,jdbcType=DECIMAL},
+      </if>
+      <if test="afgWfjt != null">
+        AFG_WFJT = #{afgWfjt,jdbcType=VARCHAR},
+      </if>
+      <if test="afgLrsj != null">
+        AFG_LRSJ = #{afgLrsj,jdbcType=VARCHAR},
+      </if>
+      <if test="afgLrr != null">
+        AFG_LRR = #{afgLrr,jdbcType=VARCHAR},
+      </if>
+      <if test="afgSmsj != null">
+        AFG_SMSJ = #{afgSmsj,jdbcType=VARCHAR},
+      </if>
+      <if test="afgSmr != null">
+        AFG_SMR = #{afgSmr,jdbcType=VARCHAR},
+      </if>
+      <if test="afgBzsj != null">
+        AFG_BZSJ = #{afgBzsj,jdbcType=VARCHAR},
+      </if>
+      <if test="afgCxda != null">
+        AFG_CXDA = #{afgCxda,jdbcType=DECIMAL},
+      </if>
+      <if test="afgFlag != null">
+        AFG_FLAG = #{afgFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="afgDalc != null">
+        AFG_DALC = #{afgDalc,jdbcType=VARCHAR},
+      </if>
+      <if test="afgBaseimg != null">
+        AFG_BASEIMG = #{afgBaseimg,jdbcType=VARCHAR},
+      </if>
+    </set>
+    WHERE AFG_ID = #{afgId,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateApLC" parameterType="Map">
+    update APPLYFORGRADUATE
+    <set>
+      <if test="lc!=null and lc!=''">
+        AFG_LC=#{lc},
+      </if>
+      <if test="zt!=null and zt!=''">
+        AFG_ZT=#{zt}
+      </if>
+    </set>
+    where AFG_ID=#{applyid}
+  </update>
+
+  <insert id="insert" parameterType="com.sys.pojo.apply.ApplyForgraDuate">
+    insert into APPLYFORGRADUATE (AFG_ID, AFG_SQBH, AFG_SQRID,
+      AFG_SSQ, AFG_DWMC, AFG_DWDZ, AFG_BYYX, AFG_BYSJ, AFG_XL,
+      AFG_HJDZ, AFG_SQHJNX, AFG_JTRKS, AFG_GRNSR, AFG_JTNSR, AFG_RJYSR,
+      AFG_LDHTKSSJ, AFG_LDHTJSSJ, AFG_SBJNSJ, AFG_GJJJNSJ, AFG_RJZFMJ, AFG_XZFXZ,
+      AFG_XZFQK, AFG_WFJT, AFG_LRSJ, AFG_LRR, AFG_SMSJ, AFG_SMR, AFG_BZSJ,
+      AFG_CXDA, AFG_DALC, AFG_BASEIMG )
+    values (#{afgId,jdbcType=VARCHAR}, #{afgSqbh,jdbcType=VARCHAR}, #{afgSqrid,jdbcType=VARCHAR},
+      #{afgSsq,jdbcType=VARCHAR}, #{afgDwmc,jdbcType=VARCHAR}, #{afgDwdz,jdbcType=VARCHAR},
+      #{afgByyx,jdbcType=VARCHAR}, #{afgBysj,jdbcType=VARCHAR}, #{afgXl,jdbcType=VARCHAR},
+      #{afgHjdz,jdbcType=VARCHAR}, #{afgSqhjnx,jdbcType=DECIMAL}, #{afgJtrks,jdbcType=DECIMAL},
+      #{afgGrnsr,jdbcType=DECIMAL}, #{afgJtnsr,jdbcType=DECIMAL}, #{afgRjysr,jdbcType=DECIMAL},
+      #{afgLdhtkssj,jdbcType=VARCHAR}, #{afgLdhtjssj,jdbcType=VARCHAR}, #{afgSbjnsj,jdbcType=VARCHAR},
+      #{afgGjjjnsj,jdbcType=VARCHAR}, #{afgRjzfmj,jdbcType=DECIMAL}, #{afgXzfxz,jdbcType=VARCHAR},
+      #{afgXzfqk,jdbcType=VARCHAR},
+      #{afgWfjt,jdbcType=VARCHAR}, #{afgLrsj,jdbcType=VARCHAR}, #{afgLrr,jdbcType=VARCHAR},
+      #{afgSmsj,jdbcType=VARCHAR}, #{afgSmr,jdbcType=VARCHAR}, #{afgBzsj,jdbcType=VARCHAR},
+      #{afgCxda,jdbcType=DECIMAL}, #{afgDalc,jdbcType=VARCHAR}, #{afgBaseimg,jdbcType=VARCHAR}
+      )
+  </insert>
+
+</mapper>

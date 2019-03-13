@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.UserRoleInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.sys.pojo.UserRoleInfo" >
+    <id column="USERDUTYID" property="userdutyid" jdbcType="VARCHAR" />
+    <result column="USERID" property="userid" jdbcType="VARCHAR" />
+    <result column="DUTYID" property="dutyid" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="OTHER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from USERDUTY
+    where USERDUTYID = #{userdutyid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.UserRoleInfo" >
+    insert into USERDUTY (USERDUTYID, USERID, DUTYID, 
+      REMARK)
+    values (#{userdutyid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, #{dutyid,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=OTHER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.sys.pojo.UserRoleInfo" >
+    update USERDUTY
+    set USERID = #{userid,jdbcType=VARCHAR},
+      DUTYID = #{dutyid,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=OTHER}
+    where USERDUTYID = #{userdutyid,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select USERDUTYID, USERID, DUTYID, REMARK
+    from USERDUTY
+    where USERDUTYID = #{userdutyid,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select USERDUTYID, USERID, DUTYID, REMARK
+    from USERDUTY
+  </select>
+
+  <select id="selectCountByUid" resultType="java.lang.Integer">
+    select count(1)
+    from USERDUTY
+    where USERID=#{userid}
+  </select>
+
+  <select id="findRoleByUid" resultMap="BaseResultMap">
+    select *
+    from USERDUTY
+    where USERID=#{userid}
+  </select>
+
+
+
+  <delete id="deleteUserRole" parameterType="Map" >
+    delete from USERDUTY
+    where DUTYID = #{dutyid,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deleteUserRoleByUid" parameterType="Map">
+     delete from USERDUTY
+     where USERID = #{userid,jdbcType=VARCHAR}
+  </delete>
+
+
+
+  <insert id="insertList" parameterType="java.util.List">
+    insert into USERDUTY (USERDUTYID, USERID, DUTYID,REMARK)
+    <foreach close=")" collection="list" item="item" index="index" open="(" separator="union">
+      select
+      #{item.userdutyid,jdbcType=VARCHAR},
+      #{item.userid,jdbcType=VARCHAR},
+      #{item.dutyid,jdbcType=VARCHAR},
+      #{item.remark,jdbcType=VARCHAR}
+      from DUAL
+    </foreach>
+  </insert>
+
+</mapper>

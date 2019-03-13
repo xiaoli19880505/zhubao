@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.ApplyUserinfoMapper" >
+  <resultMap id="ApplyUserinfoResultMap" type="com.sys.pojo.ApplyUserinfo" >
+    <id column="USERID" property="userid" jdbcType="VARCHAR" />
+    <result column="USERCODE" property="usercode" jdbcType="VARCHAR" />
+    <result column="USERPWD" property="userpwd" jdbcType="VARCHAR" />
+    <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+    <result column="SEX" property="sex" jdbcType="VARCHAR" />
+    <result column="LINKTEL" property="linktel" jdbcType="VARCHAR" />
+    <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+    <result column="STATE" property="state" jdbcType="CHAR" />
+    <result column="SFZH" property="sfzh" jdbcType="VARCHAR" />
+    <result column="SSQ_STR" property="ssqStr" jdbcType="VARCHAR" />
+    <result column="SSJ_STR" property="ssjStr" jdbcType="VARCHAR" />
+      <!-- <result column="XZQ" property="xzq" jdbcType="VARCHAR" />
+      <result column="JIEDAO" property="jiedao" jdbcType="VARCHAR" />
+      <association property="parmItemssjd" column="{piSetcode=JIEDAO,piItemcode=SSJ}" select="com.sys.mapper.ParmItemMapper.selectByMap"/>
+        <association property="parmItemssq" column="{piSetcode=XZQ,piItemcode=SSQ}" select="com.sys.mapper.ParmItemMapper.selectByMap"/>
+    --></resultMap>
+
+   <!-- <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>-->
+
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from APPLYUSERINFO
+    where USERID = #{userid,jdbcType=VARCHAR}
+  </delete>
+
+
+
+<!--, APP.SFZH,APP.SSQ ,APP.SSJ,'04' AS XZQ,'05' AS JIEDAO-->
+  <select id="selectAll" parameterType="Map" resultMap="ApplyUserinfoResultMap">
+      select APP.USERID, APP.SFZH,APP.USERCODE, APP.USERPWD, APP.USERNAME, APP.SEX,
+      APP.LINKTEL, APP.ADDRESS, APP.STATE,APP.SSQ,APP.SSJ,p1.pi_itemname SSQ_STR,
+      p2.pi_itemname SSJ_STR from APPLYUSERINFO APP,
+      parmitem p1,parmitem p2
+      where app.ssq=p1.pi_itemcode and p1.pi_setcode='04'
+      and app.ssj=p2.pi_itemcode and p2.pi_setcode='05'
+      <if test="username!=null and username!=''">
+          AND APP.USERNAME=#{username}
+      </if>
+     <if test="usercode != null and usercode != ''">
+         AND  APP.USERCODE=#{usercode}
+     </if>
+      <if test="sfzh!=null and sfzh!=''">
+          AND APP.SFZH=#{sfzh}
+      </if>
+      <if test="ssq!=null and ssq!=''">
+          AND APP.SSQ=#{ssq}
+      </if>
+      <if test="ssj!=null and ssj!=''">
+          AND APP.SSJ=#{ssj}
+      </if>
+      <if test="linktel != null and linktel != ''">
+         AND APP.LINKTEL=#{linktel}
+      </if>
+  </select>
+
+
+  <insert id="insert" parameterType="com.sys.pojo.ApplyUserinfo" >
+    insert into APPLYUSERINFO (USERID, USERCODE, USERPWD, 
+      USERNAME, SEX, LINKTEL, 
+      ADDRESS, STATE, SSQ,SFZH,SSJ)
+    values (#{userid,jdbcType=VARCHAR}, #{usercode,jdbcType=VARCHAR}, #{userpwd,jdbcType=VARCHAR}, 
+      #{username,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, #{linktel,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{state,jdbcType=CHAR}, #{ssq,jdbcType=VARCHAR}, #{sfzh,jdbcType=VARCHAR},#{ssj,jdbcType=VARCHAR})
+  </insert>
+
+
+    <!--,APP.SSQ ,APP.SSJ,'04' AS XZQ,'05' AS JIEDAO-->
+  <select id="selectById" resultMap="ApplyUserinfoResultMap" parameterType="java.lang.String" >
+    select APP.USERID, APP.USERCODE, APP.USERPWD, APP.USERNAME, APP.SEX,
+    APP.LINKTEL, APP.ADDRESS, APP.STATE, APP.SFZH
+    from APPLYUSERINFO APP
+    where APP.USERID = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectUserInfo"  parameterType="Map" resultType="ApplyUserinfo">
+      select * from APPLYUSERINFO APP
+      <where>
+      <if test="userpwd!=null and userpwd!=''">
+          and APP.USERPWD=#{userpwd}
+      </if>
+      <if test="sfzh!=null and sfzh!=null">
+        and lower(APP.SFZH)=lower(#{sfzh})
+      </if>
+      </where>
+  </select>
+
+
+    <!--,APP.SSQ ,APP.SSJ,'04' AS XZQ,'05' AS JIEDAO-->
+  <select id="select" resultMap="ApplyUserinfoResultMap" >
+    select APP.USERID, APP.USERCODE, APP.USERPWD, APP.USERNAME, APP.SEX,
+    APP.LINKTEL, APP.ADDRESS, APP.STATE, APP.SFZH from APPLYUSERINFO APP
+  </select>
+
+  <update id="updatePwd" parameterType="Map">
+    update APPLYUSERINFO
+    <set>
+      <if test="userpwd!=null and userpwd!=''">
+        USERPWD = #{userpwd,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where USERID = #{userid,jdbcType=VARCHAR}
+  </update>
+
+<!--更新整个用户实体-->
+    <update id="update">
+        update APPLYUSERINFO
+        <set>
+            <if test="linktel!=null and linktel!=''">
+                LINKTEL = #{linktel},
+            </if>
+            <if test="ssq!=null and ssq!=''">
+                SSQ = #{ssq},
+            </if>
+            <if test="ssj!=null and ssj!=''">
+                SSJ = #{ssj},
+            </if>
+            <if test="address!=null and address!=''">
+                ADDRESS = #{address},
+            </if>
+        </set>
+        where USERID = #{userid}
+    </update>
+
+    <select id="selectNoActiv" resultMap="ApplyUserinfoResultMap" >
+        select APP.USERID,
+        APP.USERNAME,
+        APP.SEX,
+        APP.LINKTEL,
+        APP.STATE,
+        APP.SFZH ,
+        APP.SSQ,
+        APP.SSJ
+        ,p1.pi_itemname SSQ_STR,
+        p2.pi_itemname SSJ_STR
+        from APPLYUSERINFO APP,
+        parmitem p1,parmitem p2
+        where
+            app.ssq=p1.pi_itemcode and p1.pi_setcode='04'
+            and app.ssj=p2.pi_itemcode and p2.pi_setcode='05'
+            <if test="ssq!=null and ssq !=''">
+                AND APP.SSQ = #{ssq}
+            </if>
+            <if test="ssj!=null and ssj !=''">
+                AND APP.ssj=#{ssj}
+            </if>
+
+            <if test="username!=null and username !=''">
+                AND APP.USERNAME like '%'||#{username}||'%'
+            </if>
+            <if test="sfzh!=null and sfzh !=''">
+                AND APP.SFZH like '%'||#{sfzh}||'%'
+            </if>
+            AND APP.STATE='0'
+
+    </select>
+    <update id="updateUserState">
+        update APPLYUSERINFO
+        <set>
+            <if test="state!=null and state!=''">
+                STATE = #{state}
+            </if>
+
+        </set>
+        where USERID = #{userid}
+    </update>
+
+</mapper>

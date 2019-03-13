@@ -1,0 +1,236 @@
+<%@ page language="java" contentType="text/html" pageEncoding="utf-8"%>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>注册</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" type="text/css" href="<%=basePath %>srcApp/css/mui.css"/>
+	<link rel="stylesheet" type="text/css" href="<%=basePath %>srcApp/css/easyui/easyui.css">
+	<link rel="stylesheet" type="text/css" href="<%=basePath %>srcApp/css/easyui/mobile.css">
+	<link rel="stylesheet" type="text/css" href="<%=basePath %>srcApp/css/easyui/icon.css">
+	<link rel="stylesheet" type="text/css" href="<%=basePath %>srcApp/css/common.css"/>
+</head>
+<body>
+	  <!-- 主页面容器 -->
+	  <div class="mui-inner-wrap" >
+	    <div class="mui-content mui-scroll-wrapper" id="loginBg">
+	      <div class="mui-scroll">
+	        <!-- 主界面具体展示内容 -->
+	         <div class="loginTitle">徐州市住房保障管理系统</div>
+	         <form id="form" class="mui-input-group" method="post">
+			    <div class="mui-input-row">
+			        <label>身份证号</label>
+			        <input type="text" name="sfzh" id="sfzh" class="mui-input-clear" required>
+			    </div>
+			    <div class="mui-input-row">
+			        <label>密码</label>
+			        <input type="password" id="userpwd"  name="userpwd" class="mui-input-password" required minlength="6" maxlength="10">
+			    </div>
+			    <div class="mui-input-row">
+			        <label>确认密码</label>
+			        <input type="password" class="mui-input-password" id="againpwd" required minlength="6" maxlength="10">
+			    </div>
+				 <div class="mui-input-row">
+					 <label>用户姓名</label>
+					 <input type="text" name="username" id="username" class="mui-input-clear" required>
+				 </div>
+				 <div class="mui-input-row">
+					 <div class=" mui-radio mui-pull-left mui-left">
+						 <label>男</label>
+						 <input name="sex" type="radio" checked value="男">
+					 </div>
+					 <div class="mui-radio mui-pull-left mui-left">
+						 <label>女</label>
+						 <input name="sex" type="radio" value="女">
+					 </div>
+				 </div>
+				 <div class="commonRow  mui-input-row">
+					 <input class="easyui-combobox" name="ssq" id="ssq" style="width: 92%" data-options="label:'所属区(县)',valueField:'piItemcode',textField:'piItemname',
+                    url:'<%=basePath %>ParmItem/selectSsqExceptCenter',onSelect:selectSSQ,editable:false,panelHeight:'auto',panelMaxHeight:'280'">
+				 </div>
+				 <div class="commonRow  mui-input-row">
+					 <input class="easyui-combobox" name="ssj" id="ssj" style="width: 92%" data-options="label:'街道办事处',valueField:'piItemcode',textField:'piItemname',
+                    editable:false,panelHeight:'auto',panelMaxHeight:'280'">
+				 </div>
+			    <div class="mui-input-row">
+			        <label>手机号</label>
+			        <input type="text" name="linktel"  id="linktel" class="mui-input-clear" required>
+			    </div>
+			    <div class="mui-input-row mui-left">
+			        <label style="float: right" class="code">短信验证码</label>
+			        <input type="text" name="checkcode" id="checkcode" class="mui-input-clear" required placeholder="请输入验证码" style="width: 50%">
+			    </div>
+			    <div class="mui-content-padded">
+				    <button id='login' class="mui-btn mui-btn-block mui-btn-primary">立即注册</button>
+			    </div>
+			</form>
+		   
+	      </div>
+	    </div>  
+	  </div>
+	  <style>
+		  .textbox-label{
+			  max-width: 46%;
+			  width:11.2rem;
+		  }
+		  .commonRow .textbox,.commonRow .combo,.commonRow .datebox{
+			  min-width:63% !important;
+			  max-width: 80% !important;
+		  }
+		  .commonRow .textbox-text ,.commonRow .validatebox-text{
+			  width: 100% !important;
+		  }
+		  .textbox{
+			  background-color: transparent;
+		  }
+	  </style>
+	  <script src="<%=basePath %>srcApp/js/public/jquery.min.js" type="text/javascript" ></script>
+	  <script src="<%=basePath %>srcApp/js/mui/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	  <script src="<%=basePath %>srcApp/js/easyui/jquery.easyui.min.js" type="text/javascript"></script>
+	  <script src="<%=basePath %>srcApp/js/easyui/jquery.easyui.mobile.js" type="text/javascript" ></script>
+	  <script src="<%=basePath %>srcApp/js/webuploader/webuploader.js" type="text/javascript" ></script>
+	  <script src="<%=basePath %>srcApp/js/easyui/easyui-lang-zh_CN.js" type="text/javascript"></script>
+	  <script src="<%=basePath %>srcApp/js/public/public.js"></script>
+	<script>
+		mui.init();
+        mui('.mui-scroll-wrapper').scroll({
+            deceleration: 0.0006
+        });
+        var flag=true;
+        var timer=null;
+        mui(".mui-input-row").on('tap', '.code', function() {
+            sendCode();
+        });
+        mui(".mui-content-padded").on('tap', '#login', function() {
+            save();
+        });
+        function save(){
+            var flag=false;
+            var sfzh=$.trim($("#sfzh").val());
+            var userpwd=$.trim($("#userpwd").val());
+            var againpwd=$.trim($("#againpwd").val());
+            var ssq=$.trim($("#ssq").combobox('getValue'));
+            var ssj=$.trim($("#ssj").combobox('getValue'));
+            var linktel=$.trim($("#linktel").val());
+            var checkcode=$.trim($("#checkcode").val());
+            var username=$.trim($("#username").val());
+            $('#form').form('submit', {
+                url:'<%=basePath %>applyUserinfo/insertUserInfo',
+                onSubmit: function(param){
+                    if(ssq.length==0||ssj.length==0||userpwd.length==0||againpwd.length==0||checkcode.length==0||username.length==0){
+                        weixin.toast("所有输入项不能为空");
+                        return false
+                    }else if(!weixin.validType().isIdCard(sfzh)){
+                     weixin.toast("身份证格式错误");
+					   return false
+				   }else if(!weixin.validType().isPhone(linktel)){
+                       weixin.toast("手机格式错误");
+                       return false
+				   }else if(userpwd.length<5||userpwd.length>21){
+                        weixin.toast("密码长度6-20位");
+                        return false
+					}else if(userpwd!=againpwd){
+                       weixin.toast("两次输入密码不一致");
+                       return false
+				   }else{
+                       flag=true
+				   }
+                    return flag;
+                },
+                success:function(data){
+                    weixin.toast(data);
+                    if(data=="注册成功"){
+                        weixin.alert('注册信息已提交，请到所在地街道办事处住保科进行帐号激活');
+                        weixin.setCookie('sfzh',sfzh,24);
+                        setTimeout(function () {
+                            window.location.href='<%=basePath %>appPath/login';
+                        },5000);
+                    }else{
+                        weixin.toast("注册失败！");
+                        flag=true;
+                        $("#checkcode").val('');
+                    }
+                    clearSession();//清空缓存
+				},
+                error:function(){
+                    weixin.alert("数据库连接失败，请稍后再试！");
+                    return false;
+                }
+            },'json');
+        }
+        //设置倒计时
+        function setCode(){
+            clearInterval(timer);
+            var time=60;
+            timer=setInterval(function(){
+                if(time==0){
+                    $(".code").html('获取验证码');
+                    flag=true;
+                    clearInterval(timer);//这句话至关重要
+                    return false;
+                }else {
+                    flag=false;
+                    time--;
+                    $(".code").html('倒计时'+time+'');
+                }
+            },1000);
+        }
+        //发送验证码
+        function sendCode(){
+            if(flag){
+                flag=false;
+                var linktel=$.trim($("#linktel").val());
+                if(linktel.length==0){
+                    flag=true;
+                    weixin.alert("请输入手机号")
+                }else{
+                    setCode();
+                    $.ajax({
+                        url:'<%=basePath %>applyUserinfo/SendCode',
+                        type:'post',
+                        data:{
+                            linktel:$.trim($("#linktel").val())
+                        },
+                        success:function(data){
+                        },error:function(){
+                              weixin.alert("数据库连接失败，请稍后再试")
+                        }
+                    })
+                }
+            }
+        }
+        //清空后台session
+        function clearSession(){
+            $.ajax({
+                url:'<%=basePath %>applyUserinfo/newSend',
+                type:'post',
+                data:null,
+                success:function (data) {
+                    if(data=="刷新"){
+                        clearInterval(timer);
+                        $(".code").html('获取验证码');
+                    }
+                },
+                error:function () {
+                    weixin.alert("数据库连接失败，稍后再试");
+                }
+            })
+        }
+        //街区联动
+        function selectSSQ(record){
+            $("#ssj").combobox({
+                url:'<%=basePath%>ParmItem/findAllJd',
+                onBeforeLoad:function(param){
+                    param.qid=record.piItemcode;
+                }
+            });
+        }
+	</script>
+</body>
+</html>
+

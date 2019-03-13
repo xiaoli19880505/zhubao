@@ -1,0 +1,15 @@
+[
+	{
+		"id": 501,
+		"text": "栏目内容信息",
+		"src": "<%=basePath %>pageColumn/column"
+	}, {
+		"id": 502,
+		"text": "图片上传",
+		"src": "<%=basePath %>pageColumn/photo"
+	}, {
+		"id": 503,
+		"text": "文章内容信息",
+		"src": "<%=basePath %>pageColumn/text"
+	}
+]

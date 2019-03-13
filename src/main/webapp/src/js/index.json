@@ -1,0 +1,165 @@
+[
+  {
+    "id": 1,
+    "text": "保障房申请审核",
+    "src": "",
+    "state": "closed",
+    "children": [
+      {
+        "id": 101,
+        "text": "待审核申请",
+        "src": "path/toNoAuditApply"
+      },
+      {
+        "id": 102,
+        "text": "已审核申请",
+        "src": "path/toAuditApply"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "text": "保障房年审审核",
+    "src": "",
+    "state": "closed",
+    "children": [
+      {
+        "id": 201,
+        "text": "待审核申请",
+        "src": "houseAudit/noauditApply.jsp"
+      },
+      {
+        "id": 202,
+        "text": "已审核申请",
+        "src": "houseAudit/auditApply.jsp"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "text": "保障房备案管理",
+    "src": "",
+    "state": "closed",
+    "children": [
+    	 {
+        "id": 501,
+        "text": "新就业公租房",
+        "src": "houseRecord/jobHouse.jsp"
+      },
+      {
+        "id": 502,
+        "text": "外来务工公租房",
+        "src": "houseRecord/outsideHouse.jsp"
+      },
+      {
+        "id": 503,
+        "text": "低保特困公租房",
+        "src": "houseRecord/allowanceHouse.jsp"
+      },
+      {
+        "id": 504,
+        "text": "低保特困住保补贴",
+        "src": "houseRecord/allowance.jsp"
+      },
+      {
+        "id": 505,
+        "text": "经济适用房",
+        "src": "houseRecord/economyHouse.jsp"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "text": "房源信息管理",
+    "src": "",
+    "state": "closed",
+    "children": [
+      {
+        "id": 401,
+        "text": "房源信息管理",
+        "src": "path/tohouseInfo"
+      },
+      {
+        "id": 402,
+        "text": "房源导入",
+        "src": "houseInfoMa/houseImport.jsp"
+      },
+      {
+        "id": 403,
+        "text": "房源配给",
+        "src": "path/tohouseRation"
+      },
+      {
+        "id": 404,
+        "text": "房源分配",
+        "src": "path/tohouseDis"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "text": "用户注册审核",
+    "src": "",
+    "state": "closed",
+    "children": [
+      {
+        "id": 501,
+        "text": "新注册审核",
+        "src": "registMa/newRegist.jsp"
+      },
+      {
+        "id": 502,
+        "text": "已通过注册",
+        "src": "registMa/passedRegist.jsp"
+      },
+      {
+        "id": 503,
+        "text": "未通过注册",
+        "src": "registMa/failRegist.jsp"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "text": "系统管理",
+    "src": "",
+    "state": "closed",
+    "children": [
+      {
+        "id": 601,
+        "text": "用户管理",
+        "src": "path/touser"
+      },
+      {
+        "id": 602,
+        "text": "角色管理",
+        "src": "path/torole"
+      },
+      {
+        "id": 603,
+        "text": "模块管理",
+        "src": "path/tomodule"
+      },
+      {
+        "id": 604,
+        "text": "操作权限",
+        "src": "path/toauthor"
+      },
+      {
+        "id": 605,
+        "text": "流程管理",
+        "src": "flow/toFlowMa"
+      },
+      {
+        "id": 606,
+        "text": "数据字典",
+        "src": "path/todic"
+      },
+      {
+        "id": 607,
+        "text": "合同模板管理",
+        "src": "path/tocon"
+      }
+    ]
+  }
+]

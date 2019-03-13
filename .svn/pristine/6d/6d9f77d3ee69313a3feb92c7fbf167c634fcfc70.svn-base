@@ -1,0 +1,591 @@
+package com.sys.controller.app;
+
+import com.google.common.collect.Maps;
+import com.sys.common.PropertiesUtil;
+import com.sys.common.StringUtils;
+import com.sys.pojo.ApplyUserinfo;
+import com.sys.pojo.ParmItem;
+import com.sys.pojo.apply.Apply;
+import com.sys.pojo.apply.ApplyButie;
+import com.sys.pojo.apply.Approve;
+import com.sys.service.ApplyUserinfoService;
+import com.sys.service.FlowService;
+import com.sys.service.ParmItemService;
+import com.sys.service.apply.*;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.task.TaskDefinition;
+import org.activiti.engine.task.Task;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+
+/**
+ * @author hwx
+ * @CopyRight (C) 江苏乳虎
+ * @date 2019/1/4 0004
+ * @desc
+ */
+@Controller
+@RequestMapping("/appApply")
+public class AppApplyController {
+    @Autowired
+    private ApplyChangeService applyChangeService;
+    @Autowired
+    private ApplyFamilyMemberService applyFamilyMemberService;
+
+    @Autowired
+    private ApplyButieService applyButieService;
+
+    @Autowired
+    private ApplyService applyService;
+
+    @Autowired
+    private ApproveService approveService;
+
+
+    @Autowired
+    private ParmItemService parmItemService;
+
+    @Autowired
+    ApproveService appoveService;
+    @Autowired
+    private TaskService taskService;
+    @Autowired
+    private ApplyUserinfoService applyUserinfoService;
+    @Autowired
+    private FlowService flowService;
+
+
+    /**
+     * 跳转到申请须知页面
+     * @param applytype
+     * @return
+     */
+    @RequestMapping("/toapptype")
+    public ModelAndView toAppType(int applytype, HttpServletRequest request){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("applytype",applytype);
+        /*如果是经适房的申请，先判断在之前两年内是否存在退房的经适房的记录;如果存在，则不得申请*/
+        if(applytype==1){
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.YEAR,-2);
+            ApplyUserinfo applyUserinfo = (ApplyUserinfo)request.getSession().getAttribute("applyUserinfo");
+
+            Map<String, Object> conditionMap = Maps.newHashMap();
+            conditionMap.put("sfzh",applyUserinfo.getSfzh());
+            conditionMap.put("approveExist","no");
+            int oldDataCount = this.applyFamilyMemberService.selectCountByMap(conditionMap);
+            /*属于老数据用户，需要判断是否存在取消保障的经适房；
+             * 如果存在，则需要判断退房时间是否超过两年，目前还没有依据*/
+            if(oldDataCount>0){
+
+            }
+            /*设置查询条件*/
+            //Map<String,Object> conditionMap = Maps.newHashMap();
+            conditionMap.put("date",calendar.getTime());//查询日期
+            conditionMap.put("sfzh",applyUserinfo.getSfzh());//身份证号
+            conditionMap.put("acType",7);//记录类别;7为退房
+            conditionMap.put("acApplyType", PropertiesUtil.getApplyTypeProperties("jingsf"));//申请业务类别
+            int count = applyChangeService.selectCountByMap(conditionMap);//查询个数
+            //判断是否存在两年内的年审退房记录
+            if(count>0){
+                modelAndView.addObject("message","存在您两年内的经适房退房记录");
+                modelAndView.setViewName("zfApp/message/message");
+            }else{
+                modelAndView.addObject("applyType",0);
+                modelAndView.setViewName("zfApp/applyList/applyAdd/jsfAdd");
+            }
+        }else{
+            if (applytype == 5){
+                modelAndView.setViewName("zfApp/applyList/applyAdd/xjyAdd");
+            }else if(applytype==4){
+                modelAndView.setViewName("zfApp/applyList/applyAdd/wlhAdd");
+            }else if(applytype==3){
+                modelAndView.addObject("applyType",1);
+                modelAndView.setViewName("zfApp/applyList/applyAdd/dbAdd");
+            }else if(applytype==2){
+                modelAndView.setViewName("zfApp/applyList/applyAdd/btAdd");
+            }
+        }
+        return modelAndView;
+    }
+
+
+
+
+    /**
+     * 跳到到申请发起页面
+     *
+     * @return
+     */
+    @RequestMapping("/toAppForm")
+    @ResponseBody
+    public String toApplyType(HttpServletRequest request) {
+
+        ParmItem parmItem = parmItemService.selectSwitch();
+        /*申请开关为设置为否，或者为null，则提示申请通道开关未设置，不允许申请*/
+        if (parmItem==null  || !"是".equals(parmItem.getPiItemname())){
+            request.setAttribute("message", "申请通道开关尚未设置");
+            return "申请通道开关尚未设置";
+        }
+        /*申请单中的老数据对应的用户申请数据*/
+        ApplyUserinfo applyUserinfo = (ApplyUserinfo) request.getSession().getAttribute("applyUserinfo");
+        String userid = applyUserinfo.getUserid();
+
+        String returnResult = "success";
+        Map<String, Object> conditionMap = Maps.newHashMap();
+        conditionMap.put("sfzh",applyUserinfo.getSfzh());
+        conditionMap.put("approveExist","no");
+        int oldDataCount = this.applyFamilyMemberService.selectCountByMap(conditionMap);
+        /*oldDataCount>0表示用户存在老数据，老的申请单（判断依据：存在家庭成员，并且家庭成员表中对应的申请id在审批
+        单中不存在）*/
+        if(oldDataCount>0){
+            conditionMap.put("approveExist","yes");
+            int newDataCount = this.applyFamilyMemberService.selectCountByMap(conditionMap);
+            /*老用户没有在新系统中发起过申请，则不存在审批单记录*/
+            if(newDataCount==0){
+                conditionMap.remove("approveExist");
+                /*获取申请单类型和状态*/
+                List<Map<String,Object>> resultMap = this.applyFamilyMemberService.selectApplyMap(conditionMap);
+                String applyType = (String)resultMap.get(0).get("APPTYPE");//申请类型
+                String applyZT = ""+resultMap.get(0).get("APPZT");//申请状态
+                /*如果为保障中的状态*/
+                if(applyZT.equals("4")){
+                    /*如果为保障中的低保特困公租房或者补贴，则可以继续申请另一种类别*/
+                    if(applyType.equals(PropertiesUtil.getApplyTypeProperties("butie"))
+                            || applyType.equals(PropertiesUtil.getApplyTypeProperties("gongzf"))){
+                        request.setAttribute("appType", applyType);
+                    }else{
+                        /*保障中的其他情况均不能申请*/
+                        request.setAttribute("message", "系统中存在您保障中的申请信息，请参考申请记录一栏");
+                        returnResult = "系统中存在您保障中的申请信息，请参考申请记录一栏";
+                    }
+                }else if(!applyZT.equals("5")){
+                    /*其他非保障结束状态的申请单均不能申请*/
+                    request.setAttribute("message", "系统中存在您保障中的申请信息，请参考申请记录一栏");
+                    returnResult = "系统中存在您保障中的申请信息，请参考申请记录一栏";
+                }
+            }else{
+                returnResult=setCommonResult(request);
+            }
+        }else{
+            //以下为新用户的处理
+            returnResult=setCommonResult(request);
+        }
+        return returnResult;
+    }
+
+
+    private String setCommonResult(HttpServletRequest request){
+        String returnResult="success";
+        Map<String,Object> conditionMap = Maps.newHashMap();
+       // 老数据用户发起过申请（之前老数据申请单状态已更新为5，即保障结束后，重新发起的申请）
+        ApplyUserinfo applyUserinfo = (ApplyUserinfo) request.getSession().getAttribute("applyUserinfo");
+        conditionMap.put("userid", applyUserinfo.getUserid());
+        conditionMap.put("applyTypeNotLike", "ns");//非年审审批单查询
+        conditionMap.put("applyStateNotLike", "驳回");//审批单的状态不是驳回
+        //conditionMap.put("applyZtEqual",5);//审批单对应的申请单状态是5
+        int approveCount = approveService.findCountByMap(conditionMap);
+        //用户存在的状态不是驳回也不是年审的审批单大于1的话，则不能再申请
+        /*if(approveCount>1){
+            request.setAttribute("message", "您已经发起过申请，不能再次申请。请参考申请记录一栏");
+            returnResult = "您已经发起过申请，不能再次申请。请参考申请记录一栏";
+        }else*/
+        if (approveCount > 0){
+            conditionMap.put("applyZtEqual", 5);//审批单对应的申请单状态是5
+            int applyQuitCount = approveService.findCountByMap(conditionMap);//查询保障结束的申请信息
+            if (applyQuitCount != approveCount) {//如果审批单中对应的申请单不全为保障结束，即还存在其他状态的审批单
+                int notQuitCount = approveCount - applyQuitCount;//状态不为保障结束的申请单
+                if (notQuitCount == 1) {//只存在一个申请单
+                    conditionMap.remove("applyZtEqual");
+                    conditionMap.put("applyZtLess",5);
+                    Approve approve = approveService.findByMap(conditionMap);//获取原有的审批单
+                    String appType = approve.getAptype();//获取已经存在的申请类别
+                    boolean flag = false;
+                   /* 如果之前的申请单位补贴或者低保特困公租房，并且是在保障中的状态，那么flag为true，用户可以继续申请
+                     * 另一类的申请类型，诸如低保特困公租房在保障中，则可以申请补贴*/
+                    if (appType.equals(PropertiesUtil.getApplyTypeProperties("butie"))) {
+                        ApplyButie applyButie = this.applyButieService.selectById(approve.getAplid());
+                        if (4 == applyButie.getAbZt()) {
+                            flag = true;
+                        }
+                    } else if (appType.equals(PropertiesUtil.getApplyTypeProperties("gongzf"))) {
+                        Apply apply = this.applyService.selectById(approve.getAplid());
+                        if (4 == apply.getApZt()) {
+                            flag = true;
+                        }
+                    }
+                    //如果flag为true，则可以继续发起申请，否则不能申请
+                    if (flag) {
+                        request.setAttribute("appType", appType);
+                    } else {
+                            /*当申请类别为经适房，并且zt状态为6的时候，依然可以申请；6视为经适房轮候或者待摇号状态过期，
+                            被操作员取消*/
+                        returnResult = "您已经发起过申请，不能再次申请。请参考申请记录一栏";
+                        if (appType.equals(PropertiesUtil.getApplyTypeProperties("jingsf"))) {
+                            Apply apply = this.applyService.selectById(approve.getAplid());
+                            if (6 == apply.getApZt()) {
+                                returnResult = "success";
+                            }
+                        }
+                        request.setAttribute("message", "您已经发起过申请，不能再次申请。请参考申请记录一栏");
+                    }
+                }else{
+                    returnResult = "您已经发起过申请，不能再次申请。请参考申请记录一栏";
+                }
+            }
+        }
+        return  returnResult;
+    }
+
+
+
+    @RequestMapping("/h5FindPerApply")
+    @ResponseBody
+    public Object h5FindPerApply(HttpServletRequest request){
+        ModelAndView modelAndView = new ModelAndView();
+//        ApplyUserinfo applyUserinfo = (ApplyUserinfo)request.getSession().getAttribute("applyUserinfo");
+        String sqbh = request.getParameter("sqbh");
+        String sfzh = request.getParameter("sfzh");
+        Map<String,Object> map=new HashMap();
+
+        map.put("sfzh",sfzh);
+        map.put("sqbh",sqbh);
+
+        Approve appove=appoveService.h5FindPerApply(map);
+        modelAndView.addObject("appove",appove);
+        modelAndView.addObject("apptype",appove.getAtype());
+        modelAndView.setViewName("zfApp/applyList/applyDetail");
+        return modelAndView;
+    }
+
+    /**
+     * 跳转到个人审核页面
+     * @return
+     */
+    @RequestMapping("appViewApprove")
+    public ModelAndView appViewApprove(HttpServletRequest request){
+
+        /*参数保存于modelview中*/
+        ModelAndView modelAndView = new ModelAndView();
+
+        String applyType = request.getParameter("applyType");//获取申请类型
+        String applyId = request.getParameter("applyId");//获取申请单id
+        String processInstanceId = request.getParameter("processInstanceId");//获取流程实例id
+        String chengxin = request.getParameter("chengxin");//获取流程实例id
+
+        /*通过流程实例查到正在审批的节点task*/
+        if(!StringUtils.isEmpty(processInstanceId)){
+            Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).
+                    singleResult();
+            if(task.getName().indexOf(PropertiesUtil.getFlowProperties("reauditname"))!=-1){
+                modelAndView.addObject("yuanjianFlag",1);
+            }
+        }
+
+        modelAndView.addObject("applyType",applyType);
+        modelAndView.addObject("applyId",applyId);
+        modelAndView.addObject("processInstanceId",processInstanceId);
+        modelAndView.addObject("chengxin",chengxin);
+
+        if(!StringUtils.isEmpty(processInstanceId)){
+            /*如果当前节点的下一个节点含有“原件复审”字样，则认为是需要发送原件复审短信*/
+            List<TaskDefinition> taskDefinitionList = flowService.getTaskDefinitionList(processInstanceId);
+            if(taskDefinitionList!=null && !taskDefinitionList.isEmpty()){
+                String taskname = taskDefinitionList.get(0).getNameExpression().getExpressionText();
+                /*是否是原件复审节点*/
+                if (taskname.indexOf(PropertiesUtil.getFlowProperties("reauditname"))!=-1) {
+                    modelAndView.addObject("reaudit",0);
+                }else{
+                    modelAndView.addObject("reaudit",1);
+                }
+            }else{
+                if(applyType.equals(PropertiesUtil.getApplyTypeProperties("butie"))){
+                    Map<String,Object> conditionMap = Maps.newHashMap();
+                    conditionMap.put("processInstanceId",processInstanceId);
+                    Approve approve = this.approveService.findByMap(conditionMap);//审批单
+                    ApplyUserinfo applyUserinfo = this.applyUserinfoService.selectById(approve.getApluserid());//查询申请用户
+                    // ScheduleJobServiceImpl.java
+                    conditionMap.put("sfzh",applyUserinfo.getSfzh());//身份证号
+                    conditionMap.put("apSqlb",3);//申请类别为低保特困公租房
+                    Apply apply = this.applyService.selectByMap(conditionMap);
+                    if(apply!=null){
+                        modelAndView.addObject("gzfExt",1);
+                    }
+                }
+
+                modelAndView.addObject("reaudit",2);
+            }
+        }
+
+        /*根据申请类型，跳转到不同类型页面进行反写*/
+        if(applyType.equals(PropertiesUtil.getApplyTypeProperties("jingsf"))){
+            modelAndView.setViewName("zfApp/applyList/applyView/jsfView");
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("butie"))){
+            modelAndView.setViewName("zfApp/applyList/applyView/btView");
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("gongzf"))){
+            modelAndView.setViewName("zfApp/applyList/applyView/dbView");
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("wailaiwg"))){
+            modelAndView.setViewName("zfApp/applyList/applyView/wlhView");
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("xinjy"))){
+            modelAndView.setViewName("zfApp/applyList/applyView/xjyView");
+        }
+        return modelAndView;
+    }
+
+    /**
+     * 跳转到个人审核页面
+     * @return
+     */
+    @RequestMapping("appUpdate")
+    public ModelAndView appUpdate(HttpServletRequest request){
+
+        String applyType = request.getParameter("applyType");//获取申请类型
+        String applyId = request.getParameter("applyId");//获取申请单id
+//        String processInstanceId = request.getParameter("processInstanceId");//获取流程实例id
+        System.out.println("applyType"+applyType);
+        System.out.println("applyId"+applyId);
+        /*参数保存于modelview中*/
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("applyType",applyType);
+        modelAndView.addObject("applyId",applyId);
+//        modelAndView.addObject("processInstanceId",processInstanceId);
+
+        /*根据申请类型，跳转到不同类型页面进行反写*/
+        if(applyType.equals(PropertiesUtil.getApplyTypeProperties("jingsf"))){
+            modelAndView.setViewName("zfApp/applyList/applyEdit/jsfEdit");
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("butie"))){
+            modelAndView.setViewName("zfApp/applyList/applyEdit/btEdit");
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("gongzf"))){
+            modelAndView.setViewName("zfApp/applyList/applyEdit/dbEdit");
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("wailaiwg"))){
+            modelAndView.setViewName("zfApp/applyList/applyEdit/wlhEdit");
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("xinjy"))){
+            modelAndView.setViewName("zfApp/applyList/applyEdit/xjyEdit");
+        }
+        return modelAndView;
+    }
+
+
+
+    /**
+     * 跳到个人年审列表页面
+     *
+     * @return
+     */
+    @RequestMapping("appPerNsApplyList")
+    @ResponseBody
+    public Object appPerNsApplyList(HttpServletRequest request) {
+        /*在进入年审页面前，先获取用户自己的初审信息*/
+        ApplyUserinfo applyUserinfo = (ApplyUserinfo) request.getSession().getAttribute("applyUserinfo");
+        Map<String, Object> conditionMap = Maps.newHashMap();
+        conditionMap.put("nsSfzh",applyUserinfo.getSfzh());
+        conditionMap.put("nsStateNotLike","驳回");
+        conditionMap.put("nsApplyType", "ns");
+        conditionMap.put("nsDateEqual",new Date());
+        List<Map<String,Object>> mapList = this.approveService.selectApplyNsMap(conditionMap);
+
+        /*跳转路径和返回信息*/
+        String goUrl = "zfApp/audioList/audioList";
+        String message = "";
+
+
+
+        /*申请类别和申请单id*/
+        String applyType = "";
+        String applyId = "";
+
+        /*通过用户id查询审批单*/
+        if (mapList.size()>0) {
+            /*approveCount大于0则代表已经发起了今年的年审*/
+            request.setAttribute("haveHouse", 0);//申请单已经有分房标志
+            //goUrl = "applicationForm/message";
+            //message = "您申请的经济适用房，不用参加年审申请";
+
+        }else{
+            /*查看用户是否存在在保障中的申请单*/
+            conditionMap.remove("nsDateEqual");
+            conditionMap.remove("nsApplyType");
+            conditionMap.remove("nsStateNotLike");
+            mapList = this.approveService.selectApplyNsMap(conditionMap);
+            if(mapList.size()>0){
+                /*用户存在在保障中的申请单,但不存在今年的年审单，则可以发起年审*/
+                Map<String,Object> resultMap = mapList.get(0);
+                applyId=(String)resultMap.get("APPID");
+                applyType=(String)resultMap.get("APPTYPE");
+                request.setAttribute("haveHouse", 1);//申请单已经有分房标志
+            }else{
+                /*查看用户是否有其他种情况的年审记录，诸如驳回的、往年的*/
+                conditionMap.put("nsApplyType", "ns");
+                mapList = this.approveService.selectApplyNsMap(conditionMap);
+                if(mapList.size()==0){
+                    goUrl = "falid";
+                    message = "您不存在在保障中的申请单，请查看申请记录一栏";
+                }else{
+                    request.setAttribute("haveHouse", 0);//不能新增年审的标记
+                }
+            }
+        }
+        Map<String,Object> map=new HashMap<String, Object>();
+        map.put("goUrl",goUrl);
+        map.put("message",message);
+        map.put("applyid", applyId);
+        map.put("applyType", applyType);
+        map.put("message", message);
+        /*request.setAttribute("applyid", applyId);
+        request.setAttribute("applyType", applyType);
+        request.setAttribute("message", message);*/
+        return map;
+
+    }
+
+
+
+    @RequestMapping("/h5FindPerAudit")
+    @ResponseBody
+    public Object h5FindPerAudit(HttpServletRequest request){
+        ModelAndView modelAndView = new ModelAndView();
+//        ApplyUserinfo applyUserinfo = (ApplyUserinfo)request.getSession().getAttribute("applyUserinfo");
+        String sqbh = request.getParameter("sqbh");
+        String applyid = request.getParameter("applyid");
+        Map<String,Object> map=new HashMap();
+
+        map.put("applyid",applyid);
+        map.put("sqbh",sqbh);
+
+        Approve appove=appoveService.h5FindPerAudio(map);
+        modelAndView.addObject("appove",appove);
+        modelAndView.addObject("apptype",appove.getAtype());
+        modelAndView.setViewName("zfApp/audioList/audioDetail");
+        return modelAndView;
+    }
+
+    /**
+     * 跳转到个人审核页面
+     * @return
+     */
+    @RequestMapping("appAuditViewApprove")
+    public String appAuditViewApprove(HttpServletRequest request){
+        String applyType = request.getParameter("applyType");//获取申请类型
+        String applyId = request.getParameter("applyId");//获取申请单id
+        String processInstanceId = request.getParameter("processInstanceId");//获取流程实例id
+        String chengxin = request.getParameter("chengxin");//获取流程实例id
+
+        System.out.println("applyType"+applyType);
+        System.out.println("applyId"+applyId);
+        System.out.println("processInstanceId"+processInstanceId);
+
+
+        String toPath = "";
+//        if(PropertiesUtil.getApplyTypeProperties("jingsf").equals(applyType)){//经济适用房
+//            toPath = "houseAudit/auditDialog/approveJsf";
+//        }else
+
+        if(PropertiesUtil.getApplyTypeProperties("butie").equals(applyType)){//廉租房--低保特困补贴
+            toPath = "houseAudit/auditDialog/approveButie";
+            if(!StringUtils.isEmpty(processInstanceId)){
+                /*如果当前节点的下一个节点为空，则当前节点为最后一个审批节点，设置reaudit标志给前端，用于发送通过审批通知*/
+                List<TaskDefinition> taskDefinitionList = flowService.getTaskDefinitionList(processInstanceId);
+                if(taskDefinitionList!=null && !taskDefinitionList.isEmpty()){
+                    request.setAttribute("reaudit",0);
+                }else{
+                    /*如果是补贴的审批，*/
+                    Map<String,Object> map = Maps.newHashMap();
+                    map.put("processInstanceId",processInstanceId);//流程实例id
+                    Approve approve = this.approveService.findByMap(map);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(approve.getApldate());
+                    request.setAttribute("year",calendar.get(Calendar.YEAR));
+                    request.setAttribute("reaudit",1);
+                }
+            }
+        }else if(PropertiesUtil.getApplyTypeProperties("gongzf").equals(applyType)){//公租房--低保特困公租房
+            toPath = "zfApp/audioList/audioView/dbView";
+        } else if (PropertiesUtil.getApplyTypeProperties("wailaiwg").equals(applyType)) {//外来务工--外来务工公租房
+            toPath = "zfApp/audioList/audioView/wlhView";
+        }else if(PropertiesUtil.getApplyTypeProperties("xinjy").equals(applyType)){//新就业--新就业公租房
+            toPath = "zfApp/audioList/audioView/xjyView";
+        }else if(PropertiesUtil.getApplyTypeProperties("nsgongzf").equals(applyType)){//公租房--低保特困公租房
+            toPath = "zfApp/audioList/audioView/dbView";
+        } else if (PropertiesUtil.getApplyTypeProperties("nswailaiwg").equals(applyType)) {//外来务工--外来务工公租房
+            toPath = "zfApp/audioList/audioView/wlhView";
+        }else if(PropertiesUtil.getApplyTypeProperties("nsxinjy").equals(applyType)){//新就业--新就业公租房
+            toPath = "zfApp/audioList/audioView/xjyView";
+        }else if(PropertiesUtil.getApplyTypeProperties("nsbutie").equals(applyType)){//廉租房--低保特困补贴
+            toPath = "zfApp/audioList/audioView/btView";
+            if(!StringUtils.isEmpty(processInstanceId)){
+                /*如果当前节点的写一个节点为空，则当前节点为最后一个审批节点，设置reaudit标志给前端，用于发送通过审批通知*/
+                List<TaskDefinition> taskDefinitionList = flowService.getTaskDefinitionList(processInstanceId);
+                if(taskDefinitionList!=null && !taskDefinitionList.isEmpty()){
+                    request.setAttribute("reaudit",0);
+                }else{
+                    /*如果是补贴的审批，*/
+                    Map<String,Object> map = Maps.newHashMap();
+                    map.put("processInstanceId",processInstanceId);//流程实例id
+                    Approve approve = this.approveService.findByMap(map);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(approve.getApldate());
+                    request.setAttribute("year",calendar.get(Calendar.YEAR));
+                    request.setAttribute("reaudit",1);
+                }
+            }
+        }
+        request.setAttribute("applyId",applyId);
+        request.setAttribute("applyType",applyType);
+        request.setAttribute("processInstanceId",processInstanceId);
+        request.setAttribute("chengxin",chengxin);
+        return  toPath;
+
+    }
+
+    /**
+     * 跳转到个人审核页面
+     * @return
+     */
+    @RequestMapping("appAuditUpdate")
+    public String appAuditUpdate(HttpServletRequest request){
+
+
+        String applyType = request.getParameter("applyType");//获取申请类型
+        String applyId = request.getParameter("applyId");//获取申请单id
+        String toPath = "";
+        if(applyType.equals(PropertiesUtil.getApplyTypeProperties("nsbutie"))){
+            toPath="zfApp/audioList/audioEdit/btEdit";
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("nsgongzf"))){
+            toPath="zfApp/audioList/audioEdit/dbEdit";
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("nswailaiwg"))){
+            toPath="zfApp/audioList/audioEdit/wlhEdit";
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("nsxinjy"))){
+            toPath="zfApp/audioList/audioEdit/xjyEdit";
+        }
+        request.setAttribute("applyId",applyId);
+        request.setAttribute("applyType",applyType);
+        return  toPath;
+
+    }
+
+    @RequestMapping("appAddNsApply")
+    public String appAddNsApply(String applyType,String applyid,HttpServletRequest request){
+        String toPath = "";
+        if(applyType.equals(PropertiesUtil.getApplyTypeProperties("wailaiwg"))){
+            toPath="zfApp/audioList/audioAdd/wlhAdd";
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("xinjy"))){
+            toPath="zfApp/audioList/audioAdd/xjyAdd";
+        }if(applyType.equals(PropertiesUtil.getApplyTypeProperties("butie"))){
+            toPath="zfApp/audioList/audioAdd/btAdd";
+        }if(applyType.equals(PropertiesUtil.getApplyTypeProperties("gongzf"))){
+            toPath="zfApp/audioList/audioAdd/dbAdd";
+        }
+        request.setAttribute("applyType",applyType);
+        request.setAttribute("applyid",applyid);
+        return  toPath;
+    }
+
+
+}

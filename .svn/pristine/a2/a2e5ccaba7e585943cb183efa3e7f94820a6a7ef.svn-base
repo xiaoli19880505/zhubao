@@ -1,0 +1,482 @@
+package com.sys.service;
+
+import com.sys.common.*;
+import com.sys.mapper.HisRentMapper;
+import com.sys.mapper.SourceHouseMapper;
+import com.sys.mapper.apply.*;
+import com.sys.pojo.SourceHouse;
+import com.sys.pojo.UserInfo;
+import com.sys.pojo.apply.*;
+import com.sys.service.lotnum.LotNumService;
+import com.sys.service.schedule.ScheduleJobDomain;
+import com.sys.service.schedule.ScheduleJobService;
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+/**
+ * @author hwx
+ * @CopyRight (C) 江苏乳虎
+ * @date 2018/10/22 0022
+ * @desc
+ */
+@Service
+public class SourceHouseService extends BaseService<SourceHouse>{
+    @Autowired
+    private SourceHouseMapper sourceHouseMapper;
+    @Autowired
+    private ApplyMapper applyMapper;
+    @Autowired
+    private ApplyForForeignMapper applyForForeignMapper;
+    @Autowired
+    private ApplyForgraDuateMapper applyForgraDuateMapper;
+    @Autowired
+    private ApplyButieMapper applyButieMapper;
+    @Autowired
+    private ApproveMapper approveMapper;
+    @Autowired
+    private ApplyChangeMapper applyChangeMapper;
+
+    @Autowired
+    private DynamicallyGeneratedWordUtil dynamicallyGeneratedWordService;
+
+    @Autowired
+    private ScheduleJobService scheduleJobService;
+
+    @Autowired
+    private LotNumService lotNumService;
+
+    @Autowired
+    private HisRentMapper hisRentMapper;
+
+    public List<SourceHouse> findSourceHourses(){
+        return sourceHouseMapper.findSourceHourses();
+    }
+
+    public int updateSourceHouse(String ssq,String houseid){
+
+        try {
+            List<SourceHouse> list=new ArrayList<SourceHouse>();
+            String[] array=houseid.split(",");
+            for (String fwid: array) {
+                SourceHouse sourceHouse=new SourceHouse();
+                sourceHouse.setShSsq(ssq);
+                sourceHouse.setShFwid(fwid);
+                list.add(sourceHouse);
+            }
+            sourceHouseMapper.updateSourceHourse(list);
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+
+
+    }
+
+    @Transactional(propagation= Propagation.REQUIRES_NEW)
+    public  int saveSourceHouse(String xmid,String lpid,String fwidlist,String fylx){
+        String fw []=fwidlist.split(",");
+        List<SourceHouse> list=new ArrayList<SourceHouse>();
+        for (String  fwid:fw){
+            SourceHouse sourceHouse=new SourceHouse();
+            sourceHouse.setShFwid(fwid);
+            sourceHouse.setShId(CommonUtils.getUUIDWith_());
+            sourceHouse.setShLpid(lpid);
+            sourceHouse.setShXmid(xmid);
+            sourceHouse.setShFylx(fylx);
+            if ("3".equals(fylx)){//如果是公租房类型，所属区是市区
+                sourceHouse.setShSsq("0");
+            }
+            list.add(sourceHouse);
+        }
+        Integer addcount=this.sourceHouseMapper.saveSourceHouse(list);
+        if (addcount>0){
+            return  1;
+        }
+        return 0;
+    }
+
+
+
+    public int updateSourceHouseApplyer(String applyid,String houseid,String aptype){
+        try {
+            List<String> list=Arrays.asList(houseid.split(","));
+            Map<String,Object> map=new HashMap<String, Object>();
+            map.put("applyid",applyid);
+            map.put("list",list);
+            this.sourceHouseMapper.updateSourceHouseApplyer(map);
+            map.remove("houseid");
+            map.put("lc",4);
+            if(aptype.equals(PropertiesUtil.getApplyTypeProperties("jingsf"))
+                    ||aptype.equals(PropertiesUtil.getApplyTypeProperties("gongzf"))){//经济适用房--1或者公租房--3
+                applyMapper.updateApLC(map);
+            }else if(aptype.equals(PropertiesUtil.getApplyTypeProperties("wailaiwg"))){//外来务工公租房--4
+                applyForForeignMapper.updateApLC(map);
+
+            }else if(aptype.equals(PropertiesUtil.getApplyTypeProperties("xinjy"))){//新就业公租房--5
+                applyForgraDuateMapper.updateApLC(map);
+            }
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+
+
+
+    }
+
+    public int updateSourceHouseByApplyid(String applyid,String houseid){
+        try {
+            Map<String,Object> map=new HashMap<String, Object>();
+            map.put("applyid",applyid);
+            List<String> list=Arrays.asList(houseid.split(","));
+            map.put("flag",1);
+            map.put("list",list);
+            this.sourceHouseMapper.updateSourceHouseRetrunHouse(map);
+            this.sourceHouseMapper.updateSourceHouseApplyer(map);
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+
+
+
+    }
+
+
+    public String getReturnHpuseFile(String applyid,HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Map<String,Object> map=new HashMap<String, Object>();
+        map.put("applyid",applyid);
+        List<Approve> approveList=approveMapper.findTFSpForm(map);
+        String filePath = request.getSession().getServletContext().getRealPath("/");
+        if(approveList==null){
+            return "审批单不存在";
+        }
+        Approve approve=null;
+        if(approveList.size()==1){
+            approve=approveList.get(0);
+        }else{
+            approve = approveList.get(0);//获取初始元素值，用来做比较
+            String roomNom=approve.getF_ronum();
+//            for (Approve apove : approveList) {//person代表每一个元素值。
+//                if (approve.getF_conacre().compareTo(apove.getF_conacre())==-1) {
+//                    approve=apove;
+//                }
+//            }
+            for (int i = 1; i <approveList.size() ; i++) {
+                roomNom=roomNom+"、"+approveList.get(i).getF_ronum();
+            }
+            approve.setF_ronum(roomNom);
+        }
+        UserInfo userInfo = (UserInfo)request.getSession().getAttribute("user");
+        updateReturnHouse(approve.getAtype(),applyid,approve.getAplbh(),userInfo.getUserid(), request);
+
+
+        Map<String, Object> inputMap = new HashMap<String, Object>();
+        inputMap.put("year",request.getParameter("year"));
+        inputMap.put("htQue",request.getParameter("htQue"));
+        inputMap.put("username",toParseSpace(approve.getUsername()));
+        inputMap.put("sfzh",toParseSpace(approve.getSfzh()));
+        inputMap.put("poxm",request.getParameter("poxm"));
+        inputMap.put("posfzh",request.getParameter("posfzh"));
+        inputMap.put("sh_ssq",toParseSpace(approve.getSh_ssq()));
+        inputMap.put("hao",request.getParameter("hao"));
+        inputMap.put("linktel",toParseSpace(approve.getLinktel()));
+        inputMap.put("ssq",toParseSpace(approve.getSsq()));
+        inputMap.put("ssj",toParseSpace(approve.getSsj()));
+        inputMap.put("shequ",request.getParameter("shequ"));
+        inputMap.put("f_community",toParseSpace(approve.getF_community()));
+        inputMap.put("f_buname",toParseSpace(approve.getF_buname()));
+        inputMap.put("f_cecode",toParseSpace(approve.getF_cecode()));
+        inputMap.put("f_ronum",toParseSpace(approve.getF_ronum()));
+        Date date = new Date();
+        String templetName="市区公共租赁住房退房审批表.xml";
+        String targetName = templetName.replace("xml", "doc");//生成文件名称
+        String templateFilePath = filePath+File.separator + "housereturn"
+                + File.separator + "template"+File.separator+templetName;//模板文件全路径
+        String tempLetDir = templateFilePath.replace("/" + templetName,"");//模板路径
+        String targetWordDir = filePath + "housereturn" + File.separator +
+                "template" + File.separator + "word"
+                + File.separator + date.getTime();
+        String dirAndName = targetWordDir + File.separator + targetName;//目标全路径
+        String result = "成功";
+        try {
+        dynamicallyGeneratedWordService.genWordFile(tempLetDir, templetName, targetWordDir, targetName, inputMap);
+        //从数据库中查出文件位置和文件名字
+        String pdfPath = filePath + "contract" + File.separator +
+                "tempContract" + File.separator + "pdf"
+                + File.separator + date.getTime() + File.separator + templetName.replace("xml","pdf");
+        String p_path="contract" + File.separator +
+                "tempContract" + File.separator + "pdf"
+                + File.separator + date.getTime() + File.separator + templetName.replace("xml","pdf");
+        try {
+            //转换成PDF
+            PDFUtil.word2PDF(dirAndName,pdfPath);
+            File file = new File(pdfPath);
+            if (!file.exists()) {
+                return "该文档生成pdf失败,请下载文档查看";
+            }
+            dirAndName = pdfPath;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+//        FileUtils.buildResponseEntity(response, new File(pdfPath), "application/pdf");
+            result=p_path;
+        }catch (Exception e) {
+            result = "失败";
+            e.printStackTrace();
+            throw e;
+        }
+        return result;
+    }
+
+    /**
+     * 经适房退房打印
+     * @param applyid
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public String getJSFHouseFile(String applyid,HttpServletRequest request) throws Exception {
+        Map<String,Object> map=new HashMap<String, Object>();
+        map.put("applyid",applyid);
+        List<Approve> approveList=approveMapper.findJSFForm(map);
+        String filePath = request.getSession().getServletContext().getRealPath("/");
+        if(approveList==null){
+            return "审批单不存在";
+        }
+        Approve approve=null;
+        if(approveList.size()==1){
+            approve=approveList.get(0);
+        }else{
+            approve = approveList.get(0);//获取初始元素值，用来做比较
+            String roomNom=approve.getF_ronum();
+//            for (Approve apove : approveList) {//person代表每一个元素值。
+//                if (approve.getF_conacre().compareTo(apove.getF_conacre())==-1) {
+//                    approve=apove;
+//                }
+//            }
+            for (int i = 1; i <approveList.size() ; i++) {
+                roomNom=roomNom+"、"+approveList.get(i).getF_ronum();
+            }
+            approve.setF_ronum(roomNom);
+        }
+
+        UserInfo userInfo = (UserInfo)request.getSession().getAttribute("user");
+        updateReturnHouse(approve.getAtype(),applyid,approve.getAplbh(),userInfo.getUserid(), request);
+
+
+
+        Map<String, Object> inputMap = new HashMap<String, Object>();
+        inputMap.put("year",request.getParameter("year"));
+        inputMap.put("htQue",request.getParameter("htQue"));
+        inputMap.put("username",toParseSpace(approve.getUsername()));
+        inputMap.put("sfzh",toParseSpace(approve.getSfzh()));
+        inputMap.put("poxm",request.getParameter("poxm"));
+        inputMap.put("posfzh",request.getParameter("posfzh"));
+        inputMap.put("sh_ssq",toParseSpace(approve.getSh_ssq()));
+        //        String pici=request.getParameter("pici");//经房第几期
+//        String sqjwh=request.getParameter("sqjwh");//社区
+//        String num=request.getParameter("num");//选房顺序号
+//        String yuanyin=request.getParameter("yuanyin");//退房原因
+        inputMap.put("pici",request.getParameter("pici"));
+        inputMap.put("linktel",toParseSpace(approve.getLinktel()));
+        inputMap.put("ssq",toParseSpace(approve.getSsq()));
+        inputMap.put("ssj",toParseSpace(approve.getSsj()));
+        inputMap.put("sqjwh",request.getParameter("sqjwh"));
+        inputMap.put("htbh",request.getParameter("htbh"));
+        inputMap.put("yuanyin",request.getParameter("yuanyin"));
+        inputMap.put("f_community",toParseSpace(approve.getF_community()));
+        inputMap.put("f_buname",toParseSpace(approve.getF_buname()));
+        inputMap.put("f_cecode",toParseSpace(approve.getF_cecode()));
+        inputMap.put("f_ronum",toParseSpace(approve.getF_ronum()));
+        inputMap.put("num",request.getParameter("num"));
+        Date date = new Date();
+        String templetName="徐州市经济适用住房退房审批表.xml";
+        String targetName = templetName.replace("xml", "doc");//生成文件名称
+        String templateFilePath = filePath+File.separator + "housereturn"
+                + File.separator + "template"+File.separator+templetName;//模板文件全路径
+        String tempLetDir = templateFilePath.replace("/" + templetName,"");//模板路径
+        String targetWordDir = filePath + "housereturn" + File.separator +
+                "template" + File.separator + "word"
+                + File.separator + date.getTime();
+        String dirAndName = targetWordDir + File.separator + targetName;//目标全路径
+        String result = "成功";
+        try {
+            dynamicallyGeneratedWordService.genWordFile(tempLetDir, templetName, targetWordDir, targetName, inputMap);
+            //从数据库中查出文件位置和文件名字
+            String pdfPath = filePath + "contract" + File.separator +
+                    "tempContract" + File.separator + "pdf"
+                    + File.separator + date.getTime() + File.separator + templetName.replace("xml","pdf");
+            String p_path="contract" + File.separator +
+                    "tempContract" + File.separator + "pdf"
+                    + File.separator + date.getTime() + File.separator + templetName.replace("xml","pdf");
+            try {
+                //转换成PDF
+                PDFUtil.word2PDF(dirAndName,pdfPath);
+                File file = new File(pdfPath);
+                if (!file.exists()) {
+                    return "该文档生成pdf失败,请下载文档查看";
+                }
+                dirAndName = pdfPath;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+//        FileUtils.buildResponseEntity(response, new File(pdfPath), "application/pdf");
+            result=p_path;
+        }catch (Exception e) {
+            result = "失败";
+            e.printStackTrace();
+            throw e;
+        }
+        return result;
+    }
+    private String toParseSpace(String str) {
+        if(StringUtils.isEmpty(str)){
+            return "";
+        }
+        return str;
+    }
+
+
+    public int updateReturnHouse(String atype,String applyid,String acSqbh,String userid,HttpServletRequest request){
+        try {
+            Map<String,Object> map=new HashMap<String, Object>();
+            map.put("lc",6);
+            map.put("applyid",applyid);
+            //map.put("flag",0);
+            map.put("zt",5);
+            if(PropertiesUtil.getApplyTypeProperties("gongzf").equals(atype)
+                   ||PropertiesUtil.getApplyTypeProperties("jingsf").equals(atype) ){//公租房--低保特困公租房
+                applyMapper.updateApLC(map);
+                lotNumService.updateApplyInfo(applyid,atype,request);
+            } else if (PropertiesUtil.getApplyTypeProperties("wailaiwg").equals(atype)) {//外来务工--外来务工公租房
+                applyForForeignMapper.updateApLC(map);
+            }else if(PropertiesUtil.getApplyTypeProperties("xinjy").equals(atype)){//新就业--新就业公租房
+                applyForgraDuateMapper.updateApLC(map);
+            }
+
+            map.remove("lc");
+            ApplyChange applyChange=new ApplyChange();
+            String acId = CommonUtils.getUUIDWith_();//id
+            applyChange.setAcId(acId);
+            applyChange.setAcApplyType(atype);
+            applyChange.setAcSqid(applyid);
+            applyChange.setAcType("7");
+            applyChange.setAcSqbh(acSqbh);
+            applyChange.setAcUserid(userid);
+            long currentTime = System.currentTimeMillis() + 5000;
+            applyChange.setAcTime(new Date(currentTime));
+            applyChangeMapper.insert(applyChange);
+            sourceHouseMapper.updateSourceHouseRetrunHouse(map);
+
+            String job_name=applyid;
+            ScheduleJobDomain scheduleJob = new ScheduleJobDomain();
+            scheduleJob.setJobGroup("group1");
+            scheduleJob.setJobName(job_name);
+            scheduleJobService.deleteJob(scheduleJob);
+            //修改历史记录退房时间
+            Map<String,Object> hismap=new HashMap<String, Object>();
+            hismap.put("sqid",applyid);
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            hismap.put("tfsj",sdf.format(date));
+            hisRentMapper.updateBySqid(hismap);
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    /**
+     * 选房确认单
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public String getConfirmFile(HttpServletRequest request) throws Exception {
+
+        String filePath = request.getSession().getServletContext().getRealPath("/");
+        String atype=request.getParameter("atype");
+        String ssq=request.getParameter("ssq");
+
+        Map<String, Object> inputMap = new HashMap<String, Object>();
+        inputMap.put("year",request.getParameter("year"));
+        inputMap.put("ssq",request.getParameter("ssq"));
+        inputMap.put("username",request.getParameter("username"));
+        inputMap.put("sfzh",request.getParameter("sfzh"));
+        inputMap.put("itName",request.getParameter("itName"));
+        inputMap.put("fBuname",request.getParameter("fBuname"));
+        inputMap.put("fCecode",request.getParameter("fCecode"));
+        inputMap.put("fRonum",request.getParameter("fRonum"));
+        inputMap.put("conacre",request.getParameter("conacre"));
+        inputMap.put("num",request.getParameter("num"));
+        String templetName=null;
+       if(atype.equals("1")){
+           if(ssq.equals("经济技术开发区")){
+               templetName="徐州市经济适用住房经开区选房确认单.xml";
+           }else{
+               templetName="徐州市经济适用住房选房确认单.xml";
+           }
+       }else if(atype.equals("2")){
+           templetName="徐州市公共租赁住房选房确认单低保特困.xml";
+       }else{
+           templetName="徐州市公共租赁住房选房确认单.xml";
+       }
+        Date date = new Date();
+        String targetName = templetName.replace("xml", "doc");//生成文件名称
+        String templateFilePath = filePath+File.separator + "housereturn"
+                + File.separator + "template"+File.separator+templetName;//模板文件全路径
+        String tempLetDir = templateFilePath.replace("/" + templetName,"");//模板路径
+        String targetWordDir = filePath + "housereturn" + File.separator +
+                "template" + File.separator + "word"
+                + File.separator + date.getTime();
+        String dirAndName = targetWordDir + File.separator + targetName;//目标全路径
+        String result = "成功";
+        try {
+            dynamicallyGeneratedWordService.genWordFile(tempLetDir, templetName, targetWordDir, targetName, inputMap);
+            //从数据库中查出文件位置和文件名字
+            String pdfPath = filePath + "contract" + File.separator +
+                    "tempContract" + File.separator + "pdf"
+                    + File.separator + date.getTime() + File.separator + templetName.replace("xml","pdf");
+            String p_path="contract" + File.separator +
+                    "tempContract" + File.separator + "pdf"
+                    + File.separator + date.getTime() + File.separator + templetName.replace("xml","pdf");
+            try {
+                //转换成PDF
+                PDFUtil.word2PDF(dirAndName,pdfPath);
+                File file = new File(pdfPath);
+                if (!file.exists()) {
+                    return "该文档生成pdf失败,请下载文档查看";
+                }
+                dirAndName = pdfPath;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+//        FileUtils.buildResponseEntity(response, new File(pdfPath), "application/pdf");
+            result=p_path;
+        }catch (Exception e) {
+            result = "失败";
+            e.printStackTrace();
+            throw e;
+        }
+        return result;
+    }
+
+}

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.QxRoleInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.sys.pojo.QxRoleInfo" >
+    <id column="QR_ID" property="qrId" jdbcType="VARCHAR" />
+    <result column="QR_QXINFOID" property="qrQxinfoid" jdbcType="VARCHAR" />
+    <result column="QR_ROLEID" property="qrRoleid" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from QX_DUTY_INFO
+    where QR_ID = #{qrId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.QxRoleInfo" >
+    insert into QX_DUTY_INFO (QR_ID, QR_QXINFOID, QR_ROLEID
+      )
+    values (#{qrId,jdbcType=VARCHAR}, #{qrQxinfoid,jdbcType=VARCHAR}, #{qrRoleid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.sys.pojo.QxRoleInfo" >
+    update QX_DUTY_INFO
+    set QR_QXINFOID = #{qrQxinfoid,jdbcType=VARCHAR},
+      QR_ROLEID = #{qrRoleid,jdbcType=VARCHAR}
+    where QR_ID = #{qrId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select QR_ID, QR_QXINFOID, QR_ROLEID
+    from QX_DUTY_INFO
+    where QR_ID = #{qrId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select QR_ID, QR_QXINFOID, QR_ROLEID
+    from QX_DUTY_INFO
+  </select>
+</mapper>

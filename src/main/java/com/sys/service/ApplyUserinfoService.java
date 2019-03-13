@@ -1,0 +1,409 @@
+package com.sys.service;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.sys.common.CommonUtils;
+import com.sys.common.PropertiesUtil;
+import com.sys.common.encrypt.AESUtil;
+import com.sys.mapper.ApplyUserinfoMapper;
+import com.sys.mapper.ParmItemMapper;
+import com.sys.mapper.apply.ApplyFamilyMemberMapper;
+import com.sys.pojo.ApplyUserinfo;
+import com.sys.pojo.ParmItem;
+import com.sys.pojo.RoleInfo;
+import com.sys.pojo.apply.*;
+import com.sys.service.apply.*;
+import org.activiti.engine.HistoryService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.task.Task;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author hwx
+ * @CopyRight (C) 江苏乳虎
+ * @date 2018/10/15 0015
+ * @desc
+ */
+@Service
+public class ApplyUserinfoService extends BaseService<ApplyUserinfo> {
+    @Autowired
+    ApplyUserinfoMapper applyUserinfoMapper;
+    @Autowired
+    ParmItemMapper parmItemMapper;
+    @Autowired
+    private ApplyFamilyMemberMapper applyFamilyMemberMapper;
+
+    @Autowired
+    private ApproveService approveService;
+
+    @Autowired
+    private ApplyFamilyMemberService applyFamilyMemberService;
+
+    @Autowired
+    private ParmItemService parmItemService;
+
+    @Autowired
+    private ApplyService applyService;
+
+    @Autowired
+    private TaskService taskService;
+
+    @Autowired
+    private HistoryService historyService;
+
+    @Autowired
+    private ApplyButieService applyButieService;
+
+    @Autowired
+    private ApplyForForeignService applyForForeignService;
+
+    @Autowired
+    private ApplyForgraDuateService applyForgraDuateService;
+
+    @Autowired
+    private ApplyNsService applyNsService;
+
+
+
+    public PageInfo<ApplyUserinfo> selectAll(Map map){
+        PageHelper.startPage(Integer.parseInt((String) map.get("page")),
+                Integer.parseInt((String) map.get("rows")));
+        List<ApplyUserinfo> list = applyUserinfoMapper.selectAll(map);
+        return new PageInfo<ApplyUserinfo>(list);
+    }
+
+
+     public ApplyUserinfo selectById(String userid) {
+        ApplyUserinfo applyUserinfo=applyUserinfoMapper.selectById(userid);
+        return applyUserinfo;
+    }
+
+     public  int insert(ApplyUserinfo applyUserinfo) {
+         Map<String, Object> map = new HashMap<String, Object>();
+         map.put("usercode", applyUserinfo.getUsercode());
+         map.put("sfzh", applyUserinfo.getSfzh());
+         int flag=5;
+         ApplyUserinfo applyUserinfo1 = this.applyUserinfoMapper.selectUserInfo(map);
+         if (applyUserinfo1 == null) {
+             applyUserinfo.setUserid(CommonUtils.getUUIDWith_());
+             applyUserinfo.setState("0");
+             Integer add = this.applyUserinfoMapper.insert(applyUserinfo);
+             if (add > 0) {
+                 flag = 1;
+                 /*更新家庭成员表中对应此注册用户的手机号码，主要针对的是老用户*/
+                 ApplyFamilyMember applyFamilyMember = new ApplyFamilyMember();
+                 applyFamilyMember.setAfmSfzh(applyUserinfo.getSfzh());
+                 applyFamilyMember.setAfmLxdh(applyUserinfo.getLinktel());
+                 List<ApplyFamilyMember> memberList = Lists.newArrayList();
+                 memberList.add(applyFamilyMember);
+                 applyFamilyMemberMapper.updateMemberBatch(memberList);
+                 return flag;
+             } else {
+                 flag = 0;
+                 return flag;
+             }
+         } else if (applyUserinfo1.getUsercode().equals(applyUserinfo.getUsercode())) {
+             flag = 2;
+             return flag;
+         } else if (applyUserinfo1.getSfzh().equals(applyUserinfo.getSfzh())) {
+             flag = 3;
+             return flag;
+         }
+         return flag;
+     }
+    public List<ApplyUserinfo> selectAllApp(Map map){
+        return  this.applyUserinfoMapper.selectAll(map);
+    }
+
+
+     public ApplyUserinfo selectUserInfo(Map map){
+         return applyUserinfoMapper.selectUserInfo(map);
+     }
+
+
+
+    public int updatePwd(Map map){
+        return applyUserinfoMapper.updatePwd(map);
+    }
+
+    /**
+     * 更新申请用户信息
+     * @param applyUserinfo
+     * @return
+     */
+    public int  updateUser(ApplyUserinfo applyUserinfo){
+
+        int count = this.applyUserinfoMapper.update(applyUserinfo);
+
+        /*更新家庭成员表中对应此注册用户的手机号码，主要针对的是老用户*/
+        ApplyFamilyMember applyFamilyMember = new ApplyFamilyMember();
+        applyFamilyMember.setAfmSfzh(applyUserinfo.getSfzh());
+        applyFamilyMember.setAfmLxdh(applyUserinfo.getLinktel());
+        List<ApplyFamilyMember> memberList = Lists.newArrayList();
+        memberList.add(applyFamilyMember);
+        applyFamilyMemberMapper.updateMemberBatch(memberList);
+
+        return  count;
+    }
+
+    /**
+     * 查询未激活的用户列表
+     * @param map
+     * @return
+     */
+    public PageInfo<ApplyUserinfo> selectNoActiv(Map map){
+        PageHelper.startPage(Integer.parseInt((String) map.get("page")),
+                Integer.parseInt((String) map.get("rows")));
+        List<ApplyUserinfo> list = applyUserinfoMapper.selectNoActiv(map);
+        return new PageInfo<ApplyUserinfo>(list);
+    }
+    /**
+     * 根据用户id更新用户状态
+     * @param map
+     * @return
+     */
+    public int updateUserState(Map map){
+        return applyUserinfoMapper.updateUserState(map);
+    }
+
+
+    /**
+     * 判断当前申请用户是否可以发起申请
+     * @param request
+     * @return
+     */
+    public String getApplyTypeCondition(HttpServletRequest request) {
+
+        ParmItem parmItem = parmItemService.selectSwitch();
+        /*申请开关为设置为否，或者为null，则提示申请通道开关未设置，不允许申请*/
+        if (parmItem==null  || !"是".equals(parmItem.getPiItemname())){
+            return PropertiesUtil.getApplyTypeProperties("shenqingtd");
+        }
+        /*申请单中的老数据对应的用户申请数据*/
+        ApplyUserinfo applyUserinfo = (ApplyUserinfo) request.getSession().getAttribute("applyUserinfo");
+
+        String returnResult = "success";
+        Map<String, Object> conditionMap = Maps.newHashMap();
+        conditionMap.put("sfzh",applyUserinfo.getSfzh());
+        conditionMap.put("approveExist","no");
+        int oldDataCount = this.applyFamilyMemberService.selectCountByMap(conditionMap);
+        /*oldDataCount>0表示用户存在老数据，老的申请单（判断依据：存在家庭成员，并且家庭成员表中对应的申请id在审批
+        单中不存在）*/
+        if(oldDataCount>0){
+            conditionMap.put("approveExist","yes");
+            int newDataCount = this.applyFamilyMemberService.selectCountByMap(conditionMap);
+            /*老用户没有在新系统中发起过申请，则不存在审批单记录*/
+            if(newDataCount==0){
+                conditionMap.remove("approveExist");
+                /*获取申请单类型和状态*/
+                List<Map<String,Object>> resultMap = this.applyFamilyMemberService.selectApplyMap(conditionMap);
+                String applyType = (String)resultMap.get(0).get("APPTYPE");//申请类型
+                String applyZT = ""+resultMap.get(0).get("APPZT");//申请状态
+                /*如果为保障中的状态*/
+                if(applyZT.equals("4")){
+                    /*如果为保障中的低保特困公租房或者补贴，则可以继续申请另一种类别*/
+                    if(applyType.equals(PropertiesUtil.getApplyTypeProperties("butie"))
+                            || applyType.equals(PropertiesUtil.getApplyTypeProperties("gongzf"))){
+                        returnResult = "applyType:"+applyType;
+                    }else{
+                        /*保障中的其他情况均不能申请*/
+                        returnResult = PropertiesUtil.getApplyTypeProperties("baozhangzhong");
+                    }
+                }else if(!applyZT.equals("5")){
+                    /*其他非保障结束状态的申请单均不能申请*/
+                    returnResult = PropertiesUtil.getApplyTypeProperties("baozhangzhong");
+                }
+            }else{
+                returnResult=setCommonResult(request);
+            }
+        }else{
+            //以下为新用户的处理
+            returnResult=setCommonResult(request);
+        }
+        return returnResult;
+    }
+
+    /*处理审批单，判断是否能够申请*/
+    private String setCommonResult(HttpServletRequest request){
+        String returnResult="success";
+        Map<String,Object> conditionMap = Maps.newHashMap();
+        /*老数据用户发起过申请（之前老数据申请单状态已更新为5，即保障结束后，重新发起的申请）*/
+        ApplyUserinfo applyUserinfo = (ApplyUserinfo) request.getSession().getAttribute("applyUserinfo");
+        conditionMap.put("userid", applyUserinfo.getUserid());
+        conditionMap.put("applyTypeNotLike", "ns");//非年审审批单查询
+        conditionMap.put("applyStateNotLike", "驳回");//审批单的状态不是驳回
+        //conditionMap.put("applyZtEqual",5);//审批单对应的申请单状态是5
+        int approveCount = approveService.findCountByMap(conditionMap);
+        /*用户存在的状态不是驳回也不是年审的审批单大于1的话，则不能再申请*/
+        if (approveCount > 0){
+            conditionMap.put("applyZtEqual", 5);//审批单对应的申请单状态是5
+            int applyQuitCount = approveService.findCountByMap(conditionMap);//查询保障结束的申请信息
+            if (applyQuitCount != approveCount) {//如果审批单中对应的申请单不全为保障结束，即还存在其他状态的审批单
+                int notQuitCount = approveCount - applyQuitCount;//状态不为保障结束的申请单
+                if (notQuitCount == 1) {//只存在一个申请单
+                    conditionMap.remove("applyZtEqual");
+                    conditionMap.put("applyZtLess",5);
+                    Approve approve = approveService.findByMap(conditionMap);//获取原有的审批单
+                    String appType = approve.getAptype();//获取已经存在的申请类别
+                    boolean flag = false;
+                    /*如果之前的申请单位补贴或者低保特困公租房，并且是在保障中的状态，那么flag为true，用户可以继续申请
+                     * 另一类的申请类型，诸如低保特困公租房在保障中，则可以申请补贴*/
+                    if (appType.equals(PropertiesUtil.getApplyTypeProperties("butie"))) {
+                        ApplyButie applyButie = this.applyButieService.selectById(approve.getAplid());
+                        if (4 == applyButie.getAbZt()) {
+                            flag = true;
+                        }
+                    } else if (appType.equals(PropertiesUtil.getApplyTypeProperties("gongzf"))) {
+                        Apply apply = this.applyService.selectById(approve.getAplid());
+                        if (4 == apply.getApZt()) {
+                            flag = true;
+                        }
+                    }
+                    /*如果flag为true，则可以继续发起申请，否则不能申请*/
+                    if (flag) {
+                        returnResult = "applyType:"+appType;
+                        //request.setAttribute("appType", appType);
+                    } else {
+                            /*当申请类别为经适房，并且zt状态为6的时候，依然可以申请；6视为经适房轮候或者待摇号状态过期，
+                            被操作员取消*/
+                        returnResult = PropertiesUtil.getApplyTypeProperties("shenqingzhong");
+                        if (appType.equals(PropertiesUtil.getApplyTypeProperties("jingsf"))) {
+                            Apply apply = this.applyService.selectById(approve.getAplid());
+                            if (6 == apply.getApZt()) {
+                                returnResult = "success";
+                            }
+                        }
+                    }
+                }else{
+                    returnResult=PropertiesUtil.getApplyTypeProperties("shenqingzhong");
+                }
+            }
+        }
+        return  returnResult;
+    }
+
+
+    /**
+     * 个人发起年审前的判断条件
+     *
+     * @return
+     */
+    public String toPerNsApplyCondition(HttpServletRequest request) {
+        /*在进入年审页面前，先获取用户自己的初审信息*/
+        String result=PropertiesUtil.getApplyTypeProperties("nianshen");;
+        /**
+         * 1.审核全部通过并且不是今年的
+         * 2.没有年审信息
+         * 3.被驳回的
+         */
+        /*获取申请用户的信息*/
+        ApplyUserinfo applyUserinfo = (ApplyUserinfo)request.getSession().getAttribute("applyUserinfo");
+        String userid = applyUserinfo.getUserid();
+        Map<String,Object> conditionMap = Maps.newHashMap();
+
+        //审核全部通过并且不是今年的
+        conditionMap.put("userid",userid);//用户id
+        conditionMap.put("applyType","ns");//用户申请类型为年审类型
+        List<Approve> list=approveService.findApproveByMap(conditionMap);
+        ParmItem parmItem=parmItemService.selectSwitch();
+        /*开关未设置或者未开启直接返回*/
+        if(parmItem!=null) {
+            if (!"是".equals(parmItem.getPiItemname())) {
+                result = PropertiesUtil.getApplyTypeProperties("shenqingtd");
+                return result;
+            }
+        }else {
+            result = PropertiesUtil.getApplyTypeProperties("shenqingtd");
+            return result;
+        }
+
+        if(list!=null){
+            if(list.size()==0){//未申请过
+                result="success";
+            }else{
+                boolean flag=false;//为true表示有未审核通过的年审
+                boolean flag2=true;//为true表示没有今年审批通过的年审
+                for (Approve approve:list) {
+                    Task task= taskService.createTaskQuery()
+                            .processInstanceId(approve.getProcessinstanceid())
+                            .singleResult();
+                    if(task!=null){
+                        result=PropertiesUtil.getApplyTypeProperties("nianshen");
+                        flag=true;
+                        break;
+                    }
+                }
+                if(!flag){//没没完成的，是否有驳回的今年已经完成的
+                    for (Approve approve:list) {
+                        HistoricTaskInstance historicTaskInstance= historyService.createHistoricTaskInstanceQuery()
+                                .processInstanceId(approve.getProcessinstanceid())
+                                .taskVariableValueLike("shzt","通过")
+                                .singleResult();
+                        if(historicTaskInstance!=null){
+                            //判断是否是今年的
+                            Date d = new Date();
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+                            Date d2=approve.getApldate();
+                            String csid = (applyNsService.selectById(approve.getAplid())).getApSqid();
+                            boolean ztBaoZhang = this.isBaoZhangZhong(approve.getAptype(),csid);
+                            if(sdf.format(d).equals(sdf.format(d2)) && ztBaoZhang){
+                                result=PropertiesUtil.getApplyTypeProperties("nianshen");
+                                flag2=false;
+                                break;
+                            }
+                        }
+                    }
+                    if(flag2){
+                        result="success";
+                    }
+                }
+            }
+        }
+        return  result;
+    }
+
+
+    /**
+     * 查看该条申请单是否是保障中
+     * @param applyType
+     * @param appid
+     * @return
+     */
+    private boolean isBaoZhangZhong(String applyType,String appid){
+        if(applyType.equals(PropertiesUtil.getApplyTypeProperties("nsbutie"))){
+            ApplyButie applyButie = this.applyButieService.selectById(appid);
+            if(applyButie.getAbZt()==4){
+                return true;
+            }
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("nsxinjy"))){
+            ApplyForgraDuate applyForgraDuate = this.applyForgraDuateService.selectById(appid);
+            if(applyForgraDuate.getAfgZt()==4){
+                return true;
+            }
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("nswailaiwg"))){
+            ApplyForForeign applyForForeign = this.applyForForeignService.selectById(appid);
+            if(applyForForeign.getAffZt()==4){
+                return true;
+            }
+        }else if(applyType.equals(PropertiesUtil.getApplyTypeProperties("nsgongzf"))){
+            Apply apply = this.applyService.selectById(appid);
+            if(apply.getApZt()==4){
+                return true;
+            }
+        }
+
+        return false;
+    }
+}

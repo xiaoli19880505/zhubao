@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.contract.ContractDetailMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.contract.ContractDetail">
+    <id column="C_ID" jdbcType="VARCHAR" property="cId" />
+    <result column="C_FWID" jdbcType="VARCHAR" property="cFwid" />
+    <result column="C_HTBH" jdbcType="VARCHAR" property="cHtbh" />
+    <result column="C_HTBARQ" jdbcType="TIMESTAMP" property="cHtbarq" />
+    <result column="C_BACZY" jdbcType="VARCHAR" property="cBaczy" />
+    <result column="C_LC" jdbcType="DECIMAL" property="cLc" />
+    <result column="C_ZT" jdbcType="DECIMAL" property="cZt" />
+    <result column="C_SQID" jdbcType="VARCHAR" property="cSqid" />
+    <result column="C_HTLX" jdbcType="VARCHAR" property="cHtlx" />
+    <result column="C_ZFZT" jdbcType="DECIMAL" property="cZfzt" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="CREATE_PERSON" jdbcType="VARCHAR" property="createPerson" />
+    <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="UPDATE_PERSON" jdbcType="VARCHAR" property="updatePerson" />
+    <result column="C_URL" jdbcType="VARCHAR" property="cUrl" />
+    <result column="SUBSIDY_NUM" jdbcType="DECIMAL" property="subsidyNum" />
+    <result column="C_BEGINTIME" jdbcType="TIMESTAMP" property="cBeginTime" />
+    <result column="C_ENDTIME" jdbcType="TIMESTAMP" property="cEndTime" />
+    <result column="C_TYPE" jdbcType="VARCHAR" property="cType" />
+    <result column="C_DATA_INPUT" jdbcType="VARCHAR" property="cDataInput" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    C_ID, C_FWID, C_HTBH, C_HTBARQ, C_BACZY, C_LC, C_ZT, C_SQID, C_HTLX, C_ZFZT, CREATE_DATE, 
+    CREATE_PERSON, UPDATE_DATE, UPDATE_PERSON,C_URL,SUBSIDY_NUM,C_BEGINTIME,C_ENDTIME,C_TYPE,C_DATA_INPUT
+  </sql>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from CONTRACT_DETAIL
+    where C_ID = #{cId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByCondition" parameterType="com.sys.pojo.contract.ContractDetail" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from CONTRACT_DETAIL
+    where 2=2
+    <if test="cZfzt!=null">
+      and C_ZFZT = #{cZfzt}
+    </if>
+    <if test="cSqid!=null and cSqid!=''">
+      and C_SQID = #{cSqid,jdbcType=VARCHAR}
+    </if>
+    <if test="cLc!=null and cLc!=''">
+      and C_LC = #{cLc}
+    </if>
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from CONTRACT_DETAIL
+    where C_ID = #{cId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.contract.ContractDetail">
+    insert into CONTRACT_DETAIL (C_ID, C_FWID, C_HTBH, 
+      C_HTBARQ, C_BACZY, C_LC, 
+      C_ZT, C_SQID, C_HTLX, 
+      C_ZFZT, CREATE_DATE, CREATE_PERSON, 
+      UPDATE_DATE, UPDATE_PERSON,C_URL,SUBSIDY_NUM,C_BEGINTIME,C_ENDTIME,C_TYPE,C_DATA_INPUT)
+    values (#{cId,jdbcType=VARCHAR}, #{cFwid,jdbcType=VARCHAR}, #{cHtbh,jdbcType=VARCHAR}, 
+      #{cHtbarq,jdbcType=TIMESTAMP}, #{cBaczy,jdbcType=VARCHAR}, #{cLc,jdbcType=DECIMAL}, 
+      #{cZt,jdbcType=DECIMAL}, #{cSqid,jdbcType=VARCHAR}, #{cHtlx,jdbcType=VARCHAR}, 
+      #{cZfzt,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, #{cUrl,jdbcType=VARCHAR}, #{subsidyNum,jdbcType=DECIMAL}
+      , #{cBeginTime,jdbcType=TIMESTAMP}, #{cEndTime,jdbcType=TIMESTAMP}, #{cType,jdbcType=VARCHAR},#{cDataInput,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sys.pojo.contract.ContractDetail">
+    insert into CONTRACT_DETAIL
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cId != null">
+        C_ID,
+      </if>
+      <if test="cFwid != null">
+        C_FWID,
+      </if>
+      <if test="cHtbh != null">
+        C_HTBH,
+      </if>
+      <if test="cHtbarq != null">
+        C_HTBARQ,
+      </if>
+      <if test="cBaczy != null">
+        C_BACZY,
+      </if>
+      <if test="cLc != null">
+        C_LC,
+      </if>
+      <if test="cZt != null">
+        C_ZT,
+      </if>
+      <if test="cSqid != null">
+        C_SQID,
+      </if>
+      <if test="cHtlx != null">
+        C_HTLX,
+      </if>
+      <if test="cZfzt != null">
+        C_ZFZT,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="createPerson != null">
+        CREATE_PERSON,
+      </if>
+      <if test="updateDate != null">
+        UPDATE_DATE,
+      </if>
+      <if test="updatePerson != null">
+        UPDATE_PERSON,
+      </if>
+      <if test="cUrl != null">
+        C_URL,
+      </if>
+      <if test="subsidyNum != null">
+        SUBSIDY_NUM,
+      </if>
+      <if test="cBeginTime != null">
+        C_BEGINTIME,
+      </if>
+      <if test="cEndTime != null">
+        C_ENDTIME,
+      </if>
+      <if test="cType != null">
+        C_TYPE,
+      </if>
+      <if test="cDataInput != null">
+        C_DATA_INPUT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cId != null">
+        #{cId,jdbcType=VARCHAR},
+      </if>
+      <if test="cFwid != null">
+        #{cFwid,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtbh != null">
+        #{cHtbh,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtbarq != null">
+        #{cHtbarq,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cBaczy != null">
+        #{cBaczy,jdbcType=VARCHAR},
+      </if>
+      <if test="cLc != null">
+        #{cLc,jdbcType=DECIMAL},
+      </if>
+      <if test="cZt != null">
+        #{cZt,jdbcType=DECIMAL},
+      </if>
+      <if test="cSqid != null">
+        #{cSqid,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtlx != null">
+        #{cHtlx,jdbcType=VARCHAR},
+      </if>
+      <if test="cZfzt != null">
+        #{cZfzt,jdbcType=DECIMAL},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null">
+        #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null">
+        #{updatePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="cUrl != null">
+        #{cUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="subsidyNum != null">
+        #{subsidyNum,jdbcType=DECIMAL},
+      </if>
+      <if test="cBeginTime != null">
+        #{cBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cEndTime != null">
+        #{cEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cType != null">
+        #{cType,jdbcType=VARCHAR},
+      </if>
+      <if test="cDataInput != null">
+        #{cDataInput,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateBySelective" parameterType="com.sys.pojo.contract.ContractDetail">
+    update CONTRACT_DETAIL
+    <set>
+      <if test="cFwid != null">
+        C_FWID = #{cFwid,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtbh != null">
+        C_HTBH = #{cHtbh,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtbarq != null">
+        C_HTBARQ = #{cHtbarq,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cBaczy != null">
+        C_BACZY = #{cBaczy,jdbcType=VARCHAR},
+      </if>
+      <if test="cLc != null">
+        C_LC = #{cLc,jdbcType=DECIMAL},
+      </if>
+      <if test="cZt != null">
+        C_ZT = #{cZt,jdbcType=DECIMAL},
+      </if>
+      <if test="cSqid != null">
+        C_SQID = #{cSqid,jdbcType=VARCHAR},
+      </if>
+      <if test="cHtlx != null">
+        C_HTLX = #{cHtlx,jdbcType=VARCHAR},
+      </if>
+      <if test="cZfzt != null">
+        C_ZFZT = #{cZfzt,jdbcType=DECIMAL},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null">
+        CREATE_PERSON = #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+        UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null">
+        UPDATE_PERSON = #{updatePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="cUrl != null">
+        C_URL = #{cUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="subsidyNum != null">
+        SUBSIDY_NUM = #{subsidyNum,jdbcType=VARCHAR},
+      </if>
+      <if test="cBeginTime != null">
+        C_BEGIN_TIME = #{cBeginTime},
+      </if>
+      <if test="cEndTime != null">
+        C_ENDTIME = #{cEndTime},
+      </if>
+      <if test="cType != null">
+        C_TYPE = #{cType},
+      </if>
+      <if test="cDataInput != null">
+        C_DATA_INPUT = #{cDataInput},
+      </if>
+    </set>
+    where C_ID = #{cId,jdbcType=VARCHAR}
+  </update>
+  <update id="update" parameterType="com.sys.pojo.contract.ContractDetail">
+    update CONTRACT_DETAIL
+    set C_FWID = #{cFwid,jdbcType=VARCHAR},
+      C_HTBH = #{cHtbh,jdbcType=VARCHAR},
+      C_HTBARQ = #{cHtbarq,jdbcType=TIMESTAMP},
+      C_BACZY = #{cBaczy,jdbcType=VARCHAR},
+      C_LC = #{cLc,jdbcType=DECIMAL},
+      C_ZT = #{cZt,jdbcType=DECIMAL},
+      C_SQID = #{cSqid,jdbcType=VARCHAR},
+      C_HTLX = #{cHtlx,jdbcType=VARCHAR},
+      C_ZFZT = #{cZfzt,jdbcType=DECIMAL},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      CREATE_PERSON = #{createPerson,jdbcType=VARCHAR},
+      UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+      UPDATE_PERSON = #{updatePerson,jdbcType=VARCHAR},
+      C_URL = #{cUrl,jdbcType=VARCHAR},
+      SUBSIDY_NUM = #{subsidyNum,jdbcType=VARCHAR},
+      C_BEGINTIME=#{cBeginTime,jdbcType=TIMESTAMP},
+      C_ENDTIME=#{cEndTime,jdbcType=TIMESTAMP},
+      C_TYPE=#{cType,jdbcType=VARCHAR},
+      C_DATA_INPUT = #{cDataInput,jdbcType=VARCHAR}
+    where C_ID = #{cId}
+  </update>
+
+  <!--条件查询合同实体-->
+  <select id="selectContractDetailbyMap" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from CONTRACT_DETAIL
+    <include refid="sqlWhere"></include>
+  </select>
+
+<!--查询条件-->
+  <sql id="sqlWhere">
+    <where>
+      <if test="applyid!=null and applyid!=''">
+        and C_SQID=#{applyid}
+      </if>
+      <if test="zfzt!=null and zfzt!=''">
+        and C_ZFZT=#{zfzt}
+      </if>
+    </where>
+  </sql>
+</mapper>

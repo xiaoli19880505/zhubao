@@ -1,0 +1,2368 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.apply.ApproveMapper" >
+  <resultMap id="BaseResultMap" type="com.sys.pojo.apply.Approve" >
+    <id column="APVID" property="apvid" jdbcType="VARCHAR" />
+    <result column="APLID" property="aplid" jdbcType="VARCHAR" />
+    <result column="APLBH" property="aplbh" jdbcType="VARCHAR" />
+    <result column="APTYPE" property="aptype" jdbcType="VARCHAR" />
+    <result column="AP_TYPE_NAME" property="apTypeName" jdbcType="VARCHAR" />
+    <result column="APLDATE" property="apldate" jdbcType="TIMESTAMP" />
+    <result column="APLUSERID" property="apluserid" jdbcType="VARCHAR" />
+    <result column="STATE" property="state" jdbcType="VARCHAR" />
+    <result column="PASSDATE" property="passdate" jdbcType="TIMESTAMP" />
+    <result column="APVUSERS" property="apvusers" jdbcType="VARCHAR" />
+    <result column="APDESC" property="apdesc" jdbcType="VARCHAR" />
+    <result column="ATYPE" property="atype" jdbcType="VARCHAR" />
+    <result column="SSQ" property="ssq" jdbcType="VARCHAR" />
+    <result column="SSJ" property="ssj" jdbcType="VARCHAR" />
+    <result column="SSQ_STR" property="ssqStr" jdbcType="VARCHAR" />
+    <result column="SSJ_STR" property="ssjStr" jdbcType="VARCHAR" />
+    <result column="XM" property="xm" jdbcType="VARCHAR" />
+    <result column="SFZH" property="sfzh" jdbcType="VARCHAR" />
+    <result column="APP_F_ID" property="appFId" jdbcType="VARCHAR" />
+    <result column="LINKTEL" property="linktel" jdbcType="VARCHAR" />
+    <result column="PROCESSINSTANCEID" property="processinstanceid" jdbcType="VARCHAR" />
+    <association property="applyUserinfo" column="apluserid" javaType="com.sys.pojo.ApplyUserinfo"
+                 select="com.sys.mapper.ApplyUserinfoMapper.selectById"/>
+    <association property="applyType" column="{piSetcode=atype,piItemcode=aptype}" select="com.sys.mapper.ParmItemMapper.selectByMap"/>
+  </resultMap>
+
+    <!--在mapper文件中的头部引入缓存策略-->
+    <!--<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>-->
+
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from APPROVE
+    where APVID = #{apvid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.apply.Approve" >
+    insert into APPROVE (APVID, APLID, APLBH,APTYPE,
+      APLDATE, APLUSERID, STATE, 
+      PASSDATE, APVUSERS, APDESC,PROCESSINSTANCEID
+      )
+    values (#{apvid,jdbcType=VARCHAR}, #{aplid,jdbcType=VARCHAR}, #{aplbh,jdbcType=VARCHAR}, #{aptype,jdbcType=VARCHAR},
+      #{apldate,jdbcType=TIMESTAMP}, #{apluserid,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
+      #{passdate,jdbcType=TIMESTAMP}, #{apvusers,jdbcType=VARCHAR}, #{apdesc,jdbcType=VARCHAR},
+      #{processinstanceid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="update" parameterType="com.sys.pojo.apply.Approve" >
+    update APPROVE
+    set APLID = #{aplid,jdbcType=VARCHAR},
+      APTYPE = #{aptype,jdbcType=VARCHAR},
+      APLBH = #{aplbh,jdbcType=VARCHAR},
+      APLDATE = #{apldate,jdbcType=TIMESTAMP},
+      APLUSERID = #{apluserid,jdbcType=VARCHAR},
+      STATE = #{state,jdbcType=VARCHAR},
+      PASSDATE = #{passdate,jdbcType=TIMESTAMP},
+      APVUSERS = #{apvusers,jdbcType=VARCHAR},
+      APDESC = #{apdesc,jdbcType=VARCHAR},
+      PROCESSINSTANCEID=#{processinstanceid,jdbcType=VARCHAR}
+    where APVID = #{apvid,jdbcType=VARCHAR}
+  </update>
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select APVID, APLID, APLBH,APTYPE, APLDATE, APLUSERID, STATE, PASSDATE, APVUSERS, APDESC,PROCESSINSTANCEID
+    from APPROVE
+    where APVID = #{apvid,jdbcType=VARCHAR}
+  </select>
+  <select id="select" resultMap="BaseResultMap" >
+    select APVID, APLID,APLBH, APTYPE, APLDATE, APLUSERID, STATE, PASSDATE, APVUSERS, APDESC,PROCESSINSTANCEID,'00' AS ATYPE
+    from APPROVE
+  </select>
+  <!--我的年审-->
+  <select id="findAppoveByApplyUser" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT APPRO.APVID, APPRO.APLID,APPRO.APLBH,APPRO.APTYPE,
+    APPRO.APLDATE,APPRO.STATE,APPRO.PASSDATE,
+    APPRO.APVUSERS, APPRO.APDESC,APPRO.APLUSERID, APPRO.PROCESSINSTANCEID,'00' AS ATYPE,SSQ,SSJ
+    FROM APPROVE APPRO
+    INNER JOIN
+    (
+    (SELECT AP_ID AP_ID,AP_SQRID AP_SQRID, AP_SQLB AP_SQLB,AP_LC AP_LC,AP_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AP_SQBH APLBH FROM APPLY
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AP_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AP_JDBSC)
+    UNION
+    (SELECT AB_ID AP_ID,AB_SQRID AP_SQRID, '2' AP_SQLB,AB_LC AP_LC,AB_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AB_SQBH APLBH FROM APPLY_BUTIE
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AB_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AB_JDBSC)
+    UNION
+    (SELECT AFF_ID AP_ID,AFF_SQRID AP_SQRID,'4' AP_SQLB,AFF_LC AP_LC,AFF_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AFF_SQBH APLBH FROM APPLYFORFOREIGN
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AFF_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AFF_DWDZ)
+    UNION
+    (SELECT AFG_ID AP_ID,AFG_SQRID AP_SQRID,'5' AP_SQLB,AFG_LC AP_LC,AFG_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AFG_SQBH APLBH FROM APPLYFORGRADUATE
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AFG_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AFG_DWDZ)
+    ) AP ON APPRO.APLID=AP.AP_ID
+    WHERE APPRO.APLUSERID = #{apluserid,jdbcType=VARCHAR}
+    <if test="type!=null and type!=''">
+      and SUBSTR(APTYPE,1,1) not between '0' and '9'
+    </if>
+    <if test="type==null">
+      and SUBSTR(APTYPE,1,1)  between '0' and '9'
+    </if>
+  </select>
+  <select id="findByApplyId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select APVID, APLID, APLBH, APTYPE, APLDATE, APLUSERID, STATE, PASSDATE, APVUSERS, APDESC,PROCESSINSTANCEID,'00' AS ATYPE
+    from APPROVE
+    where APLID = #{aplid,jdbcType=VARCHAR}
+  </select>
+
+  <select id="findApplyForApprove" resultMap="BaseResultMap">
+    select t.*,
+            p1.PI_ITEMNAME SSQ_STR,
+            p2.PI_ITEMNAME SSJ_STR,
+            applyfamilymember.afm_xm XM,
+            applyfamilymember.afm_sfzh SFZH
+          from (select app.apvid APVID,
+              app.aplid APLID,
+              app.aptype APTYPE,
+              app.apldate APLDATE,
+              case when aptype='1' then '经济适用房'
+                when aptype='2' then '补贴'
+                when aptype='3' then '公租房'
+                when aptype='4' then '外来务工'
+                when aptype='5' then '新就业'
+                else '年审'end ATYPE,
+              case when aptype='1' then a.ap_sqbh
+                when aptype='2' then ab.ab_sqbh
+                when aptype='3' then a.ap_sqbh
+                when aptype='4' then aff.aff_sqbh
+                when aptype='5' then afg.afg_sqbh
+                else '年审' end APLBH,
+              case when aptype='1' then a.ap_ssq
+                when aptype='2' then ab.ab_ssq
+                when aptype='3' then a.ap_ssq
+                when aptype='4' then aff.aff_ssq
+                when aptype='5' then afg.afg_ssq
+                else '' end SSQ,
+              case when aptype='1' then a.AP_JDBSC
+                when aptype='2' then ab.AB_JDBSC
+                when aptype='3' then a.AP_JDBSC
+                when aptype='4' then aff.AFF_DWDZ
+                when aptype='5' then afg.AFG_DWDZ
+                else '' end SSJ,
+              case when aptype='1' then a.ap_sqrid
+                when aptype='2' then ab.ab_sqrid
+                when aptype='3' then a.AP_sqrid
+                when aptype='4' then aff.AFF_sqrid
+                when aptype='5' then afg.AFG_sqrid
+                else '' end APP_F_ID
+      from approve app
+      left join apply a on a.ap_id=app.APLID
+      left join apply_butie ab on ab.ab_id=app.aplid
+      left join applyforforeign aff on aff.aff_id=app.aplid
+      left join applyforgraduate afg on afg.afg_id=app.aplid
+      where app.state='审批全部通过'and app.aptype in ('1','2','3','4','5')) t,
+      PARMITEM p1,PARMITEM p2,applyfamilymember
+      where applyfamilymember.afm_id=t.APP_F_ID
+        AND applyfamilymember.afm_sqid=t.APLID
+        AND p1.pi_itemcode = t.SSQ
+        AND p2.pi_itemcode = t.SSJ
+        AND p1.PI_SETCODE = '04'
+        AND p2.PI_SETCODE = '05'
+      <if test="aptype!=null">
+        AND t.APTYPE=#{aptype}
+      </if>
+      <if test="xm!=null and xm!='' ">
+          AND applyfamilymember.afm_xm=#{xm}
+      </if>
+      <if test="aplbh!=null">
+        AND t.APLBH=#{aplbh}
+      </if>
+  </select>
+
+  <!--条件查询审批单单个实体-->
+  <select id="findByMap" parameterType="Map" resultType="com.sys.pojo.apply.Approve">
+
+     select APVID, APLID, APLBH, APTYPE, APLDATE, APLUSERID, STATE, PASSDATE, APVUSERS, APDESC,PROCESSINSTANCEID,'00' AS ATYPE
+    from APPROVE APRO
+    <include refid="sqlCondition"></include>
+
+  </select>
+
+  <!--条件查询审批单个数-->
+  <select id="findCountByMap" parameterType="Map" resultType="java.lang.Integer">
+
+    select count(*) from APPROVE APRO
+    <include refid="sqlCondition"></include>
+
+  </select>
+  <!--条件查询审批单列表实体-->
+  <select id="findListByMap" resultMap="BaseResultMap">
+    select APRO.APVID, APRO.APLID, APRO.APLBH, APRO.APTYPE, APRO.APLDATE, APRO.APLUSERID, APRO.STATE, APRO.PASSDATE, APRO.APVUSERS, APRO.APDESC,APRO.PROCESSINSTANCEID,
+    PAR.PI_ITEMNAME SSQ ,PAR2.PI_ITEMNAME SSJ,
+    APRO.APTYPE AS ATYPE
+    from APPROVE APRO
+    INNER JOIN APPLYNS APNS ON APNS.ALSID=APRO.APLID
+    LEFT JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=APNS.AP_SSQ
+    LEFT JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=APNS.AP_JDBSC
+    <include refid="sqlCondition"></include>
+    order by APRO.APLDATE desc
+  </select>
+
+  <select id="findBySfzh" parameterType="Map" resultType="Approve">
+    SELECT
+    DISTINCT CC.USERID AS APLUSERID,CC.USERNAME,CC.SFZH,CC.LINKTEL,CC.APLID,CC.APTYPE,SSQ,
+    CASE WHEN AP_LC &lt; 4 THEN '未选房' ELSE '已选房' END AS ORDERSTATE
+    FROM
+    (SELECT AP_ID AP_ID,AP_SQRID AP_SQRID, AP_SQLB AP_SQLB,AP_LC AP_LC,AP_FLAG AP_FLAG,AP_SSQ SSQ FROM APPLY
+    UNION
+    SELECT AFF_ID AP_ID,AFF_SQRID AP_SQRID,'4' AP_SQLB,AFF_LC AP_LC,AFF_FLAG AP_FLAG,AFF_SSQ SSQ FROM APPLYFORFOREIGN
+    UNION
+    SELECT AFG_ID AP_ID,AFG_SQRID AP_SQRID,'5' AP_SQLB,AFG_LC AP_LC,AFG_FLAG AP_FLAG,AFG_SSQ SSQ FROM APPLYFORGRADUATE
+    ) AP
+    INNER JOIN (SELECT APPRO.USERID,APPRO.USERNAME,APPRO.SFZH,APPRO.LINKTEL,APPRO.APLID,APPRO.APTYPE FROM
+    (SELECT DISTINCT XXX.USERID,XXX.USERNAME,XXX.SFZH,XXX.LINKTEL,T.APLUSERID,T.APLID,T.APTYPE FROM APPROVE T
+    INNER JOIN (SELECT * FROM APPLYUSERINFO AAA INNER JOIN APPLYFAMILYMEMBER MMM ON AAA.SFZH=MMM.AFM_SFZH AND MMM.AFM_YSQRGX='本人')XXX ON T.APLID=XXX.AFM_SQID
+    WHERE T.STATE like concat('%','审批全部通过'))APPRO
+    WHERE APPRO.SFZH=#{sfzh}
+    <if test="aptype==1">
+      AND APPRO.APTYPE=#{aptype}
+    </if>
+    <if test="aptype==2">
+      AND APPRO.APTYPE IN('4','5')
+    </if>
+    <if test="aptype==3">
+      AND APPRO.APTYPE='2'
+    </if>
+    )CC
+    ON AP.AP_ID=CC.APLID
+    WHERE AP_FLAG!=0 AND AP_LC &lt; 4
+
+
+  </select>
+
+
+
+  <!--未分房或房屋数量小于3分页-->
+  <select id="findByFylxAndSSQ" parameterType="Map" resultType="Approve">
+
+
+    select *
+    from (
+    select BBB.*, ROWNUM ROW_ID2
+    from (
+
+    select AAA.APLUSERID,
+    AAA.USERNAME,
+    AAA.SFZH,
+    AAA.LINKTEL,
+    AAA.APLID,
+    AAA.APTYPE,
+    AAA.SSQ,
+    sum(sor_num) as numb
+    FROM
+
+    (SELECT DISTINCT CC.USERID AS APLUSERID,
+    CC.USERNAME,
+    CC.SFZH,
+    CC.LINKTEL,
+    CC.APLID,
+    CC.APTYPE,
+    SSQ,
+    ROWNUM ROW_ID,
+    CASE
+    WHEN AP_LC &lt; 4 THEN
+    '未选房'
+    ELSE
+    '已选房'
+    END AS ORDERSTATE,
+    CASE
+    WHEN CC.SH_ID is not null THEN
+    1
+    ELSE
+    0
+    END AS sor_num
+
+    FROM (
+    SELECT AP_ID    AP_ID,
+    AP_SQRID AP_SQRID,
+    AP_SQLB  AP_SQLB,
+    AP_LC    AP_LC,
+    AP_FLAG  AP_FLAG,
+    AP_SSQ   SSQ
+    FROM APPLY
+    WHERE AP_LC = 3
+    OR AP_LC = 4
+    UNION
+    SELECT AFF_ID AP_ID,
+    AFF_SQRID AP_SQRID,
+    '4' AP_SQLB,
+    AFF_LC AP_LC,
+    AFF_FLAG AP_FLAG,
+    AFF_SSQ SSQ
+    FROM APPLYFORFOREIGN
+    WHERE AFF_LC &lt;= 4
+    UNION
+    SELECT AFG_ID AP_ID,
+    AFG_SQRID AP_SQRID,
+    '5' AP_SQLB,
+    AFG_LC AP_LC,
+    AFG_FLAG AP_FLAG,
+    AFG_SSQ SSQ
+    FROM APPLYFORGRADUATE
+    WHERE AFG_LC &lt;= 4) AP
+
+    INNER JOIN (SELECT APPRO.USERID,
+    APPRO.USERNAME,
+    APPRO.SFZH,
+    APPRO.LINKTEL,
+    APPRO.APLID,
+    APPRO.APTYPE,
+    SOR.SH_ID
+    FROM (SELECT  XXX.USERID,
+    XXX.USERNAME,
+    XXX.SFZH,
+    XXX.LINKTEL,
+    T.APLUSERID,
+    T.APLID,
+    T.APTYPE
+    FROM APPROVE T
+    INNER JOIN (SELECT *
+    FROM APPLYUSERINFO AAA
+    INNER JOIN APPLYFAMILYMEMBER MMM
+    ON AAA.SFZH =
+    MMM.AFM_SFZH AND MMM.AFM_YSQRGX='本人') XXX
+    ON T.APLID = XXX.AFM_SQID
+    WHERE T.STATE like
+    '%审批全部通过') APPRO
+    LEFT JOIN SOURCEHOUSE SOR
+    ON APPRO.APLID = SOR.SH_APPLYID
+    WHERE 1 = 1
+    <if test="aptype==1">
+      AND APPRO.APTYPE=#{aptype}
+    </if>
+    <if test="aptype==3">
+      AND APPRO.APTYPE IN('4','5')
+    </if>
+    <if test="aptype==2">
+      AND APPRO.APTYPE='3'
+    </if>
+    ) CC
+    ON AP.AP_ID = CC.APLID
+    WHERE AP_FLAG != 0
+    <if test="aptype==3 or ssq==0">
+      AND SSQ IN('0','1','2','3','4')
+    </if>
+    <if test="aptype!=3 and ssq!=null and ssq!=0">
+      AND SSQ =#{ssq}
+    </if>
+    <if test="uname!=null">
+      AND CC.USERNAME LIKE concat(concat('%',#{uname}),'%')
+    </if>
+    ) AAA
+
+    group by
+    AAA.APLUSERID,
+    AAA.USERNAME,
+    AAA.SFZH,
+    AAA.LINKTEL,
+    AAA.APLID,
+    AAA.APTYPE,
+    AAA.SSQ
+    ) BBB
+    where ROWNUM &lt;= #{pageLaseIndex} and numb &lt;3)
+    WHERE ROW_ID2 &gt; #{pageIndex}
+  </select>
+  <!--未分房或房屋数量小于3总数-->
+  <select id="findByFylxAndSSQCount"  resultType="java.lang.Integer">
+    SELECT count(*) from(
+    select *
+    from (
+    select BBB.*, ROWNUM ROW_ID2
+    from (
+
+    select AAA.APLUSERID,
+    AAA.USERNAME,
+    AAA.SFZH,
+    AAA.LINKTEL,
+    AAA.APLID,
+    AAA.APTYPE,
+    AAA.SSQ,
+    sum(sor_num) as numb
+    FROM
+
+    (SELECT DISTINCT CC.USERID AS APLUSERID,
+    CC.USERNAME,
+    CC.SFZH,
+    CC.LINKTEL,
+    CC.APLID,
+    CC.APTYPE,
+    SSQ,
+    ROWNUM ROW_ID,
+    CASE
+    WHEN AP_LC &lt; 4 THEN
+    '未选房'
+    ELSE
+    '已选房'
+    END AS ORDERSTATE,
+    CASE
+    WHEN CC.SH_ID is not null THEN
+    1
+    ELSE
+    0
+    END AS sor_num
+
+    FROM (
+    SELECT AP_ID    AP_ID,
+    AP_SQRID AP_SQRID,
+    AP_SQLB  AP_SQLB,
+    AP_LC    AP_LC,
+    AP_FLAG  AP_FLAG,
+    AP_SSQ   SSQ
+    FROM APPLY
+    WHERE AP_LC = 3
+    OR AP_LC = 4
+    UNION
+    SELECT AFF_ID AP_ID,
+    AFF_SQRID AP_SQRID,
+    '4' AP_SQLB,
+    AFF_LC AP_LC,
+    AFF_FLAG AP_FLAG,
+    AFF_SSQ SSQ
+    FROM APPLYFORFOREIGN
+    WHERE AFF_LC &lt;= 4
+    UNION
+    SELECT AFG_ID AP_ID,
+    AFG_SQRID AP_SQRID,
+    '5' AP_SQLB,
+    AFG_LC AP_LC,
+    AFG_FLAG AP_FLAG,
+    AFG_SSQ SSQ
+    FROM APPLYFORGRADUATE
+    WHERE AFG_LC &lt;= 4) AP
+
+    INNER JOIN (SELECT APPRO.USERID,
+    APPRO.USERNAME,
+    APPRO.SFZH,
+    APPRO.LINKTEL,
+    APPRO.APLID,
+    APPRO.APTYPE,
+    SOR.SH_ID
+    FROM (SELECT  XXX.USERID,
+    XXX.USERNAME,
+    XXX.SFZH,
+    XXX.LINKTEL,
+    T.APLUSERID,
+    T.APLID,
+    T.APTYPE
+    FROM APPROVE T
+    INNER JOIN (SELECT *
+    FROM APPLYUSERINFO AAA
+    INNER JOIN APPLYFAMILYMEMBER MMM
+    ON AAA.SFZH =
+    MMM.AFM_SFZH AND MMM.AFM_YSQRGX='本人') XXX
+    ON T.APLID = XXX.AFM_SQID
+    WHERE T.STATE like
+    '%审批全部通过') APPRO
+    LEFT JOIN SOURCEHOUSE SOR
+    ON APPRO.APLID = SOR.SH_APPLYID
+    WHERE 1 = 1
+    <if test="aptype==1">
+      AND APPRO.APTYPE=#{aptype}
+    </if>
+    <if test="aptype==3">
+      AND APPRO.APTYPE IN('4','5')
+    </if>
+    <if test="aptype==2">
+      AND APPRO.APTYPE='3'
+    </if>
+    ) CC
+    ON AP.AP_ID = CC.APLID
+    WHERE AP_FLAG != 0
+    <if test="aptype==3 or ssq==0">
+      AND SSQ IN('0','1','2','3','4')
+    </if>
+    <if test="aptype!=3 and ssq!=null and ssq!=0">
+      AND SSQ =#{ssq}
+    </if>
+    <if test="uname!=null">
+      AND CC.USERNAME LIKE concat(concat('%',#{uname}),'%')
+    </if>
+    ) AAA
+
+    group by
+    AAA.APLUSERID,
+    AAA.USERNAME,
+    AAA.SFZH,
+    AAA.LINKTEL,
+    AAA.APLID,
+    AAA.APTYPE,
+    AAA.SSQ
+    ) BBB
+
+    where  numb &lt;3))
+  </select>
+  <!--放弃列表-->
+  <select id="houseQuitList" parameterType="Map" resultType="Approve">
+
+    SELECT * FROM
+    (SELECT
+    DISTINCT CC.USERID AS APLUSERID,
+    CC.USERNAME,CC.SFZH,CC.LINKTEL,
+    CC.APLID,CC.APTYPE AS ATYPE,
+    SSQ,SSJ,APLBH,ROWNUM ROW_ID,
+    CASE WHEN AP_SQLB='2' THEN '低保特困补贴'
+    WHEN AP_SQLB= '4' THEN '公租房(外来务工)'
+    WHEN AP_SQLB= '5' THEN '公租房(新就业)'
+    end AS APTYPE,
+    CASE WHEN AP_LC &lt; 4 THEN '未选.房'
+    ELSE '已选房'
+    END AS ORDERSTATE
+    FROM
+    (
+    (
+
+    SELECT AB_ID AP_ID,AB_SQRID AP_SQRID, '2' AP_SQLB,
+    AB_LC AP_LC,AB_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,AB_SQBH APLBH
+    FROM APPLY_BUTIE
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04'
+    AND PAR.PI_ITEMCODE=AB_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05'
+    AND PAR2.PI_ITEMCODE=AB_JDBSC
+    WHERE   AB_ZT!=5 AND (AB_LC=4 OR AB_LC=5)
+    )
+    UNION
+    (SELECT AFF_ID AP_ID,AFF_SQRID AP_SQRID,'4' AP_SQLB,
+    AFF_LC AP_LC,AFF_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,AFF_SQBH APLBH FROM APPLYFORFOREIGN
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04'
+    AND PAR.PI_ITEMCODE=AFF_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05'
+    AND PAR2.PI_ITEMCODE=AFF_DWDZ
+    WHERE AFF_LC &lt; 4 AND AFF_ZT!=5
+    )
+    UNION
+    (SELECT AFG_ID AP_ID,AFG_SQRID AP_SQRID,'5' AP_SQLB,
+    AFG_LC AP_LC,AFG_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,AFG_SQBH APLBH
+    FROM APPLYFORGRADUATE
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04'
+    AND PAR.PI_ITEMCODE=AFG_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05'
+    AND PAR2.PI_ITEMCODE=AFG_DWDZ
+    WHERE AFG_LC &lt; 4 AND AFG_ZT!=5
+    )
+    UNION
+    (SELECT AP_ID,AP_SQRID,to_char(AP_SQLB) AP_SQLB,
+     AP_LC, AP_FLAG,PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,AP_SQBH APLBH
+    FROM APPLY
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04'
+    AND PAR.PI_ITEMCODE=AP_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05'
+    AND PAR2.PI_ITEMCODE=AP_JDBSC
+    WHERE AP_LC &lt; 4 AND AP_ZT!=5 AND AP_ZT!=6
+    )
+    ) AP
+    INNER JOIN (SELECT APPRO.USERID,APPRO.USERNAME,APPRO.SFZH,APPRO.LINKTEL,APPRO.APLID,APPRO.APTYPE FROM
+    (SELECT DISTINCT XXX.USERID,XXX.USERNAME,XXX.SFZH,XXX.LINKTEL,T.APLUSERID,T.APLID,T.APTYPE FROM APPROVE T
+    INNER JOIN (SELECT * FROM APPLYUSERINFO AAA INNER JOIN APPLYFAMILYMEMBER MMM ON AAA.SFZH=MMM.AFM_SFZH AND MMM.AFM_YSQRGX='本人')XXX ON T.APLID=XXX.AFM_SQID
+    WHERE T.STATE like concat('%','审批全部通过'))APPRO
+    WHERE 1=1
+    <if test="aptype!=null and aptype!=''">
+      AND APPRO.APTYPE=#{aptype}
+    </if>
+    )CC
+    ON AP.AP_ID=CC.APLID
+    WHERE AP_FLAG!=0
+    <if test="ssq!=null and ssq!=''">
+      AND AP.SSQ = #{ssq}
+    </if>
+    <if test="ssj!=null and ssj!=''">
+      AND AP.SSJ = #{ssj}
+    </if>
+    <if test="username!=null">
+      AND CC.USERNAME like concat(concat('%',#{username}),'%')
+    </if>
+    <if test="sfzh!=null">
+      AND CC.SFZH like concat(concat('%',#{sfzh}),'%')
+    </if>
+    <if test="aplbh!=null">
+      AND APLBH like concat(concat('%',#{aplbh}),'%')
+    </if>
+    AND  ROWNUM &lt;= #{pageLaseIndex})
+    WHERE ROW_ID &gt; #{pageIndex}
+
+  </select>
+  <!--放弃总数-->
+  <select id="houseQuitListCount"  resultType="java.lang.Integer">
+    SELECT count(*) from(
+    SELECT * FROM
+    (SELECT
+    DISTINCT CC.USERID AS APLUSERID,
+    CC.USERNAME,CC.SFZH,CC.LINKTEL,
+    CC.APLID,CC.APTYPE,ROWNUM ROW_ID,
+    CASE WHEN AP_LC &lt; 4 THEN '未选房' ELSE '已选房' END AS ORDERSTATE
+    FROM
+    (
+    (SELECT AB_ID AP_ID,AB_SQRID AP_SQRID, '2' AP_SQLB,
+    AB_LC AP_LC,AB_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,AB_SQBH APLBH
+    FROM APPLY_BUTIE
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04'
+    AND PAR.PI_ITEMCODE=AB_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05'
+    AND PAR2.PI_ITEMCODE=AB_JDBSC
+    WHERE   AB_ZT!=5 AND (AB_LC=4 OR AB_LC=5)
+    )
+    UNION
+    (SELECT AFF_ID AP_ID,AFF_SQRID AP_SQRID,'4' AP_SQLB,
+    AFF_LC AP_LC,AFF_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,AFF_SQBH APLBH FROM APPLYFORFOREIGN
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04'
+    AND PAR.PI_ITEMCODE=AFF_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05'
+    AND PAR2.PI_ITEMCODE=AFF_DWDZ
+    WHERE AFF_LC &lt; 4 AND AFF_ZT!=5)
+    UNION
+    (SELECT AFG_ID AP_ID,AFG_SQRID AP_SQRID,'5' AP_SQLB,
+    AFG_LC AP_LC,AFG_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,AFG_SQBH APLBH
+    FROM APPLYFORGRADUATE
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04'
+    AND PAR.PI_ITEMCODE=AFG_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05'
+    AND PAR2.PI_ITEMCODE=AFG_DWDZ
+    WHERE AFG_LC &lt; 4 AND AFG_ZT!=5)
+    UNION
+    (SELECT AP_ID,AP_SQRID,to_char(AP_SQLB) AP_SQLB,
+    AP_LC, AP_FLAG,PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,AP_SQBH APLBH
+    FROM APPLY
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04'
+    AND PAR.PI_ITEMCODE=AP_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05'
+    AND PAR2.PI_ITEMCODE=AP_JDBSC
+    WHERE AP_LC &lt; 4 AND AP_ZT!=5 AND AP_ZT!=6
+    )
+    ) AP
+    INNER JOIN (SELECT APPRO.USERID,APPRO.USERNAME,APPRO.SFZH,APPRO.LINKTEL,APPRO.APLID,APPRO.APTYPE FROM
+    (SELECT DISTINCT XXX.USERID,XXX.USERNAME,XXX.SFZH,XXX.LINKTEL,T.APLUSERID,T.APLID,T.APTYPE FROM APPROVE T
+    INNER JOIN (SELECT * FROM APPLYUSERINFO AAA INNER JOIN APPLYFAMILYMEMBER MMM ON AAA.SFZH=MMM.AFM_SFZH AND MMM.AFM_YSQRGX='本人')XXX ON T.APLID=XXX.AFM_SQID
+    WHERE T.STATE like concat('%','审批全部通过'))APPRO
+    WHERE 1=1
+    <if test="aptype!=null and aptype!=''">
+      AND APPRO.APTYPE=#{aptype}
+    </if>
+    )CC
+    ON AP.AP_ID=CC.APLID
+    WHERE AP_FLAG!=0
+    <if test="ssq!=null and ssq!=''">
+      AND AP.SSQ = #{ssq}
+    </if>
+    <if test="ssj!=null and ssj!=''">
+      AND AP.SSJ = #{ssj}
+    </if>
+    <if test="username!=null">
+      AND CC.USERNAME like concat(concat('%',#{username}),'%')
+    </if>
+    <if test="sfzh!=null">
+      AND CC.SFZH like concat(concat('%',#{sfzh}),'%')
+    </if>
+    <if test="aplbh!=null">
+      AND APLBH like concat(concat('%',#{aplbh}),'%')
+    </if>
+    ))
+  </select>
+
+  <!--已分房但是未签合同的人员分页-->
+  <select id="findNoSign" parameterType="Map" resultType="Approve">
+    SELECT * FROM
+    (SELECT
+    DISTINCT CC.USERID AS APLUSERID,
+    CC.USERNAME,APLBH,
+    CC.SFZH,CC.LINKTEL,CC.APLID,CC.APTYPE
+    AS ATYPE,SSQ,ROWNUM ROW_ID,
+    AP_SQLB AS APTYPE,
+    CASE
+    when mess.MSTIME is null then '未发送'
+    else '已发送'end as operstate,
+    mess.Mstime AS opertime
+    FROM
+    (
+    SELECT AP_ID AP_ID,AP_SQRID AP_SQRID,
+    AP_SQLB AP_SQLB,AP_LC AP_LC,AP_FLAG AP_FLAG,
+    AP_SSQ SSQ,AP_SQBH APLBH
+    FROM APPLY WHERE AP_LC=4
+    UNION
+    SELECT AFF_ID AP_ID,AFF_SQRID AP_SQRID,
+    '4' AP_SQLB,AFF_LC AP_LC,AFF_FLAG AP_FLAG,
+    AFF_SSQ SSQ,AFF_SQBH APLBH
+    FROM APPLYFORFOREIGN
+    WHERE AFF_LC = 4
+    UNION
+    SELECT AFG_ID AP_ID,AFG_SQRID AP_SQRID,
+    '5' AP_SQLB,AFG_LC AP_LC,AFG_FLAG AP_FLAG,
+    AFG_SSQ SSQ,AFG_SQBH APLBH
+    FROM APPLYFORGRADUATE
+    WHERE AFG_LC = 4
+    ) AP
+    INNER JOIN (SELECT APPRO.USERID,APPRO.USERNAME,APPRO.SFZH,
+    APPRO.LINKTEL,APPRO.APLID,APPRO.APTYPE
+    FROM
+    (SELECT DISTINCT XXX.USERID,XXX.USERNAME,XXX.SFZH,
+    XXX.LINKTEL,T.APLUSERID,T.APLID,T.APTYPE
+    FROM APPROVE T
+    INNER JOIN (SELECT * FROM APPLYUSERINFO AAA
+    INNER JOIN APPLYFAMILYMEMBER MMM
+    ON AAA.SFZH=MMM.AFM_SFZH AND MMM.AFM_YSQRGX='本人' )XXX
+    ON T.APLID=XXX.AFM_SQID
+    WHERE T.STATE like concat('%','审批全部通过'))APPRO
+    WHERE 1=1
+    <if test="aptype!=null and aptype==1">
+    AND APPRO.APTYPE=#{aptype}
+    </if>
+    <if test="aptype!=null and aptype==3">
+      AND APPRO.APTYPE IN('4','5')
+    </if>
+    <if test="aptype!=null and aptype==2">
+      AND APPRO.APTYPE='3'
+    </if>
+    )CC
+    ON AP.AP_ID=CC.APLID
+    LEFT JOIN MESSAGE mess ON (APLBH = mess.SQBH AND mess.MSTYPE='40')
+    WHERE AP_FLAG!=0
+    <if test="aptype==3">
+      AND SSQ IN('0','1','2','3','4')
+    </if>
+    <if test="aptype!=null and aptype!=3 and ssq!=null">
+      AND SSQ =#{ssq}
+    </if>
+    <if test="username!=null">
+      AND CC.USERNAME like concat(concat('%',#{username}),'%')
+    </if>
+    <if test="sfzh!=null">
+      AND CC.SFZH like concat(concat('%',#{sfzh}),'%')
+    </if>
+    <if test="aplbh!=null">
+      AND APLBH like concat(concat('%',#{aplbh}),'%')
+    </if>
+    AND  ROWNUM &lt;= #{pageLaseIndex})
+    WHERE ROW_ID &gt; #{pageIndex}
+  </select>
+
+
+  <!--已分房但是未签合同的人员分页,用于发送通知信息-->
+  <select id="findNoSignToMes" parameterType="Map" resultType="Approve">
+    SELECT * FROM
+    (SELECT
+    DISTINCT CC.USERID AS APLUSERID,
+    CC.USERNAME,APLBH,
+    CC.SFZH,CC.LINKTEL,CC.APLID,CC.APTYPE
+    AS ATYPE,SSQ,ROWNUM ROW_ID,
+    AP_SQLB AS APTYPE,
+    CASE
+    when mess.MSTIME is null then '未发送'
+    else '已发送'end as operstate,
+    mess.Mstime AS opertime
+    FROM
+    (
+    SELECT AP_ID AP_ID,AP_SQRID AP_SQRID,
+    AP_SQLB AP_SQLB,AP_LC AP_LC,AP_FLAG AP_FLAG,
+    AP_SSQ SSQ,AP_SQBH APLBH
+    FROM APPLY WHERE AP_LC=4
+    UNION
+    SELECT AFF_ID AP_ID,AFF_SQRID AP_SQRID,
+    '4' AP_SQLB,AFF_LC AP_LC,AFF_FLAG AP_FLAG,
+    AFF_SSQ SSQ,AFF_SQBH APLBH
+    FROM APPLYFORFOREIGN
+    WHERE AFF_LC = 4
+    UNION
+    SELECT AFG_ID AP_ID,AFG_SQRID AP_SQRID,
+    '5' AP_SQLB,AFG_LC AP_LC,AFG_FLAG AP_FLAG,
+    AFG_SSQ SSQ,AFG_SQBH APLBH
+    FROM APPLYFORGRADUATE
+    WHERE AFG_LC = 4
+    ) AP
+    INNER JOIN (SELECT APPRO.USERID,APPRO.USERNAME,APPRO.SFZH,
+    APPRO.LINKTEL,APPRO.APLID,APPRO.APTYPE
+    FROM
+    (SELECT DISTINCT XXX.USERID,XXX.USERNAME,XXX.SFZH,
+    XXX.LINKTEL,T.APLUSERID,T.APLID,T.APTYPE
+    FROM APPROVE T
+    INNER JOIN (SELECT * FROM APPLYUSERINFO AAA
+    INNER JOIN APPLYFAMILYMEMBER MMM
+    ON AAA.SFZH=MMM.AFM_SFZH AND MMM.AFM_YSQRGX='本人' )XXX
+    ON T.APLID=XXX.AFM_SQID
+    WHERE T.STATE like concat('%','审批全部通过'))APPRO
+    WHERE 1=1
+    <if test="aptype!=null">
+      AND APPRO.APTYPE=#{aptype}
+    </if>
+    )CC
+    ON AP.AP_ID=CC.APLID
+    LEFT JOIN MESSAGE mess ON (APLBH = mess.SQBH AND mess.MSTYPE='40')
+    WHERE AP_FLAG!=0
+
+    <if test="ssq!=null">
+      AND SSQ =#{ssq}
+    </if>
+    <if test="username!=null">
+      AND CC.USERNAME like concat(concat('%',#{username}),'%')
+    </if>
+    <if test="sfzh!=null">
+      AND CC.SFZH like concat(concat('%',#{sfzh}),'%')
+    </if>
+    <if test="aplbh!=null">
+      AND APLBH like concat(concat('%',#{aplbh}),'%')
+    </if>
+    AND  ROWNUM &lt;= #{pageLaseIndex})
+    WHERE ROW_ID &gt; #{pageIndex}
+  </select>
+
+<!--查询数目-->
+  <select id="countNoSignToMes" resultType="java.lang.Integer">
+    SELECT count(*) from(
+    SELECT * FROM
+    (SELECT
+    DISTINCT CC.USERID AS APLUSERID,CC.USERNAME,APLBH,
+    CC.SFZH,CC.LINKTEL,CC.APLID,CC.APTYPE
+    AS ATYPE,SSQ,ROWNUM ROW_ID,
+    CASE WHEN AP_SQLB='1' THEN '经适房'
+    WHEN AP_SQLB='3' THEN '公租房(低保特困)'
+    WHEN AP_SQLB= '4' THEN '公租房(外来务工)'
+    WHEN AP_SQLB= '5' THEN '公租房(新就业)'
+    end AS APTYPE
+    FROM
+    (
+    SELECT AP_ID AP_ID,AP_SQRID AP_SQRID,
+    AP_SQLB AP_SQLB,AP_LC AP_LC,AP_FLAG AP_FLAG,
+    AP_SSQ SSQ,AP_SQBH APLBH
+    FROM APPLY
+    WHERE AP_LC=4
+    UNION
+    SELECT AFF_ID AP_ID,AFF_SQRID AP_SQRID,
+    '4' AP_SQLB,AFF_LC AP_LC,AFF_FLAG AP_FLAG,
+    AFF_SSQ SSQ,AFF_SQBH APLBH
+    FROM APPLYFORFOREIGN
+    WHERE AFF_LC = 4
+    UNION
+    SELECT AFG_ID AP_ID,AFG_SQRID AP_SQRID,
+    '5' AP_SQLB,AFG_LC AP_LC,AFG_FLAG AP_FLAG,
+    AFG_SSQ SSQ,AFG_SQBH APLBH
+    FROM APPLYFORGRADUATE
+    WHERE AFG_LC = 4
+    ) AP
+    INNER JOIN (SELECT APPRO.USERID,APPRO.USERNAME,APPRO.SFZH,
+    APPRO.LINKTEL,APPRO.APLID,APPRO.APTYPE
+    FROM
+    (SELECT DISTINCT XXX.USERID,XXX.USERNAME,XXX.SFZH,
+    XXX.LINKTEL,T.APLUSERID,T.APLID,T.APTYPE
+    FROM APPROVE T
+    INNER JOIN (SELECT * FROM APPLYUSERINFO AAA
+    INNER JOIN APPLYFAMILYMEMBER MMM
+    ON AAA.SFZH=MMM.AFM_SFZH AND MMM.AFM_YSQRGX='本人')XXX
+    ON T.APLID=XXX.AFM_SQID
+    WHERE T.STATE like concat('%','审批全部通过'))APPRO
+    WHERE 1=1
+    <if test="aptype!=null">
+      AND APPRO.APTYPE=#{aptype}
+    </if>
+    )CC
+    ON AP.AP_ID=CC.APLID
+    WHERE AP_FLAG!=0
+
+    <if test="ssq!=null">
+      AND SSQ =#{ssq}
+    </if>))
+  </select>
+
+
+  <!--已分房但是未签合同的人员不分页-->
+  <select id="findAllNoSign" parameterType="Map" resultType="Approve">
+    SELECT * FROM
+    (SELECT
+    DISTINCT CC.USERID AS APLUSERID,CC.USERNAME,APLBH,
+    CC.SFZH,CC.LINKTEL,CC.APLID,CC.APTYPE
+    AS ATYPE,SSQ,ROWNUM ROW_ID,
+    CASE WHEN AP_SQLB='1' THEN '经适房'
+    WHEN AP_SQLB='3' THEN '公租房(低保特困)'
+    WHEN AP_SQLB= '4' THEN '公租房(外来务工)'
+    WHEN AP_SQLB= '5' THEN '公租房(新就业)'
+    end AS APTYPE,
+    CASE
+    when mess.MSTIME is null then '未发送'
+    else '已发送'end as operstate,
+    mess.Mstime AS opertime
+    FROM
+    (
+    SELECT AP_ID AP_ID,AP_SQRID AP_SQRID,
+    AP_SQLB AP_SQLB,AP_LC AP_LC,AP_FLAG AP_FLAG,
+    AP_SSQ SSQ,AP_SQBH APLBH
+    FROM APPLY
+    WHERE AP_LC=4
+    UNION
+    SELECT AFF_ID AP_ID,AFF_SQRID AP_SQRID,
+    '4' AP_SQLB,AFF_LC AP_LC,AFF_FLAG AP_FLAG,
+    AFF_SSQ SSQ,AFF_SQBH APLBH
+    FROM APPLYFORFOREIGN
+    WHERE AFF_LC = 4
+    UNION
+    SELECT AFG_ID AP_ID,AFG_SQRID AP_SQRID,
+    '5' AP_SQLB,AFG_LC AP_LC,AFG_FLAG AP_FLAG,
+    AFG_SSQ SSQ,AFG_SQBH APLBH
+    FROM APPLYFORGRADUATE
+    WHERE AFG_LC = 4
+    ) AP
+    INNER JOIN (SELECT APPRO.USERID,APPRO.USERNAME,APPRO.SFZH,
+    APPRO.LINKTEL,APPRO.APLID,APPRO.APTYPE
+    FROM
+    (SELECT DISTINCT XXX.USERID,XXX.USERNAME,XXX.SFZH,
+    XXX.LINKTEL,T.APLUSERID,T.APLID,T.APTYPE
+    FROM APPROVE T
+    INNER JOIN (SELECT * FROM APPLYUSERINFO AAA
+    INNER JOIN APPLYFAMILYMEMBER MMM
+    ON AAA.SFZH=MMM.AFM_SFZH AND MMM.AFM_YSQRGX='本人')XXX
+    ON T.APLID=XXX.AFM_SQID
+    WHERE T.STATE like concat('%','审批全部通过'))APPRO
+    WHERE 1=1
+    <if test="aptype==1">
+      AND APPRO.APTYPE=#{aptype}
+    </if>
+    <if test="aptype==3">
+      AND APPRO.APTYPE IN('4','5')
+    </if>
+    <if test="aptype==2">
+      AND APPRO.APTYPE='3'
+    </if>
+    )CC
+    ON AP.AP_ID=CC.APLID
+    LEFT JOIN MESSAGE mess ON (APLBH = mess.SQBH AND mess.MSTYPE='40')
+    WHERE AP_FLAG!=0
+    <if test="username!=null">
+      AND CC.USERNAME like concat(concat('%',#{username}),'%')
+    </if>
+    <if test="sfzh!=null">
+      AND CC.SFZH like concat(concat('%',#{sfzh}),'%')
+    </if>
+    <if test="aplbh!=null">
+      AND APLBH like concat(concat('%',#{aplbh}),'%')
+    </if>)
+  </select>
+
+  <select id="countNoSign" resultType="java.lang.Integer">
+    SELECT count(*) from(
+    SELECT * FROM
+    (SELECT
+    DISTINCT CC.USERID AS APLUSERID,CC.USERNAME,APLBH,
+    CC.SFZH,CC.LINKTEL,CC.APLID,CC.APTYPE
+    AS ATYPE,SSQ,ROWNUM ROW_ID,
+    CASE WHEN AP_SQLB='1' THEN '经适房'
+    WHEN AP_SQLB='3' THEN '公租房(低保特困)'
+    WHEN AP_SQLB= '4' THEN '公租房(外来务工)'
+    WHEN AP_SQLB= '5' THEN '公租房(新就业)'
+    end AS APTYPE
+    FROM
+    (
+    SELECT AP_ID AP_ID,AP_SQRID AP_SQRID,
+    AP_SQLB AP_SQLB,AP_LC AP_LC,AP_FLAG AP_FLAG,
+    AP_SSQ SSQ,AP_SQBH APLBH
+    FROM APPLY
+    WHERE AP_LC=4
+    UNION
+    SELECT AFF_ID AP_ID,AFF_SQRID AP_SQRID,
+    '4' AP_SQLB,AFF_LC AP_LC,AFF_FLAG AP_FLAG,
+    AFF_SSQ SSQ,AFF_SQBH APLBH
+    FROM APPLYFORFOREIGN
+    WHERE AFF_LC = 4
+    UNION
+    SELECT AFG_ID AP_ID,AFG_SQRID AP_SQRID,
+    '5' AP_SQLB,AFG_LC AP_LC,AFG_FLAG AP_FLAG,
+    AFG_SSQ SSQ,AFG_SQBH APLBH
+    FROM APPLYFORGRADUATE
+    WHERE AFG_LC = 4
+    ) AP
+    INNER JOIN (SELECT APPRO.USERID,APPRO.USERNAME,APPRO.SFZH,
+    APPRO.LINKTEL,APPRO.APLID,APPRO.APTYPE
+    FROM
+    (SELECT DISTINCT XXX.USERID,XXX.USERNAME,XXX.SFZH,
+    XXX.LINKTEL,T.APLUSERID,T.APLID,T.APTYPE
+    FROM APPROVE T
+    INNER JOIN (SELECT * FROM APPLYUSERINFO AAA
+    INNER JOIN APPLYFAMILYMEMBER MMM
+    ON AAA.SFZH=MMM.AFM_SFZH AND MMM.AFM_YSQRGX='本人')XXX
+    ON T.APLID=XXX.AFM_SQID
+    WHERE T.STATE like concat('%','审批全部通过'))APPRO
+    WHERE 1=1
+    <if test="aptype==1">
+      AND APPRO.APTYPE=#{aptype}
+    </if>
+    <if test="aptype==3">
+      AND APPRO.APTYPE IN('4','5')
+    </if>
+    <if test="aptype==2">
+      AND APPRO.APTYPE='3'
+    </if>
+    )CC
+    ON AP.AP_ID=CC.APLID
+    WHERE AP_FLAG!=0
+    <if test="aptype==3">
+      AND SSQ IN('0','1','2','3','4')
+    </if>
+    <if test="aptype!=3 and ssq!=null">
+      AND SSQ =#{ssq}
+    </if>))
+  </select>
+
+
+
+  <select id="findAllApply" parameterType="Map" resultType="com.sys.pojo.apply.Approve">
+    SELECT * FROM(
+    select BBB.*,ROWNUM ROW_ID2
+    from
+    (select wmsys.wm_concat(AAA.F_RONUM) F_RONUM,AAA.APLID,AAA.USERNAME,AAA.SSQ,AAA.SSJ,
+    AAA.SFZH,AAA.APLUSERID,AAA.ATYPE,AAA.APLBH,
+    AAA.F_COMMUNITY,AAA.F_BUNAME,AAA.F_CECODE
+    FROM
+    (SELECT
+    AP_SQRID AS APLUSERID,MMM.AFM_XM AS USERNAME,
+    MMM.AFM_SFZH AS SFZH,MMM.AFM_LXDH AS LINKTEL,AP_ID AS APLID,
+    AP_SQLB AS ATYPE,SSQ,SSJ,APLBH,
+    FAC.F_COMMUNITY,FAC.F_BUNAME,FAC.F_CECODE,
+    FAC.F_RONUM,FAC.F_CONACRE,
+    CASE WHEN AP_SQLB='1' THEN '经适房'
+    WHEN AP_SQLB='3' THEN '公租房(低保特困)'
+    WHEN AP_SQLB= '4' THEN '公租房(外来务工)'
+    WHEN AP_SQLB= '5' THEN '公租房(新就业)'
+    end AS APTYPE,
+    ROWNUM ROW_ID,
+    CASE WHEN AC.AC_SQID IS NULL THEN '0' ELSE '1'END AS PRINTABLE,
+    CASE WHEN AP_LC &lt; 4 THEN '未选房' WHEN AP_LC &gt;=4 AND AP_LC!=6 THEN '已选房'WHEN
+    AP_LC=6 THEN '退房' END AS ORDERSTATE
+    FROM
+    (
+    (SELECT AP_ID AP_ID,AP_SQRID AP_SQRID, AP_SQLB AP_SQLB,AP_LC AP_LC,AP_FLAG
+    AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AP_SQBH APLBH
+    FROM APPLY
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AP_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AP_JDBSC
+    WHERE 1=1
+    <if test="ssq!=null and ssq!=''">
+      AND AP_SSQ = #{ssq}
+    </if>
+    )
+    UNION
+    (SELECT AFF_ID AP_ID,AFF_SQRID AP_SQRID,'4' AP_SQLB,AFF_LC AP_LC,AFF_FLAG
+    AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AFF_SQBH APLBH
+    FROM APPLYFORFOREIGN
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AFF_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AFF_DWDZ
+    WHERE 1=1
+    <if test="ssq!=null and ssq!=''">
+      AND AFF_SSQ = #{ssq}
+    </if>
+    )
+    UNION
+    (SELECT AFG_ID AP_ID,AFG_SQRID AP_SQRID,'5' AP_SQLB,AFG_LC AP_LC,AFG_FLAG
+    AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AFG_SQBH APLBH
+    FROM APPLYFORGRADUATE
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AFG_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AFG_DWDZ
+    WHERE 1=1
+    <if test="ssq!=null and ssq!=''">
+      AND AFG_SSQ = #{ssq}
+    </if>
+    )
+    ) AP
+    INNER JOIN APPLYFAMILYMEMBER MMM ON MMM.AFM_SQID=AP.AP_ID AND MMM.AFM_YSQRGX='本人'
+    INNER JOIN SOURCEHOUSE SOR ON SOR.SH_APPLYID=AP.AP_ID
+    INNER JOIN FACTMAPPING FAC ON SOR.SH_FWID=FAC.FACTMAPPING_ID
+    LEFT JOIN APPLY_CHANGE AC ON AC.AC_SQID=AP.AP_ID AND AC.AC_TYPE='7'
+    WHERE AP_FLAG!=0
+    <if test="username!=null and username!=''">
+      AND MMM.AFM_XM LIKE CONCAT(CONCAT('%',#{username}),'%')
+    </if>
+    <if test="sfzh!=null and sfzh!=''">
+      AND MMM.AFM_SFZH LIKE CONCAT(CONCAT('%',#{sfzh}),'%')
+    </if>
+    <if test="sqbh!=null and sqbh!=''">
+      AND APLBH LIKE CONCAT(CONCAT('%',#{sqbh}),'%')
+    </if>
+    <if test="applyid!=null and applyid!=''">
+      AND AP_ID LIKE CONCAT(CONCAT('%',#{applyid}),'%')
+    </if>
+    <if test="item!=null and item!=''">
+      AND FAC.F_COMMUNITY LIKE CONCAT(CONCAT('%',#{item}),'%')
+    </if>
+    <if test="buname!=null and buname!=''">
+      AND FAC.F_BUNAME LIKE CONCAT(CONCAT('%',#{buname}),'%')
+    </if>
+    <if test="apSqlb!=null and apSqlb!=''">
+      AND AP_SQLB=#{apSqlb}
+    </if>
+    )AAA GROUP BY AAA.APLID,AAA.USERNAME,AAA.SSQ,AAA.SSJ,
+    AAA.SFZH,AAA.APLUSERID,AAA.ATYPE,AAA.APLBH,AAA.F_COMMUNITY,AAA.F_BUNAME,
+    AAA.F_CECODE
+    ) BBB where 1 = 1
+    AND  ROWNUM &lt;= #{pageLaseIndex})
+    WHERE ROW_ID2 &gt; #{pageIndex}
+  </select>
+  <select id="findAllApplyCount" resultType="java.lang.Integer">
+    SELECT count(*) from(
+    select *
+    from
+    (select wmsys.wm_concat(AAA.F_RONUM) F_RONUM,AAA.APLID,AAA.USERNAME,AAA.SSQ,AAA.SSJ,
+    AAA.SFZH,AAA.APLUSERID,AAA.ATYPE,AAA.APLBH,
+    AAA.F_COMMUNITY,AAA.F_BUNAME,AAA.F_CECODE
+    FROM
+    (SELECT
+    AP_SQRID AS APLUSERID,MMM.AFM_XM AS USERNAME,
+    MMM.AFM_SFZH AS SFZH,MMM.AFM_LXDH AS LINKTEL,AP_ID AS APLID,
+    AP_SQLB AS ATYPE,SSQ,SSJ,APLBH,
+    FAC.F_COMMUNITY,FAC.F_BUNAME,FAC.F_CECODE,
+    FAC.F_RONUM,FAC.F_CONACRE,
+    CASE WHEN AP_SQLB='1' THEN '经适房'
+    WHEN AP_SQLB='3' THEN '公租房(低保特困)'
+    WHEN AP_SQLB= '4' THEN '公租房(外来务工)'
+    WHEN AP_SQLB= '5' THEN '公租房(新就业)'
+    end AS APTYPE,
+    ROWNUM ROW_ID,
+    CASE WHEN AC.AC_SQID IS NULL THEN '0' ELSE '1'END AS PRINTABLE,
+    CASE WHEN AP_LC &lt; 4 THEN '未选房' WHEN AP_LC &gt;=4 AND AP_LC!=6 THEN '已选房'WHEN AP_LC=6 THEN '退房' END AS ORDERSTATE
+    FROM
+    (
+    (SELECT AP_ID AP_ID,AP_SQRID AP_SQRID, AP_SQLB AP_SQLB,AP_LC AP_LC,AP_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AP_SQBH APLBH
+    FROM APPLY
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AP_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AP_JDBSC
+    WHERE 1=1
+    <if test="ssq!=null and ssq!=''">
+      AND AP_SSQ = #{ssq}
+    </if>
+    )
+    UNION
+    (SELECT AFF_ID AP_ID,AFF_SQRID AP_SQRID,'4' AP_SQLB,AFF_LC AP_LC,AFF_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AFF_SQBH APLBH
+    FROM APPLYFORFOREIGN
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AFF_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AFF_DWDZ
+    WHERE 1=1
+    <if test="ssq!=null and ssq!=''">
+      AND AFF_SSQ = #{ssq}
+    </if>
+    )
+    UNION
+    (SELECT AFG_ID AP_ID,AFG_SQRID AP_SQRID,'5' AP_SQLB,AFG_LC AP_LC,AFG_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AFG_SQBH APLBH
+    FROM APPLYFORGRADUATE
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AFG_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AFG_DWDZ
+    WHERE 1=1
+    <if test="ssq!=null and ssq!=''">
+      AND AFG_SSQ = #{ssq}
+    </if>
+    )
+    ) AP
+    INNER JOIN APPLYFAMILYMEMBER MMM ON MMM.AFM_SQID=AP.AP_ID AND MMM.AFM_YSQRGX='本人'
+    INNER JOIN SOURCEHOUSE SOR ON SOR.SH_APPLYID=AP.AP_ID
+    INNER JOIN FACTMAPPING FAC ON SOR.SH_FWID=FAC.FACTMAPPING_ID
+    LEFT JOIN APPLY_CHANGE AC ON AC.AC_SQID=AP.AP_ID AND AC.AC_TYPE='7'
+    WHERE AP_FLAG!=0
+    <if test="username!=null and username!=''">
+      AND MMM.AFM_XM LIKE CONCAT(CONCAT('%',#{username}),'%')
+    </if>
+    <if test="sfzh!=null and sfzh!=''">
+      AND MMM.AFM_SFZH LIKE CONCAT(CONCAT('%',#{sfzh}),'%')
+    </if>
+    <if test="sqbh!=null and sqbh!=''">
+      AND APLBH LIKE CONCAT(CONCAT('%',#{sqbh}),'%')
+    </if>
+    <if test="applyid!=null and applyid!=''">
+      AND AP_ID LIKE CONCAT(CONCAT('%',#{applyid}),'%')
+    </if>
+    <if test="item!=null and item!=''">
+      AND FAC.F_COMMUNITY LIKE CONCAT(CONCAT('%',#{item}),'%')
+    </if>
+    <if test="buname!=null and buname!=''">
+      AND FAC.F_BUNAME LIKE CONCAT(CONCAT('%',#{buname}),'%')
+    </if>
+    <if test="apSqlb!=null and apSqlb!=''">
+      AND AP_SQLB=#{apSqlb}
+    </if>
+    )AAA GROUP BY AAA.APLID,AAA.USERNAME,AAA.SSQ,AAA.SSJ,
+    AAA.SFZH,AAA.APLUSERID,AAA.ATYPE,AAA.APLBH,AAA.F_COMMUNITY,AAA.F_BUNAME,
+    AAA.F_CECODE
+    ) BBB where 1 = 1
+    )
+  </select>
+
+
+
+  <select id="findTFSpForm" parameterType="Map" resultType="com.sys.pojo.apply.Approve">
+    SELECT
+    AP_SQRID AS APLUSERID,MMM.AFM_XM AS USERNAME,
+    MMM.AFM_SFZH AS SFZH,MMM.AFM_LXDH AS LINKTEL,AP_ID AS APLID,
+    AP_SQLB AS ATYPE,SSQ,SSJ,APLBH,PAR4.PI_ITEMNAME SH_SSQ,
+    FAC.F_COMMUNITY,
+    substr(FAC.F_BUNAME,1,instr(FAC.F_BUNAME,'#')-1) AS F_BUNAME,
+    FAC.F_CECODE, FAC.F_RONUM,FAC.F_CONACRE,
+    MEM.AFM_XM POXM,MEM.AFM_SFZH POSFZH
+    FROM
+    (
+    (SELECT AP_ID AP_ID,AP_SQRID AP_SQRID, AP_SQLB AP_SQLB,AP_LC AP_LC,AP_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AP_SQBH APLBH FROM APPLY
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AP_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AP_JDBSC
+    WHERE AP_SQLB='3')
+    UNION
+    (SELECT AFF_ID AP_ID,AFF_SQRID AP_SQRID,'4' AP_SQLB,AFF_LC AP_LC,AFF_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AFF_SQBH APLBH FROM APPLYFORFOREIGN
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AFF_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AFF_DWDZ)
+    UNION
+    (SELECT AFG_ID AP_ID,AFG_SQRID AP_SQRID,'5' AP_SQLB,AFG_LC AP_LC,AFG_FLAG AP_FLAG,PAR.PI_ITEMNAME SSQ,PAR2.PI_ITEMNAME SSJ,AFG_SQBH APLBH FROM APPLYFORGRADUATE
+    INNER JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=AFG_SSQ
+    INNER JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=AFG_DWDZ)
+    ) AP
+    INNER JOIN APPLYFAMILYMEMBER MMM ON MMM.AFM_SQID=AP.AP_ID AND MMM.AFM_YSQRGX='本人'
+
+    INNER JOIN SOURCEHOUSE SOUR ON AP.AP_ID=SOUR.SH_APPLYID
+    INNER JOIN PARMITEM PAR4 ON PAR4.PI_SETCODE='04' AND PAR4.PI_ITEMCODE=SOUR.SH_SSQ
+    INNER JOIN FACTMAPPING FAC ON SOUR.SH_FWID=FAC.FACTMAPPING_ID
+    LEFT JOIN APPLYFAMILYMEMBER MEM ON AP.AP_ID=MEM.AFM_SQID AND MEM.AFM_YSQRGX='配偶'
+    WHERE AP_FLAG!=0 AND AP_LC &gt;= 4 AND AP_LC!=6 AND AP.AP_ID=#{applyid}
+
+  </select>
+
+
+  <select id="countNsByMap" resultType="int">
+    SELECT COUNT (1) FROM APPROVE
+    WHERE 1=1
+    <if test="userid!=null and userid!=''">
+      and APLUSERID=#{userid}
+    </if>
+    <if test="applyType!=null and applyType!=''">
+      and APTYPE like concat(concat('%',#{applyType}),'%')
+    </if>
+    <if test="apldate!=null">
+      and to_char(APLDATE,'yyyy')=to_char(sysdate,'yyyy')
+    </if>
+    <if test="thisYear!=null">
+      and to_char(APLDATE,'yyyy')=to_char(sysdate,'yyyy')
+    </if>
+    <if test="state!=null and state!=''">
+      and STATE like concat('%',#{state})
+    </if>
+  </select>
+
+  <!--条件查询审批单的数目-->
+  <select id="selectCountByMap">
+    select count(0) from APPROVE apo
+
+  </select>
+
+  <sql id="sqlCondition">
+    <where>
+      <if test="processInstanceId!=null and processInstanceId!=''">
+        and PROCESSINSTANCEID=#{processInstanceId}
+      </if>
+      <if test="userid!=null and userid!=''">
+        and APLUSERID=#{userid}
+      </if>
+      <!-- 20190105-->
+      <if test="applyZtLess!=null">
+        and  EXISTS
+        (
+        select apl.AP_ID AS aplid from APPLY apl where apl.AP_ID = APRO.APLID and apl.AP_ZT &lt; #{applyZtLess}
+        union
+        select abt.AB_ID AS aplid from APPLY_BUTIE abt where abt.AB_ID = APRO.APLID and abt.AB_ZT &lt; #{applyZtLess}
+        union
+        select apf.AFF_ID AS aplid from APPLYFORFOREIGN apf where apf.AFF_ID = APRO.APLID and apf.AFF_ZT &lt; #{applyZtLess}
+        union
+        select apg.AFG_ID AS aplid from APPLYFORGRADUATE apg where apg.AFG_ID = APRO.APLID and apg.AFG_ZT &lt; #{applyZtLess}
+        )
+      </if>
+
+
+      <if test="sqbh!=null and sqbh!=''">
+        and APLBH=#{sqbh}
+      </if>
+      <if test="applyid!=null and applyid!=''">
+        and APLID=#{applyid}
+      </if>
+      <if test="applyType!=null and applyType!=''">
+        and APTYPE like concat(concat('%',#{applyType}),'%')
+      </if>
+      <if test="applyTypeNotLike!=null and applyTypeNotLike!=''">
+        and (APTYPE NOT like concat(concat('%',#{applyTypeNotLike}),'%') OR APTYPE is null)
+      </if>
+      <if test="applyStateNotLike!=null and applyStateNotLike!=''">
+        and (STATE NOT like concat(concat('%',#{applyStateNotLike}),'%') OR  STATE is null)
+      </if>
+      <if test="applyZtEqual!=null">
+        and NOT EXISTS
+          (
+          select apl.AP_ID AS aplid from APPLY apl where apl.AP_ID = APRO.APLID and apl.AP_ZT &lt; #{applyZtEqual}
+          union
+          select abt.AB_ID AS aplid from APPLY_BUTIE abt where abt.AB_ID = APRO.APLID and abt.AB_ZT &lt; #{applyZtEqual}
+          union
+          select apf.AFF_ID AS aplid from APPLYFORFOREIGN apf where apf.AFF_ID = APRO.APLID and apf.AFF_ZT &lt; #{applyZtEqual}
+          union
+          select apg.AFG_ID AS aplid from APPLYFORGRADUATE apg where apg.AFG_ID = APRO.APLID and apg.AFG_ZT &lt; #{applyZtEqual}
+        )
+      </if>
+      <if test="applyZtExist!=null">
+        and  EXISTS
+        (
+        select apl.AP_ID AS aplid from APPLY apl where apl.AP_ID = APRO.APLID and apl.AP_ZT = #{applyZtExist}
+        union
+        select abt.AB_ID AS aplid from APPLY_BUTIE abt where abt.AB_ID = APRO.APLID and abt.AB_ZT = #{applyZtExist}
+        union
+        select apf.AFF_ID AS aplid from APPLYFORFOREIGN apf where apf.AFF_ID = APRO.APLID and apf.AFF_ZT = #{applyZtExist}
+        union
+        select apg.AFG_ID AS aplid from APPLYFORGRADUATE apg where apg.AFG_ID = APRO.APLID and apg.AFG_ZT = #{applyZtExist}
+        )
+      </if>
+
+
+    </where>
+  </sql>
+
+  <!--条件查询-->
+  <select id="selectApplyNsMap" resultType="java.util.Map">
+    <include refid="nsSql"></include>
+  </select>
+
+  <!--查询公共语句-->
+  <sql id="nsSql">
+    select apl.AFF_ZT as appzt,
+    apl.AFF_ID as appid,
+    '4' as apptype
+    from APPLYFORFOREIGN apl
+    LEFT JOIN APPLYFAMILYMEMBER AM ON AM.AFM_SQID = apl.AFF_ID
+    LEFT JOIN APPLYNS aln ON aln.AP_SQID = apl.AFF_ID
+    LEFT JOIN APPROVE apov ON apov.APLID = aln.ALSID
+    where AM.AFM_SFZH = #{nsSfzh}
+    <if test="apZt!=null and apZt!=''">
+      and apl.AFF_ZT = #{apZt}
+    </if>
+    <include refid="sqlNsCondition"></include>
+
+    union
+
+    select apl.AFG_ZT as appzt,
+    apl.AFG_ID as appid,
+    '5' as apptype
+    from APPLYFORGRADUATE apl
+    LEFT JOIN APPLYFAMILYMEMBER AM ON AM.AFM_SQID = apl.AFG_ID
+    LEFT JOIN APPLYNS aln ON aln.AP_SQID = apl.AFG_ID
+    LEFT JOIN APPROVE apov ON apov.APLID = aln.ALSID
+    where AM.AFM_SFZH = #{nsSfzh}
+    <if test="apZt!=null and apZt!=''">
+      and apl.AFG_ZT = #{apZt}
+    </if>
+    <include refid="sqlNsCondition"></include>
+
+    union
+
+    select apl.AB_ZT as appzt,
+    apl.AB_ID as appid,
+    '2' as apptype
+    from APPLY_BUTIE apl
+    LEFT JOIN APPLYFAMILYMEMBER AM ON AM.AFM_SQID = apl.AB_ID
+    LEFT JOIN APPLYNS aln ON aln.AP_SQID = apl.AB_ID
+    LEFT JOIN APPROVE apov ON apov.APLID = aln.ALSID
+    where  AM.AFM_SFZH = #{nsSfzh}
+    <if test="apZt!=null and apZt!=''">
+      and apl.AB_ZT = #{apZt}
+    </if>
+    <include refid="sqlNsCondition"></include>
+
+    union
+
+    select apl.AP_ZT as appzt,
+    apl.AP_ID as appid,
+    apl.AP_SQLB as apptype
+    from APPLY apl
+    LEFT JOIN APPLYFAMILYMEMBER AM ON AM.AFM_SQID = apl.AP_ID
+    LEFT JOIN APPLYNS aln ON aln.AP_SQID = apl.AP_ID
+    LEFT JOIN APPROVE apov ON apov.APLID = aln.ALSID
+    where apl.AP_SQLB=3 and AM.AFM_SFZH = #{nsSfzh}
+    <if test="apZt!=null and apZt!=''">
+      and  apl.AP_ZT = #{apZt}
+    </if>
+    <include refid="sqlNsCondition"></include>
+  </sql>
+
+<!--查询条件-->
+  <sql id="sqlNsCondition">
+
+    <if test="nsStateNotLike!=null">
+      and (nvl(apov.STATE,'12345') NOT like concat(concat('%',#{nsStateNotLike}),'%') )
+    </if>
+    <if test="nsStateLike!=null">
+      and (nvl(apov.STATE,'12345')  like concat(concat('%',#{nsStateLike}),'%') )
+    </if>
+    <if test="nsApplyType!=null">
+      and apov.APTYPE like concat(concat('%',#{nsApplyType}),'%')
+    </if>
+    <if test="nsExist!=null and nsExist!=''">
+      and apov.APLID is not null
+    </if>
+    <if test="nsDateEqual!=null">
+      and to_char(apov.APLDATE,'yyyy') = to_char(#{nsDateEqual},'yyyy')
+    </if>
+  </sql>
+
+
+<!--查询经适房和低保特困公租房已申请通过但没有分房的用户-->
+  <select id="findPassApprove" resultType="Map">
+     SELECT
+      CASE
+        WHEN ap.AP_SQLB='1' THEN '经济适用房'
+        WHEN ap.AP_SQLB='3' THEN '低保特困公租房'
+        ELSE '类型出错'
+        END apptypename,
+    CASE
+        WHEN lot.STATE is null THEN '待摇号'
+        WHEN lot.STATE ='0' THEN '轮候'
+        WHEN lot.STATE ='1' THEN '待选房'
+        ELSE lot.STATE
+        END state,
+    CASE
+      when mess.MSTIME is null then '未发送'
+      else '已发送'
+      END msexs,
+        lot.LID AS lid,
+        ap.AP_SQLB AS apptype,
+        ap.AP_ID AS appid,
+        apr.APLBH AS id,
+        apr.APLDATE AS applydate,
+        apr.PASSDATE AS passdate,
+        aplu.USERNAME AS username,
+        aplu.LINKTEL AS linktel,
+        aplu.SFZH AS sfzh,
+        userinfo.USERNAME AS opusername,
+        lot.QZTIME AS optime,
+        pi.PI_ITEMNAME AS ssq,
+        pij.PI_ITEMNAME AS ssjd,
+        mess.MSTIME AS mstime
+    FROM APPROVE apr
+    <include refid="sqlWhere"></include>
+  </select>
+
+  <!--查询数目-->
+  <select id="findPassApproveCount" resultType="java.lang.Integer">
+    select count(*)  FROM APPROVE apr
+    <include refid="sqlWhere"></include>
+  </select>
+  <!--查询条件-->
+  <sql id="sqlWhere">
+    LEFT JOIN APPLYUSERINFO aplu ON apr.APLUSERID=aplu.USERID
+    LEFT JOIN APPLY ap on apr.APLID=ap.AP_ID
+    LEFT JOIN PARMITEM pi ON (ap.AP_SSQ = pi.PI_ITEMCODE AND pi.PI_SETCODE='04')
+    LEFT JOIN PARMITEM pij ON (ap.AP_JDBSC = pij.PI_ITEMCODE AND pij.PI_SETCODE='05')
+    LEFT JOIN LOTNUM lot ON (apr.APLBH = lot.SQBH)
+    LEFT JOIN USERINFO userinfo ON (userinfo.USERID = lot.USERID)
+    LEFT JOIN MESSAGE mess ON (apr.APLBH = mess.SQBH AND mess.MSTYPE='4')
+    <where>
+      apr.STATE like concat('%','审批全部通过')
+      and ap.AP_ZT!=5
+      and ap.AP_ZT!=6
+      <if test="aplcLs!=null and aplcLs!=''">
+        and ap.AP_LC &lt; #{aplcLs}
+      </if>
+      <if test="aplcEq!=null and aplcEq!=''">
+        and ap.AP_LC = #{aplcEq}
+      </if>
+      <if test="username!=null and username!=''">
+        and aplu.USERNAME like concat('%',concat(#{username},'%'))
+      </if>
+      <if test="sfzh!=null and sfzh!=''">
+        and aplu.SFZH like concat('%',concat(#{sfzh},'%'))
+      </if>
+      <if test="sqbh!=null and sqbh!=''">
+        and apr.APLBH =#{sqbh}
+      </if>
+      <if test="ssq!=null and ssq!=''">
+        and ap.AP_SSQ =#{ssq}
+      </if>
+      <if test="ssj!=null and ssj!=''">
+        and ap.AP_JDBSC =#{ssj}
+      </if>
+      <if test="applytype!=null and applytype!=''">
+        and ap.AP_SQLB =#{applytype}
+      </if>
+      <if test="beginDate!=null and beginDate!=''">
+        and to_char(apr.PASSDATE,'yyyy-MM-dd') &gt;= #{beginDate}
+      </if>
+      <if test="endDate!=null and endDate!=''">
+        and to_char(apr.PASSDATE,'yyyy-MM-dd') &lt;= #{endDate}
+      </if>
+    </where>
+
+  </sql>
+
+  <!--批量更新申请单状态-->
+  <update id="updateApproveStateBatch"  parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+      update APPROVE
+      <set>
+        STATE='摇号驳回'
+      </set>
+      where APLBH = to_char(${item.ID})
+    </foreach>
+  </update>
+
+
+  <!--经适房退房审批表内容-->
+  <select id="findJSFForm" parameterType="Map" resultType="com.sys.pojo.apply.Approve" >
+  SELECT AP_SQRID         AS APLUSERID,
+       MMM.AFM_XM       AS USERNAME,
+       MMM.AFM_SFZH     AS SFZH,
+       MMM.AFM_LXDH     AS LINKTEL,
+       AP_ID            AS APLID,
+       AP_SQLB          AS ATYPE,
+       SSQ,
+       SSJ,
+       AP_SQJWH         AS APSQJWH,
+       APLBH,
+       PAR4.PI_ITEMNAME SH_SSQ,
+       FAC.F_COMMUNITY,
+       substr(FAC.F_BUNAME,1,instr(FAC.F_BUNAME,'#')-1) AS F_BUNAME,
+       FAC.F_CECODE,
+       FAC.F_RONUM,
+       FAC.F_CONACRE,
+       MEM.AFM_XM       POXM,
+       MEM.AFM_SFZH     POSFZH,
+       LOT.NUM
+  FROM ((SELECT AP_ID            AP_ID,
+                AP_SQRID         AP_SQRID,
+                AP_SQLB          AP_SQLB,
+                AP_LC            AP_LC,
+                AP_FLAG          AP_FLAG,
+                PAR.PI_ITEMNAME  SSQ,
+                PAR2.PI_ITEMNAME SSJ,
+                PAR3.PI_ITEMNAME AP_SQJWH,
+                AP_SQBH          APLBH
+           FROM APPLY
+          INNER JOIN PARMITEM PAR
+             ON PAR.PI_SETCODE = '04'
+            AND PAR.PI_ITEMCODE = AP_SSQ
+          INNER JOIN PARMITEM PAR2
+             ON PAR2.PI_SETCODE = '05'
+            AND PAR2.PI_ITEMCODE = AP_JDBSC
+           left JOIN PARMITEM PAR3
+             ON PAR3.PI_SETCODE = '06'
+            AND PAR3.PI_ITEMCODE = AP_SQJWH
+          WHERE AP_SQLB = '1')) AP
+  left JOIN APPLYFAMILYMEMBER MMM
+    ON MMM.AFM_SQID = AP.AP_ID
+   AND MMM.AFM_YSQRGX = '本人'
+
+  left JOIN SOURCEHOUSE SOUR
+    ON AP.AP_ID = SOUR.SH_APPLYID
+  left JOIN PARMITEM PAR4
+    ON PAR4.PI_SETCODE = '04'
+   AND PAR4.PI_ITEMCODE = SOUR.SH_SSQ
+  left JOIN FACTMAPPING FAC
+    ON SOUR.SH_FWID = FAC.FACTMAPPING_ID
+  LEFT JOIN APPLYFAMILYMEMBER MEM
+    ON AP.AP_ID = MEM.AFM_SQID
+   AND MEM.AFM_YSQRGX = '配偶'
+  LEFT JOIN LOTNUM LOT
+    ON APLBH = LOT.SQBH
+ WHERE AP_FLAG != 0
+   AND AP_LC &gt;= 4
+   AND AP_LC != 6
+   AND AP.AP_ID = #{applyid}
+</select>
+
+  <!--已分房可以调房的用户分页-->
+  <select id="findChangePersons" parameterType="Map" resultType="Approve">
+
+
+    select *
+    from (
+    select BBB.*, ROWNUM ROW_ID2
+    from (
+
+    select AAA.APLUSERID,
+    AAA.USERNAME,
+    AAA.SFZH,
+    AAA.LINKTEL,
+    AAA.APLID,
+    AAA.APTYPE,
+    AAA.SSQ,
+    sum(sor_num) as numb
+    FROM
+
+    (SELECT DISTINCT CC.USERID AS APLUSERID,
+    CC.USERNAME,
+    CC.SFZH,
+    CC.LINKTEL,
+    CC.APLID,
+    CC.APTYPE,
+    SSQ,
+    ROWNUM ROW_ID,
+    CASE
+    WHEN AP_LC &lt; 4 THEN
+    '未选房'
+    ELSE
+    '已选房'
+    END AS ORDERSTATE,
+    CASE
+    WHEN CC.SH_ID is not null THEN
+    1
+    ELSE
+    0
+    END AS sor_num
+
+    FROM (
+    SELECT AP_ID    AP_ID,
+    AP_SQRID AP_SQRID,
+    AP_SQLB  AP_SQLB,
+    AP_LC    AP_LC,
+    AP_FLAG  AP_FLAG,
+    AP_SSQ   SSQ
+    FROM APPLY
+    WHERE AP_LC = 3
+    OR AP_LC = 4
+    UNION
+    SELECT AFF_ID AP_ID,
+    AFF_SQRID AP_SQRID,
+    '4' AP_SQLB,
+    AFF_LC AP_LC,
+    AFF_FLAG AP_FLAG,
+    AFF_SSQ SSQ
+    FROM APPLYFORFOREIGN
+    WHERE AFF_LC &lt;= 4
+    UNION
+    SELECT AFG_ID AP_ID,
+    AFG_SQRID AP_SQRID,
+    '5' AP_SQLB,
+    AFG_LC AP_LC,
+    AFG_FLAG AP_FLAG,
+    AFG_SSQ SSQ
+    FROM APPLYFORGRADUATE
+    WHERE AFG_LC &lt;= 4) AP
+
+    INNER JOIN (SELECT APPRO.USERID,
+    APPRO.USERNAME,
+    APPRO.SFZH,
+    APPRO.LINKTEL,
+    APPRO.APLID,
+    APPRO.APTYPE,
+    SOR.SH_ID
+    FROM (SELECT  XXX.USERID,
+    XXX.USERNAME,
+    XXX.SFZH,
+    XXX.LINKTEL,
+    T.APLUSERID,
+    T.APLID,
+    T.APTYPE
+    FROM APPROVE T
+    INNER JOIN (SELECT *
+    FROM APPLYUSERINFO AAA
+    INNER JOIN APPLYFAMILYMEMBER MMM
+    ON AAA.SFZH =
+    MMM.AFM_SFZH AND MMM.AFM_YSQRGX='本人') XXX
+    ON T.APLID = XXX.AFM_SQID
+    WHERE T.STATE like
+    '%审批全部通过') APPRO
+    LEFT JOIN SOURCEHOUSE SOR
+    ON APPRO.APLID = SOR.SH_APPLYID
+    WHERE 1 = 1
+    <if test="aptype==1">
+      AND APPRO.APTYPE=#{aptype}
+    </if>
+    <if test="aptype==3">
+      AND APPRO.APTYPE IN('4','5')
+    </if>
+    <if test="aptype==2">
+      AND APPRO.APTYPE='3'
+    </if>
+    ) CC
+    ON AP.AP_ID = CC.APLID
+    WHERE AP_FLAG != 0
+    <if test="aptype==3 or ssq==0">
+      AND SSQ IN('0','1','2','3','4')
+    </if>
+    <if test="aptype!=3 and ssq!=null and ssq!=0">
+      AND SSQ =#{ssq}
+    </if>
+    <if test="uname!=null">
+      AND CC.USERNAME LIKE concat(concat('%',#{uname}),'%')
+    </if>
+    ) AAA
+
+    group by
+    AAA.APLUSERID,
+    AAA.USERNAME,
+    AAA.SFZH,
+    AAA.LINKTEL,
+    AAA.APLID,
+    AAA.APTYPE,
+    AAA.SSQ
+    ) BBB
+    where ROWNUM &lt;= #{pageLaseIndex} and numb &gt;0)
+    WHERE ROW_ID2 &gt; #{pageIndex}
+  </select>
+  <!--已分房可以调房的用户总数-->
+  <select id="findChangePersonsCount"  resultType="java.lang.Integer">
+    SELECT count(*) from(
+    select *
+    from (
+    select BBB.*, ROWNUM ROW_ID2
+    from (
+
+    select AAA.APLUSERID,
+    AAA.USERNAME,
+    AAA.SFZH,
+    AAA.LINKTEL,
+    AAA.APLID,
+    AAA.APTYPE,
+    AAA.SSQ,
+    sum(sor_num) as numb
+    FROM
+
+    (SELECT DISTINCT CC.USERID AS APLUSERID,
+    CC.USERNAME,
+    CC.SFZH,
+    CC.LINKTEL,
+    CC.APLID,
+    CC.APTYPE,
+    SSQ,
+    ROWNUM ROW_ID,
+    CASE
+    WHEN AP_LC &lt; 4 THEN
+    '未选房'
+    ELSE
+    '已选房'
+    END AS ORDERSTATE,
+    CASE
+    WHEN CC.SH_ID is not null THEN
+    1
+    ELSE
+    0
+    END AS sor_num
+
+    FROM (
+    SELECT AP_ID    AP_ID,
+    AP_SQRID AP_SQRID,
+    AP_SQLB  AP_SQLB,
+    AP_LC    AP_LC,
+    AP_FLAG  AP_FLAG,
+    AP_SSQ   SSQ
+    FROM APPLY
+    WHERE AP_LC = 3
+    OR AP_LC = 4
+    UNION
+    SELECT AFF_ID AP_ID,
+    AFF_SQRID AP_SQRID,
+    '4' AP_SQLB,
+    AFF_LC AP_LC,
+    AFF_FLAG AP_FLAG,
+    AFF_SSQ SSQ
+    FROM APPLYFORFOREIGN
+    WHERE AFF_LC &lt;= 4
+    UNION
+    SELECT AFG_ID AP_ID,
+    AFG_SQRID AP_SQRID,
+    '5' AP_SQLB,
+    AFG_LC AP_LC,
+    AFG_FLAG AP_FLAG,
+    AFG_SSQ SSQ
+    FROM APPLYFORGRADUATE
+    WHERE AFG_LC &lt;= 4) AP
+
+    INNER JOIN (SELECT APPRO.USERID,
+    APPRO.USERNAME,
+    APPRO.SFZH,
+    APPRO.LINKTEL,
+    APPRO.APLID,
+    APPRO.APTYPE,
+    SOR.SH_ID
+    FROM (SELECT  XXX.USERID,
+    XXX.USERNAME,
+    XXX.SFZH,
+    XXX.LINKTEL,
+    T.APLUSERID,
+    T.APLID,
+    T.APTYPE
+    FROM APPROVE T
+    INNER JOIN (SELECT *
+    FROM APPLYUSERINFO AAA
+    INNER JOIN APPLYFAMILYMEMBER MMM
+    ON AAA.SFZH =
+    MMM.AFM_SFZH AND MMM.AFM_YSQRGX='本人') XXX
+    ON T.APLID = XXX.AFM_SQID
+    WHERE T.STATE like
+    '%审批全部通过') APPRO
+    LEFT JOIN SOURCEHOUSE SOR
+    ON APPRO.APLID = SOR.SH_APPLYID
+    WHERE 1 = 1
+    <if test="aptype==1">
+      AND APPRO.APTYPE=#{aptype}
+    </if>
+    <if test="aptype==3">
+      AND APPRO.APTYPE IN('4','5')
+    </if>
+    <if test="aptype==2">
+      AND APPRO.APTYPE='3'
+    </if>
+    ) CC
+    ON AP.AP_ID = CC.APLID
+    WHERE AP_FLAG != 0
+    <if test="aptype==3 or ssq==0">
+      AND SSQ IN('0','1','2','3','4')
+    </if>
+    <if test="aptype!=3 and ssq!=null and ssq!=0">
+      AND SSQ =#{ssq}
+    </if>
+    <if test="uname!=null">
+      AND CC.USERNAME LIKE concat(concat('%',#{uname}),'%')
+    </if>
+    ) AAA
+
+    group by
+    AAA.APLUSERID,
+    AAA.USERNAME,
+    AAA.SFZH,
+    AAA.LINKTEL,
+    AAA.APLID,
+    AAA.APTYPE,
+    AAA.SSQ
+    ) BBB
+
+    where  numb &gt;0))
+  </select>
+  <!--根据当前登陆用户的身份证号查询初审记录-->
+  <select id="findApplyByUserSfzh"   parameterType="Map" resultType="Approve">
+    select * from(
+    SELECT appc.* , ROWNUM ROW_ID FROM(
+    SELECT AFM.AFM_SQID AS APLID,
+    CASE
+    WHEN AP_SQLB = '1' THEN
+    '经适房'
+    WHEN AP_SQLB = '2' THEN
+    '低保特困补贴'
+    WHEN AP_SQLB = '3' THEN
+    '公租房(低保特困)'
+    WHEN AP_SQLB = '4' THEN
+    '公租房(外来务工)'
+    WHEN AP_SQLB = '5' THEN
+    '公租房(新就业)'
+    end AS APTYPE,
+    AP_SQLB AS ATYPE,
+    AP.APLBH,
+    AFM.AFM_XM AS USERNAME,
+    AFM.AFM_SFZH AS SFZH,
+    APPRO.APLDATE,
+    SSQ,
+    SSJ,
+    APPRO.STATE,
+    APPRO.PROCESSINSTANCEID,
+    ART.NAME_ AS PROCESSINSTANCENAME,
+    AC.AC_TYPE ACTYPE
+
+
+    FROM APPLYFAMILYMEMBER AFM
+    LEFT JOIN((SELECT AP_ID AP_ID,
+    AP_SQRID AP_SQRID,
+    AP_SQLB AP_SQLB,
+    AP_LC AP_LC,
+    AP_FLAG AP_FLAG,
+    PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,
+    AP_SQBH APLBH
+    FROM APPLY
+    LEFT JOIN PARMITEM PAR
+    ON PAR.PI_SETCODE = '04'
+    AND PAR.PI_ITEMCODE = AP_SSQ
+    LEFT JOIN PARMITEM PAR2
+    ON PAR2.PI_SETCODE = '05'
+    AND PAR2.PI_ITEMCODE = AP_JDBSC)
+    UNION (SELECT AB_ID AP_ID,
+    AB_SQRID AP_SQRID,
+    '2' AP_SQLB,
+    AB_LC AP_LC,
+    AB_FLAG AP_FLAG,
+    PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,
+    AB_SQBH APLBH
+    FROM APPLY_BUTIE
+    LEFT JOIN PARMITEM PAR
+    ON PAR.PI_SETCODE = '04'
+    AND PAR.PI_ITEMCODE = AB_SSQ
+    LEFT JOIN PARMITEM PAR2
+    ON PAR2.PI_SETCODE = '05'
+    AND PAR2.PI_ITEMCODE = AB_JDBSC)
+    UNION (SELECT AFF_ID AP_ID,
+    AFF_SQRID AP_SQRID,
+    '4' AP_SQLB,
+    AFF_LC AP_LC,
+    AFF_FLAG AP_FLAG,
+    PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,
+    AFF_SQBH APLBH
+    FROM APPLYFORFOREIGN
+    LEFT JOIN PARMITEM PAR
+    ON PAR.PI_SETCODE = '04'
+    AND PAR.PI_ITEMCODE = AFF_SSQ
+    LEFT JOIN PARMITEM PAR2
+    ON PAR2.PI_SETCODE = '05'
+    AND PAR2.PI_ITEMCODE = AFF_DWDZ)
+    UNION (SELECT AFG_ID AP_ID,
+    AFG_SQRID AP_SQRID,
+    '5' AP_SQLB,
+    AFG_LC AP_LC,
+    AFG_FLAG AP_FLAG,
+    PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,
+    AFG_SQBH APLBH
+    FROM APPLYFORGRADUATE
+    LEFT JOIN PARMITEM PAR
+    ON PAR.PI_SETCODE = '04'
+    AND PAR.PI_ITEMCODE = AFG_SSQ
+    LEFT JOIN PARMITEM PAR2
+    ON PAR2.PI_SETCODE = '05'
+    AND PAR2.PI_ITEMCODE = AFG_DWDZ)) AP
+    ON AFM.AFM_SQID = AP.AP_ID
+    <!-- 添加申请状态 操作类别（1、终审通过，2、摇号成功，3、摇号放弃，4、分房，5、换房，6、签订合同，7、退房，8、放弃，9、审批驳回，10、年审终审通过，11、年审驳回，12、摇号过期取消）-->    LEFT JOIN
+    (select * from (select C.*,row_number() over(partition by C.AC_SQID order by C.AC_TIME desc) C_NUM
+    from APPLY_CHANGE C) where C_NUM=1) AC
+    on
+    AP.AP_ID=AC.AC_SQID
+
+    LEFT JOIN APPROVE APPRO
+    ON APPRO.APLID = AFM.AFM_SQID
+    LEFT JOIN ACT_RU_TASK ART
+    ON APPRO.PROCESSINSTANCEID=ART.PROC_INST_ID_
+    where AFM.AFM_SFZH = #{sfzh}
+    AND SUBSTR(AP_SQLB,1,1) between '0' and '9'
+    order by APPRO.APLDATE desc ) appc
+    where  ROWNUM &lt;= #{pageLaseIndex}
+    )
+    WHERE ROW_ID &gt; #{pageIndex}
+  </select>
+  <!--根据当前登陆用户的身份证号查询初审记录总数-->
+  <select id="findApplyByUserSfzhCount"   resultType="java.lang.Integer">
+
+    SELECT count(*) from(
+    SELECT AFM.AFM_SQID AS APLID,
+    CASE
+    WHEN AP_SQLB = '1' THEN
+    '经适房'
+    WHEN AP_SQLB = '2' THEN
+    '低保特困补贴'
+    WHEN AP_SQLB = '3' THEN
+    '公租房(低保特困)'
+    WHEN AP_SQLB = '4' THEN
+    '公租房(外来务工)'
+    WHEN AP_SQLB = '5' THEN
+    '公租房(新就业)'
+    end AS APTYPE,
+    AP_SQLB AS ATYPE,
+    AP.APLBH,
+    AFM.AFM_XM AS USERNAME,
+    AFM.AFM_SFZH AS SFZH,
+    APPRO.APLDATE,
+    SSQ,
+    SSJ,
+    APPRO.STATE,
+    APPRO.PROCESSINSTANCEID,
+    ART.NAME_ AS PROCESSINSTANCENAME
+    FROM APPLYFAMILYMEMBER AFM
+    LEFT JOIN((SELECT AP_ID            AP_ID,
+    AP_SQRID         AP_SQRID,
+    AP_SQLB          AP_SQLB,
+    AP_LC            AP_LC,
+    AP_FLAG          AP_FLAG,
+    PAR.PI_ITEMNAME  SSQ,
+    PAR2.PI_ITEMNAME SSJ,
+    AP_SQBH          APLBH
+    FROM APPLY
+    LEFT JOIN PARMITEM PAR
+    ON PAR.PI_SETCODE = '04'
+    AND PAR.PI_ITEMCODE = AP_SSQ
+    LEFT JOIN PARMITEM PAR2
+    ON PAR2.PI_SETCODE = '05'
+    AND PAR2.PI_ITEMCODE = AP_JDBSC)
+    UNION (SELECT AB_ID AP_ID,
+    AB_SQRID AP_SQRID,
+    '2' AP_SQLB,
+    AB_LC AP_LC,
+    AB_FLAG AP_FLAG,
+    PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,
+    AB_SQBH APLBH
+    FROM APPLY_BUTIE
+    LEFT JOIN PARMITEM PAR
+    ON PAR.PI_SETCODE = '04'
+    AND PAR.PI_ITEMCODE = AB_SSQ
+    LEFT JOIN PARMITEM PAR2
+    ON PAR2.PI_SETCODE = '05'
+    AND PAR2.PI_ITEMCODE = AB_JDBSC)
+    UNION (SELECT AFF_ID AP_ID,
+    AFF_SQRID AP_SQRID,
+    '4' AP_SQLB,
+    AFF_LC AP_LC,
+    AFF_FLAG AP_FLAG,
+    PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,
+    AFF_SQBH APLBH
+    FROM APPLYFORFOREIGN
+    LEFT JOIN PARMITEM PAR
+    ON PAR.PI_SETCODE = '04'
+    AND PAR.PI_ITEMCODE = AFF_SSQ
+    LEFT JOIN PARMITEM PAR2
+    ON PAR2.PI_SETCODE = '05'
+    AND PAR2.PI_ITEMCODE = AFF_DWDZ)
+    UNION (SELECT AFG_ID AP_ID,
+    AFG_SQRID AP_SQRID,
+    '5' AP_SQLB,
+    AFG_LC AP_LC,
+    AFG_FLAG AP_FLAG,
+    PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,
+    AFG_SQBH APLBH
+    FROM APPLYFORGRADUATE
+    LEFT JOIN PARMITEM PAR
+    ON PAR.PI_SETCODE = '04'
+    AND PAR.PI_ITEMCODE = AFG_SSQ
+    LEFT JOIN PARMITEM PAR2
+    ON PAR2.PI_SETCODE = '05'
+    AND PAR2.PI_ITEMCODE = AFG_DWDZ)) AP
+    ON AFM.AFM_SQID = AP.AP_ID
+
+    LEFT JOIN APPROVE APPRO
+    ON APPRO.APLID = AFM.AFM_SQID
+    LEFT JOIN ACT_RU_TASK ART
+     ON APPRO.PROCESSINSTANCEID=ART.PROC_INST_ID_
+    where AFM.AFM_SFZH = #{sfzh}
+    AND SUBSTR(AP_SQLB,1,1)  between '0' and '9')
+  </select>
+<!--根据流程实例id查询初审信息-->
+  <select id="findByProcessInstanceId"   parameterType="Map" resultType="Approve">
+
+     SELECT APRO.APLDATE,
+         APLU.USERNAME,
+         APLU.SFZH,
+         AP.AP_SQLB AS ATYPE,
+         CASE
+           WHEN AP_SQLB = '1' THEN
+            '经济适用房'
+           WHEN AP_SQLB = '2' THEN
+            '低保特困补贴'
+           WHEN AP_SQLB = '3' THEN
+            '公租房(低保特困)'
+           WHEN AP_SQLB = '4' THEN
+            '公租房(外来务工)'
+           WHEN AP_SQLB = '5' THEN
+            '公租房(新就业)'
+         end AS APTYPE,
+
+         AP.APLBH,
+         AP.SSQ,
+         AP.SSJ,
+         APRO.APLID
+          FROM APPROVE APRO
+          LEFT JOIN APPLYUSERINFO APLU
+            ON APRO.APLUSERID = APLU.USERID
+          LEFT JOIN((SELECT AP_ID            AP_ID,
+                      AP_SQRID         AP_SQRID,
+                      AP_SQLB          AP_SQLB,
+                      AP_LC            AP_LC,
+                      AP_FLAG          AP_FLAG,
+                      PAR.PI_ITEMNAME  SSQ,
+                      PAR2.PI_ITEMNAME SSJ,
+                      AP_SQBH          APLBH
+                 FROM APPLY
+                 LEFT JOIN PARMITEM PAR
+                   ON PAR.PI_SETCODE = '04'
+                  AND PAR.PI_ITEMCODE = AP_SSQ
+                 LEFT JOIN PARMITEM PAR2
+                   ON PAR2.PI_SETCODE = '05'
+                  AND PAR2.PI_ITEMCODE = AP_JDBSC)
+        UNION (
+
+         SELECT AB_ID AP_ID,
+                 AB_SQRID AP_SQRID,
+                 '2' AP_SQLB,
+                 AB_LC AP_LC,
+                 AB_FLAG AP_FLAG,
+                 PAR.PI_ITEMNAME SSQ,
+                 PAR2.PI_ITEMNAME SSJ,
+                 AB_SQBH APLBH
+           FROM APPLY_BUTIE
+           LEFT JOIN PARMITEM PAR
+             ON PAR.PI_SETCODE = '04'
+            AND PAR.PI_ITEMCODE = AB_SSQ
+           LEFT JOIN PARMITEM PAR2
+             ON PAR2.PI_SETCODE = '05'
+            AND PAR2.PI_ITEMCODE = AB_JDBSC)
+        UNION (SELECT AFF_ID AP_ID,
+                AFF_SQRID AP_SQRID,
+                '4' AP_SQLB,
+                AFF_LC AP_LC,
+                AFF_FLAG AP_FLAG,
+                PAR.PI_ITEMNAME SSQ,
+                PAR2.PI_ITEMNAME SSJ,
+                AFF_SQBH APLBH
+           FROM APPLYFORFOREIGN
+           LEFT JOIN PARMITEM PAR
+             ON PAR.PI_SETCODE = '04'
+            AND PAR.PI_ITEMCODE = AFF_SSQ
+           LEFT JOIN PARMITEM PAR2
+             ON PAR2.PI_SETCODE = '05'
+            AND PAR2.PI_ITEMCODE = AFF_DWDZ)
+        UNION (SELECT AFG_ID AP_ID,
+                AFG_SQRID AP_SQRID,
+                '5' AP_SQLB,
+                AFG_LC AP_LC,
+                AFG_FLAG AP_FLAG,
+                PAR.PI_ITEMNAME SSQ,
+                PAR2.PI_ITEMNAME SSJ,
+                AFG_SQBH APLBH
+           FROM APPLYFORGRADUATE
+           LEFT JOIN PARMITEM PAR
+             ON PAR.PI_SETCODE = '04'
+            AND PAR.PI_ITEMCODE = AFG_SSQ
+           LEFT JOIN PARMITEM PAR2
+             ON PAR2.PI_SETCODE = '05'
+            AND PAR2.PI_ITEMCODE = AFG_DWDZ)) AP
+            ON APRO.APLID = AP.AP_ID
+            WHERE APRO.PROCESSINSTANCEID=#{processInstanceId}
+  </select>
+
+  <!--根据流程实例id查询年审信息-->
+  <select id="findNSByProcessInstanceId"   parameterType="Map" resultType="Approve">
+
+     SELECT APRO.APLDATE,
+         APLU.USERNAME,
+         APLU.SFZH,
+         AP.AP_SQLB AS ATYPE,
+         CASE
+           WHEN AP_SQLB = '2' THEN
+            '低保特困补贴'
+           WHEN AP_SQLB = '3' THEN
+            '公租房(低保特困)'
+           WHEN AP_SQLB = '4' THEN
+            '公租房(外来务工)'
+           WHEN AP_SQLB = '5' THEN
+            '公租房(新就业)'
+         end AS APTYPE,
+
+         AP.AP_SQBH AS APLBH,
+         PAR.PI_ITEMNAME AS SSQ,
+         PAR2.PI_ITEMNAME AS SSJ,
+         APRO.APLID
+          FROM APPROVE APRO
+          LEFT JOIN APPLYUSERINFO APLU
+            ON APRO.APLUSERID = APLU.USERID
+          LEFT JOIN APPLYNS AP
+            ON APRO.APLID = AP.ALSID
+             LEFT JOIN PARMITEM PAR
+                   ON PAR.PI_SETCODE = '04'
+                  AND PAR.PI_ITEMCODE = AP.AP_SSQ
+                 LEFT JOIN PARMITEM PAR2
+                   ON PAR2.PI_SETCODE = '05'
+                  AND PAR2.PI_ITEMCODE =  AP.AP_JDBSC
+            WHERE APRO.PROCESSINSTANCEID=#{processInstanceId}
+  </select>
+
+
+
+  <select id="h5FindPerApply"   parameterType="Map" resultType="Approve">
+
+    SELECT * FROM(
+    SELECT AFM.AFM_SQID AS APLID,
+    CASE
+    WHEN AP_SQLB = '1' THEN
+    '经适房'
+    WHEN AP_SQLB = '2' THEN
+    '低保特困补贴'
+    WHEN AP_SQLB = '3' THEN
+    '公租房(低保特困)'
+    WHEN AP_SQLB = '4' THEN
+    '公租房(外来务工)'
+    WHEN AP_SQLB = '5' THEN
+    '公租房(新就业)'
+    end AS APTYPE,
+    AP_SQLB AS ATYPE,
+    AP.APLBH,
+    AFM.AFM_XM AS USERNAME,
+    AFM.AFM_SFZH AS SFZH,
+    APPRO.APLDATE,
+    SSQ,
+    SSJ,
+    APPRO.STATE,
+    APPRO.PROCESSINSTANCEID,
+    ART.NAME_ AS PROCESSINSTANCENAME,
+    ROWNUM ROW_ID
+
+    FROM APPLYFAMILYMEMBER AFM
+    LEFT JOIN((SELECT AP_ID            AP_ID,
+    AP_SQRID         AP_SQRID,
+    AP_SQLB          AP_SQLB,
+    AP_LC            AP_LC,
+    AP_FLAG          AP_FLAG,
+    PAR.PI_ITEMNAME  SSQ,
+    PAR2.PI_ITEMNAME SSJ,
+    AP_SQBH          APLBH
+    FROM APPLY
+    LEFT JOIN PARMITEM PAR
+    ON PAR.PI_SETCODE = '04'
+    AND PAR.PI_ITEMCODE = AP_SSQ
+    LEFT JOIN PARMITEM PAR2
+    ON PAR2.PI_SETCODE = '05'
+    AND PAR2.PI_ITEMCODE = AP_JDBSC)
+    UNION (SELECT AB_ID AP_ID,
+    AB_SQRID AP_SQRID,
+    '2' AP_SQLB,
+    AB_LC AP_LC,
+    AB_FLAG AP_FLAG,
+    PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,
+    AB_SQBH APLBH
+    FROM APPLY_BUTIE
+    LEFT JOIN PARMITEM PAR
+    ON PAR.PI_SETCODE = '04'
+    AND PAR.PI_ITEMCODE = AB_SSQ
+    LEFT JOIN PARMITEM PAR2
+    ON PAR2.PI_SETCODE = '05'
+    AND PAR2.PI_ITEMCODE = AB_JDBSC)
+    UNION (SELECT AFF_ID AP_ID,
+    AFF_SQRID AP_SQRID,
+    '4' AP_SQLB,
+    AFF_LC AP_LC,
+    AFF_FLAG AP_FLAG,
+    PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,
+    AFF_SQBH APLBH
+    FROM APPLYFORFOREIGN
+    LEFT JOIN PARMITEM PAR
+    ON PAR.PI_SETCODE = '04'
+    AND PAR.PI_ITEMCODE = AFF_SSQ
+    LEFT JOIN PARMITEM PAR2
+    ON PAR2.PI_SETCODE = '05'
+    AND PAR2.PI_ITEMCODE = AFF_DWDZ)
+    UNION (SELECT AFG_ID AP_ID,
+    AFG_SQRID AP_SQRID,
+    '5' AP_SQLB,
+    AFG_LC AP_LC,
+    AFG_FLAG AP_FLAG,
+    PAR.PI_ITEMNAME SSQ,
+    PAR2.PI_ITEMNAME SSJ,
+    AFG_SQBH APLBH
+    FROM APPLYFORGRADUATE
+    LEFT JOIN PARMITEM PAR
+    ON PAR.PI_SETCODE = '04'
+    AND PAR.PI_ITEMCODE = AFG_SSQ
+    LEFT JOIN PARMITEM PAR2
+    ON PAR2.PI_SETCODE = '05'
+    AND PAR2.PI_ITEMCODE = AFG_DWDZ)) AP
+    ON AFM.AFM_SQID = AP.AP_ID
+
+    LEFT JOIN APPROVE APPRO
+    ON APPRO.APLID = AFM.AFM_SQID
+    LEFT JOIN ACT_RU_TASK ART
+    ON APPRO.PROCESSINSTANCEID=ART.PROC_INST_ID_
+    where AFM.AFM_SFZH = #{sfzh} AND AFM.AFM_YSQRGX='本人' AND AP.APLBH=#{sqbh}
+    AND SUBSTR(AP_SQLB,1,1)  between '0' and '9')
+  </select>
+
+
+  <select id="h5FindPerAudio" resultMap="BaseResultMap">
+    select APRO.APVID, APRO.APLID, APRO.APLBH, APRO.APTYPE, APRO.APLDATE, APRO.APLUSERID, APRO.STATE, APRO.PASSDATE, APRO.APVUSERS, APRO.APDESC,APRO.PROCESSINSTANCEID,
+    PAR.PI_ITEMNAME SSQ ,PAR2.PI_ITEMNAME SSJ,
+    APRO.APTYPE AS ATYPE
+    from APPROVE APRO
+    INNER JOIN APPLYNS APNS ON APNS.ALSID=APRO.APLID
+    LEFT JOIN PARMITEM PAR ON PAR.PI_SETCODE='04' AND PAR.PI_ITEMCODE=APNS.AP_SSQ
+    LEFT JOIN PARMITEM PAR2 ON PAR2.PI_SETCODE='05' AND PAR2.PI_ITEMCODE=APNS.AP_JDBSC
+    <where>
+      <if test="sqbh!=null and sqbh!=''">
+        and APLBH=#{sqbh}
+      </if>
+      <if test="applyid!=null and applyid!=''">
+        and APLID=#{applyid}
+      </if>
+    </where>
+
+  </select>
+
+
+
+  <!-- 申請時，判斷是否重複提交 -->
+  <select id="selectForDeWeighting" parameterType="Map" resultType="java.lang.Integer" >
+    SELECT count(0)
+  FROM (SELECT AFM.AFM_SQID AS APLID,
+               AP_SQLB AS ATYPE,
+               AP.APLBH,
+               AFM.AFM_XM AS USERNAME,
+               AFM.AFM_SFZH AS SFZH,
+               APPRO.APLDATE,
+               SSQ,
+               SSJ,
+               APPRO.STATE,
+               APPRO.PROCESSINSTANCEID,
+               ROWNUM ROW_ID
+          FROM APPLYFAMILYMEMBER AFM
+          LEFT JOIN((SELECT AP_ID            AP_ID,
+                           AP_SQRID         AP_SQRID,
+                           AP_SQLB          AP_SQLB,
+                           AP_LC            AP_LC,
+                           AP_FLAG          AP_FLAG,
+                           PAR.PI_ITEMNAME  SSQ,
+                           PAR2.PI_ITEMNAME SSJ,
+                           AP_SQBH          APLBH
+                      FROM APPLY
+                      LEFT JOIN PARMITEM PAR
+                        ON PAR.PI_SETCODE = '04'
+                       AND PAR.PI_ITEMCODE = AP_SSQ
+                      LEFT JOIN PARMITEM PAR2
+                        ON PAR2.PI_SETCODE = '05'
+                       AND PAR2.PI_ITEMCODE = AP_JDBSC)
+        UNION (SELECT AB_ID AP_ID,
+                     AB_SQRID AP_SQRID,
+                     '2' AP_SQLB,
+                     AB_LC AP_LC,
+                     AB_FLAG AP_FLAG,
+                     PAR.PI_ITEMNAME SSQ,
+                     PAR2.PI_ITEMNAME SSJ,
+                     AB_SQBH APLBH
+                FROM APPLY_BUTIE
+                LEFT JOIN PARMITEM PAR
+                  ON PAR.PI_SETCODE = '04'
+                 AND PAR.PI_ITEMCODE = AB_SSQ
+                LEFT JOIN PARMITEM PAR2
+                  ON PAR2.PI_SETCODE = '05'
+                 AND PAR2.PI_ITEMCODE = AB_JDBSC)
+        UNION (SELECT AFF_ID AP_ID,
+                     AFF_SQRID AP_SQRID,
+                     '4' AP_SQLB,
+                     AFF_LC AP_LC,
+                     AFF_FLAG AP_FLAG,
+                     PAR.PI_ITEMNAME SSQ,
+                     PAR2.PI_ITEMNAME SSJ,
+                     AFF_SQBH APLBH
+                FROM APPLYFORFOREIGN
+                LEFT JOIN PARMITEM PAR
+                  ON PAR.PI_SETCODE = '04'
+                 AND PAR.PI_ITEMCODE = AFF_SSQ
+                LEFT JOIN PARMITEM PAR2
+                  ON PAR2.PI_SETCODE = '05'
+                 AND PAR2.PI_ITEMCODE = AFF_DWDZ)
+        UNION (SELECT AFG_ID AP_ID,
+                     AFG_SQRID AP_SQRID,
+                     '5' AP_SQLB,
+                     AFG_LC AP_LC,
+                     AFG_FLAG AP_FLAG,
+                     PAR.PI_ITEMNAME SSQ,
+                     PAR2.PI_ITEMNAME SSJ,
+                     AFG_SQBH APLBH
+                FROM APPLYFORGRADUATE
+                LEFT JOIN PARMITEM PAR
+                  ON PAR.PI_SETCODE = '04'
+                 AND PAR.PI_ITEMCODE = AFG_SSQ
+                LEFT JOIN PARMITEM PAR2
+                  ON PAR2.PI_SETCODE = '05'
+                 AND PAR2.PI_ITEMCODE = AFG_DWDZ)) AP
+            ON AFM.AFM_SQID = AP.AP_ID
+          LEFT JOIN APPROVE APPRO
+            ON APPRO.APLID = AFM.AFM_SQID
+         where AFM.AFM_SFZH = #{sfzh} and AFM.AFM_YSQRGX='本人'
+           AND AP.AP_SQLB = #{apsqlb} and APPRO.State is null)
+  </select>
+
+</mapper>

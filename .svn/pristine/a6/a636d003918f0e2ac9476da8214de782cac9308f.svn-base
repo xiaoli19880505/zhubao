@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.ColumnInfoMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.ColumnInfo">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="COLUMN_CODE" jdbcType="VARCHAR" property="columnCode" />
+    <result column="COLUMN_NAME" jdbcType="VARCHAR" property="columnName" />
+    <result column="URL" jdbcType="VARCHAR" property="url" />
+    <result column="COLUMN_LEVEL" jdbcType="DECIMAL" property="columnLevel" />
+    <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
+    <result column="SEQUENCE" jdbcType="DECIMAL" property="sequence" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="CREATE_PERSON" jdbcType="VARCHAR" property="createPerson" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="UPDATE_PERSON" jdbcType="VARCHAR" property="updatePerson" />
+    <result column="DELETE_FLAG" jdbcType="VARCHAR" property="deleteFlag" />
+    <result column="DOWN_FLAG" jdbcType="VARCHAR" property="downFlag" />
+    <result column="CREATE_TIME_STR" jdbcType="VARCHAR" property="createTimeStr" />
+    <result column="UPDATE_TIME_STR" jdbcType="VARCHAR" property="updateTimeStr" />
+    <collection property="articleInfoList" ofType="com.sys.pojo.ArticleInfo">
+      <id column="ART_ID" property="id"/>
+      <result column="ARTICLE_CODE" property="articleCode"/>
+      <result column="ARTICLE_NAME" property="articleName"/>
+      <result column="ISSUING_TIME" property="issuingTime"/>
+      <result column="ISSUING_TIME_STR" property="issuingTimeStr"/>
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, COLUMN_CODE, COLUMN_NAME, URL, COLUMN_LEVEL, PARENT_ID, SEQUENCE, CREATE_TIME, CREATE_PERSON,
+    UPDATE_TIME, UPDATE_PERSON, DELETE_FLAG, DOWN_FLAG, to_char(CREATE_TIME,'yyyy-mm-dd') CREATE_TIME_STR,
+    to_char(UPDATE_TIME,'yyyy-mm-dd') UPDATE_TIME_STR
+  </sql>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from COLUMN_INFO
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from COLUMN_INFO
+    where 1=1
+    <if test="columnCode != null">
+      AND COLUMN_CODE = #{columnCode,jdbcType=VARCHAR}
+    </if>
+    <if test="columnName != null">
+      AND COLUMN_NAME like '%'|| #{columnName}|| '%'
+    </if>
+    <if test="deleteFlag != null">
+      AND DELETE_FLAG = #{deleteFlag,jdbcType=VARCHAR}
+    </if>
+    order by SEQUENCE
+  </select>
+  <select id="selectByConditionForAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    COLUMN_INFO.ID, COLUMN_INFO.COLUMN_CODE, COLUMN_INFO.COLUMN_NAME, COLUMN_INFO.URL,
+    COLUMN_INFO.COLUMN_LEVEL, COLUMN_INFO.PARENT_ID, COLUMN_INFO.SEQUENCE, COLUMN_INFO.CREATE_TIME,
+    COLUMN_INFO.CREATE_PERSON,COLUMN_INFO.UPDATE_TIME, COLUMN_INFO.UPDATE_PERSON,
+    COLUMN_INFO.DELETE_FLAG, COLUMN_INFO.DOWN_FLAG, to_char(COLUMN_INFO.CREATE_TIME,'yyyy-mm-dd') CREATE_TIME_STR,
+    to_char(COLUMN_INFO.UPDATE_TIME,'yyyy-mm-dd') UPDATE_TIME_STR,
+    ARTICLE_INFO.ID ART_ID,ARTICLE_INFO.ARTICLE_CODE,ARTICLE_INFO.ARTICLE_NAME,ARTICLE_INFO.ISSUING_TIME,
+    to_char(ARTICLE_INFO.ISSUING_TIME,'yyyy-mm-dd') ISSUING_TIME_STR
+    from COLUMN_INFO
+    left join ARTICLE_INFO on ARTICLE_INFO.COLUMN_ID=COLUMN_INFO.ID and ARTICLE_INFO.DELETE_FLAG='F'
+    where 1=1
+    <if test="columnCode != null">
+      AND COLUMN_INFO.COLUMN_CODE = #{columnCode,jdbcType=VARCHAR}
+    </if>
+    <if test="columnName != null">
+      AND COLUMN_INFO.COLUMN_NAME like '%'|| #{columnName}|| '%'
+    </if>
+    <if test="deleteFlag != null">
+      AND COLUMN_INFO.DELETE_FLAG = #{deleteFlag,jdbcType=VARCHAR}
+    </if>
+    order by COLUMN_INFO.SEQUENCE ASC ,ARTICLE_INFO.UPDATE_TIME DESC
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from COLUMN_INFO
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.ColumnInfo">
+    insert into COLUMN_INFO (ID, COLUMN_CODE, COLUMN_NAME, URL,
+      COLUMN_LEVEL, PARENT_ID, SEQUENCE,
+      CREATE_TIME, CREATE_PERSON, UPDATE_TIME,
+      UPDATE_PERSON, DELETE_FLAG, DOWN_FLAG
+      )
+    values (#{id,jdbcType=VARCHAR}, #{columnCode,jdbcType=VARCHAR}, #{columnName,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
+      #{columnLevel,jdbcType=DECIMAL}, #{parentId,jdbcType=VARCHAR}, #{sequence,jdbcType=DECIMAL},
+      #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP},
+      #{updatePerson,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=VARCHAR}, #{downFlag,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sys.pojo.ColumnInfo">
+    insert into COLUMN_INFO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="columnCode != null">
+        COLUMN_CODE,
+      </if>
+      <if test="columnName != null">
+        COLUMN_NAME,
+      </if>
+      <if test="url != null">
+        URL,
+      </if>
+      <if test="columnLevel != null">
+        COLUMN_LEVEL,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="sequence != null">
+        SEQUENCE,
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME,
+      </if>
+      <if test="createPerson != null">
+        CREATE_PERSON,
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME,
+      </if>
+      <if test="updatePerson != null">
+        UPDATE_PERSON,
+      </if>
+      <if test="deleteFlag != null">
+        DELETE_FLAG,
+      </if>
+      <if test="downFlag != null">
+        DOWN_FLAG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="columnCode != null">
+        #{columnCode,jdbcType=VARCHAR},
+      </if>
+      <if test="columnName != null">
+        #{columnName,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="columnLevel != null">
+        #{columnLevel,jdbcType=DECIMAL},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="sequence != null">
+        #{sequence,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null">
+        #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null">
+        #{updatePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null">
+        #{deleteFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="downFlag != null">
+        #{DOWN_FLAG,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateSelective" parameterType="com.sys.pojo.ColumnInfo">
+    update COLUMN_INFO
+    <set>
+      <if test="columnCode != null">
+        COLUMN_CODE = #{columnCode,jdbcType=VARCHAR},
+      </if>
+      <if test="columnName != null">
+        COLUMN_NAME = #{columnName,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        URL = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="columnLevel != null">
+        COLUMN_LEVEL = #{columnLevel,jdbcType=DECIMAL},
+      </if>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="sequence != null">
+        SEQUENCE = #{sequence,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null">
+        CREATE_PERSON = #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null">
+        UPDATE_PERSON = #{updatePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null">
+        DELETE_FLAG = #{deleteFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null">
+        DOWN_FLAG = #{downFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="update" parameterType="com.sys.pojo.ColumnInfo">
+    update COLUMN_INFO
+    set COLUMN_CODE = #{columnCode,jdbcType=VARCHAR},
+      COLUMN_NAME = #{columnName,jdbcType=VARCHAR},
+      URL = #{url,jdbcType=VARCHAR},
+      COLUMN_LEVEL = #{columnLevel,jdbcType=DECIMAL},
+      PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      SEQUENCE = #{sequence,jdbcType=DECIMAL},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      CREATE_PERSON = #{createPerson,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      UPDATE_PERSON = #{updatePerson,jdbcType=VARCHAR},
+      DELETE_FLAG = #{deleteFlag,jdbcType=VARCHAR},
+      DOWN_FLAG = #{downFlag,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.VolelearcDtlMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.VolelearcDtl">
+    <id column="VOLELEARCDTL_ID" jdbcType="VARCHAR" property="volelearcdtlId" />
+    <result column="VOLELEARC_ID" jdbcType="VARCHAR" property="volelearcId" />
+    <result column="IMGNAME" jdbcType="VARCHAR" property="imgname" />
+    <result column="SCANDATE" jdbcType="VARCHAR" property="scandate" />
+    <result column="PAGENO" jdbcType="DECIMAL" property="pageno" />
+    <result column="WIDTH" jdbcType="DECIMAL" property="width" />
+    <result column="HEIGHT" jdbcType="DECIMAL" property="height" />
+    <result column="IMG" jdbcType="BLOB" property="img" />
+  </resultMap>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from VOLELEARCDTL
+    where VOLELEARCDTL_ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.VolelearcDtl">
+    insert into VOLELEARCDTL (VOLELEARCDTL_ID, VOLELEARC_ID, IMGNAME, 
+      SCANDATE, PAGENO, WIDTH, 
+      HEIGHT, IMG)
+    values (#{volelearcdtlId,jdbcType=VARCHAR}, #{volelearcId,jdbcType=VARCHAR}, #{imgname,jdbcType=VARCHAR}, 
+      #{scandate,jdbcType=VARCHAR}, #{pageno,jdbcType=DECIMAL}, #{width,jdbcType=DECIMAL}, 
+      #{height,jdbcType=DECIMAL}, #{img,jdbcType=BLOB})
+  </insert>
+  <update id="update" parameterType="com.sys.pojo.VolelearcDtl">
+    update VOLELEARCDTL
+    set VOLELEARC_ID = #{volelearcId,jdbcType=VARCHAR},
+      IMGNAME = #{imgname,jdbcType=VARCHAR},
+      SCANDATE = #{scandate,jdbcType=VARCHAR},
+      PAGENO = #{pageno,jdbcType=DECIMAL},
+      WIDTH = #{width,jdbcType=DECIMAL},
+      HEIGHT = #{height,jdbcType=DECIMAL},
+      IMG = #{img,jdbcType=BLOB}
+    where VOLELEARCDTL_ID = #{volelearcdtlId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select VOLELEARCDTL_ID, VOLELEARC_ID, IMGNAME, SCANDATE, PAGENO, WIDTH, HEIGHT, IMG
+    from VOLELEARCDTL
+    where VOLELEARCDTL_ID = #{volelearcdtlId,jdbcType=VARCHAR}
+  </select>
+  <select id="select" resultMap="BaseResultMap">
+    select VOLELEARCDTL_ID, VOLELEARC_ID, IMGNAME, SCANDATE, PAGENO, WIDTH, HEIGHT, IMG
+    from VOLELEARCDTL
+  </select>
+
+  <select id="findByVolelearcId" resultMap="BaseResultMap">
+    select VOLELEARCDTL_ID, VOLELEARC_ID, IMGNAME, SCANDATE, PAGENO, WIDTH, HEIGHT, IMG
+    from VOLELEARCDTL
+    WHERE VOLELEARC_ID=#{volelearcId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteVoleearcDtl" parameterType="java.util.List">
+    delete from VOLELEARCDTL where VOLELEARC_ID IN
+    <foreach collection="list" item="item" open="(" close=")" separator=",">
+      #{item.elearcvolId}
+    </foreach>
+  </delete>
+</mapper>

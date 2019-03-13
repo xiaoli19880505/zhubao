@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.ParmMapper" >
+    <resultMap id="BaseResultMap" type="com.sys.pojo.Parm" >
+        <result column="PR_ID" property="prId" jdbcType="VARCHAR" />
+        <result column="PR_SETCODE" property="prSetcode" jdbcType="VARCHAR" />
+        <result column="PR_SETNAME" property="prSetName" jdbcType="VARCHAR" />
+        <result column="PR_ISMAINTAINABLE" property="" jdbcType="VARCHAR" />
+        <result column="PR_ISCOLOR" property="prIscolor" jdbcType="VARCHAR" />
+    </resultMap>
+    <insert id="insert" parameterType="com.sys.pojo.Parm">
+        insert into PARM (PR_ID, PR_SETCODE, PR_SETNAME, PR_ISMAINTAINABLE,PR_ISCOLOR)
+        values (#{prId,jdbcType=VARCHAR}, #{prSetcode,jdbcType=VARCHAR}, #{prSetName,jdbcType=VARCHAR},
+        #{prIsmaintainable,jdbcType=VARCHAR},#{prIscolor,jdbcType=VARCHAR})
+    </insert>
+    <select id="select" resultMap="BaseResultMap" >
+        select *
+        from PARM
+    </select>
+    <delete id="delete" parameterType="java.lang.String">
+        DELETE FROM PARM WHERE PR_SETCODE=#{prSetcode}
+    </delete>
+    <update id="update" parameterType="com.sys.pojo.Parm">
+        UPDATE PARM
+        <set>
+            <if test="prSetName!=null and prSetName!=''">
+                PR_SETNAME=#{prSetName}
+            </if>
+        </set>
+        WHERE PR_SETCODE=#{prSetcode}
+    </update>
+
+
+    <select id="selectByPage" resultMap="BaseResultMap" >
+        select *
+        from PARM
+        ORDER BY PR_SETCODE
+    </select>
+    <select id="selectBySetCode" parameterType="Map" resultMap="BaseResultMap" >
+        select *
+        from PARM
+        <where>
+            <if test="prSetcode!=null and prSetcode!=''">
+                AND PR_SETCODE=#{prSetcode}
+            </if>
+        </where>
+    </select>
+
+    <select id="parmCount" resultType="int">
+        SELECT COUNT (1)
+        FROM PARM
+        <where>
+            <if test="prSetcode!=null and prSetcode!=''">
+                AND PR_SETCODE=#{prSetcode}
+            </if>
+            <if test="prSetName!=null and prSetName!=''">
+                AND PR_SETNAME=#{prSetName}
+            </if>
+        </where>
+    </select>
+
+    <select id="countParmExceptSelf" resultType="int">
+        SELECT COUNT (1)
+        FROM PARM
+        <where>
+            <if test="prSetcode!=null and prSetcode!=''">
+                AND PR_SETCODE !=#{prSetcode}
+            </if>
+            <if test="prSetName!=null and prSetName!=''">
+                AND PR_SETNAME=#{prSetName}
+            </if>
+        </where>
+
+    </select>
+
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.RoleInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.sys.pojo.RoleInfo" >
+    <result column="DUTYID" property="dutyid" jdbcType="VARCHAR" />
+    <result column="DUTYCODE" property="dutycode" jdbcType="VARCHAR" />
+    <result column="DUTYNAME" property="dutyname" jdbcType="VARCHAR" />
+    <result column="DESCRIBE" property="describe" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sys.pojo.RoleInfo" >
+    insert into DUTY (DUTYID, DUTYCODE, DUTYNAME, 
+      DESCRIBE)
+    values (#{dutyid,jdbcType=VARCHAR}, #{dutycode,jdbcType=VARCHAR}, #{dutyname,jdbcType=VARCHAR}, 
+      #{describe,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="selectRoleInfoByUname" resultType="java.util.HashMap">
+    select d.* from USERDUTY t
+    inner join USERINFO u
+    on u.userid=t.userid
+    inner join duty d
+    on t.dutyid=d.dutyid
+    where u.usercode=#{dutyid,jdbcType=VARCHAR}
+  </select>
+
+  <select id="select" resultMap="BaseResultMap" >
+    select *
+    from DUTY
+  </select>
+<!--查询角色-->
+  <select id="selectById" resultMap="BaseResultMap" >
+    select *
+    from DUTY
+    where DUTYID=#{id}
+  </select>
+
+  <delete id="delete" parameterType="java.lang.String">
+    DELETE FROM DUTY WHERE DUTYID=#{dutyid}
+  </delete>
+  <update id="update" parameterType="com.sys.pojo.RoleInfo">
+    UPDATE DUTY
+    <set>
+      <if test="dutyname!=null and dutyname!=''">
+        DUTYNAME=#{dutyname},
+      </if>
+      <if test="describe!=null">
+        DESCRIBE=#{describe}
+      </if>
+    </set>
+    WHERE DUTYID=#{dutyid}
+  </update>
+  
+  <select id="getRoleInfoCount" resultType="int">
+    SELECT
+    COUNT (1)
+    from DUTY
+    <where>
+    <if test="dutyname!=null and dutyname!=''">
+      AND DUTYNAME=#{dutyname}
+    </if>
+    <if test="dutyid!=null and dutyid!=''">
+      AND DUTYID!=#{dutyid}
+    </if>
+    </where>
+
+
+  </select>
+  <select id="getMaxCode" resultType="java.lang.String">
+    SELECT MAX (DUTYCODE) FROM DUTY
+  </select>
+
+  <select id="selectByPage" resultMap="BaseResultMap" >
+    select *
+    from DUTY
+    <if test="dutyname!=null and dutyname!=''">
+      WHERE DUTYNAME like concat(#{dutyname},'%')
+    </if>
+  </select>
+
+  <!--通过用户id查询所属的全部角色信息-->
+  <select id="getRoleListByMap" resultMap="BaseResultMap">
+    SELECT d.* from DUTY d
+    LEFT JOIN USERDUTY ud ON d.DUTYID=ud.DUTYID
+    LEFT JOIN USERINFO ui ON ui.USERID=ud.USERID
+    <where>
+      <if test="userid!=null and userid!=''">
+        and ui.USERID=#{userid}
+      </if>
+    </where>
+  </select>
+  
+</mapper>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.blagsh.BliveGongSMapper" >
+  <resultMap id="BaseResultMap" type="com.sys.pojo.blagsh.BliveGongS" >
+    <id column="BLG_ID" property="blgId" jdbcType="VARCHAR" />
+    <result column="BLG_TYPE" property="blgType" jdbcType="VARCHAR" />
+    <result column="BLG_SQBH" property="blgSqbh" jdbcType="VARCHAR" />
+    <result column="BLG_SQRQ" property="blgSqrq" jdbcType="TIMESTAMP" />
+    <result column="BLG_USERID" property="blgUserid" jdbcType="VARCHAR" />
+    <result column="BLG_SH_PROCESSID" property="blgShProcessid" jdbcType="VARCHAR" />
+    <result column="BLG_SQTYPE" property="blgSqtype" jdbcType="VARCHAR" />
+    <result column="BLG_DESC" property="blgDesc" jdbcType="VARCHAR" />
+    <result column="BLG_ISGS" property="blgIsgs" jdbcType="CHAR" />
+    <result column="BLG_APID" property="blgApid" jdbcType="VARCHAR" />
+    <result column="BLG_TYPE_NAME" property="blgTypeName" jdbcType="VARCHAR" />
+    <result column="APLDATE" property="apldate" jdbcType="VARCHAR" />
+    <result column="BLG_RPUSERID" property="blgRpuserid" jdbcType="VARCHAR" />
+    <result column="BLG_USER_NAME" property="blgUserName" jdbcType="VARCHAR" />
+    <result column="BLG_SFZH" property="blgSfzh" jdbcType="VARCHAR" />
+    <result column="BLG_SSQ_STR" property="blgSsqStr" jdbcType="VARCHAR" />
+    <result column="BLG_SSJ_STR" property="blgSsjStr" jdbcType="VARCHAR" />
+    <result column="BLG_STATUS" property="blgStatus" jdbcType="VARCHAR" />
+    <result column="BLG_STATUS_STR" property="blgStatusStr" jdbcType="VARCHAR" />
+    <result column="AFM_HYZK" property="afmHyzk" jdbcType="VARCHAR" />
+    <result column="AFM_LXDH" property="afmLxdh" jdbcType="VARCHAR" />
+    <result column="BLG_PROCESSINSTANCEID" property="blgProcessinstanceid" jdbcType="VARCHAR" />
+    <result column="bLG_SQTYPE_NAME" property="blgSqtypeName" jdbcType="VARCHAR" />
+    <result column="LOST_LETTER_NO" property="lostLetterNo" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <select id="selectForCXLB" resultMap="BaseResultMap">
+      SELECT B.BLG_ID,
+      B.BLG_ISGS,
+      B.BLG_TYPE,
+      b.BLG_APID,
+      case
+        when instr(B.BLG_TYPE, 'ns') > 0 then
+          '年审:'
+        else
+          ''
+      end ||
+      case
+        when instr(B.BLG_TYPE, '1') > 0 then
+          '经济适用房'
+        when instr(B.BLG_TYPE, '2') > 0 then
+          '低保特困住保补贴'
+        when instr(B.BLG_TYPE, '3') > 0 then
+          '低保特困公租房'
+        when instr(B.BLG_TYPE, '4') > 0 then
+          '外来务工公租房'
+        when instr(B.BLG_TYPE, '5') > 0 then
+          '新就业公租房'
+        else
+          ''
+      end as BLG_TYPE_NAME,
+      B.BLG_SQBH,
+      APPROVE.APLDATE APLDATE,
+      B.BLG_DESC,
+      APPLYUSERINFO.USERNAME BLG_USER_NAME,
+      APPLYUSERINFO.SFZH BLG_SFZH,
+      p1.PI_ITEMNAME BLG_SSQ_STR,
+      p2.PI_ITEMNAME BLG_SSJ_STR,
+      case
+        when (B.BS_ID is null or B.BS_ID = '') then
+          '未提交'
+        when (B.BS_ID is not null) and
+          (B.BLG_STATE is null or B.BLG_STATE = '') then
+          '未审核'
+        when B.BLG_STATE = '1' then
+          '非失信状态'
+        else
+          '失信状态'
+      end as BLG_STATUS_STR,
+      case
+        when B.bLG_SQTYPE = '1' then
+          '一般'
+        when B.bLG_SQTYPE = '2' then
+          '严重'
+        else
+          ''
+      end as bLG_SQTYPE_NAME,
+      B.BLG_PROCESSINSTANCEID
+      from
+        (select BLGSH.BLG_PROCESSINSTANCEID,
+          BLGSH.BLG_STATE,
+          BLGSH.BS_ID,
+          BLIVEGONGS.BLG_USERID,
+          BLIVEGONGS.BLG_SQTYPE,
+          BLIVEGONGS.BLG_DESC,
+          BLIVEGONGS.BLG_SQBH,
+          BLIVEGONGS.BLG_TYPE,
+          BLIVEGONGS.BLG_ID,
+          BLIVEGONGS.BLG_RPUSERID,
+          BLIVEGONGS.BLG_APID,
+          BLIVEGONGS.BLG_ISGS,
+          case
+            when instr(BLIVEGONGS.BLG_TYPE, 'ns') > 0 then --年审
+              APPLYNS.AP_SSQ
+            when instr(BLIVEGONGS.BLG_TYPE, '1') > 0 or
+              instr(BLIVEGONGS.BLG_TYPE, '3') > 0 then --经济适用房\低保特困公租房
+              APPLY.AP_SSQ
+            when instr(BLIVEGONGS.BLG_TYPE, '2') > 0 then --低保特困住保补贴
+              APPLY_BUTIE.AB_SSQ
+            when instr(BLIVEGONGS.BLG_TYPE, '4') > 0 then --外来务工公租房
+              APPLYFORFOREIGN.AFF_SSQ
+            when instr(BLIVEGONGS.BLG_TYPE, '5') > 0 then --新就业公租房
+              APPLYFORGRADUATE.AFG_SSQ
+            else
+              '无'
+          end as BLG_SSQ,
+          case
+            when instr(BLIVEGONGS.BLG_TYPE, 'ns') > 0 then --年审
+              APPLYNS.AP_JDBSC
+            when instr(BLIVEGONGS.BLG_TYPE, '1') > 0 or
+              instr(BLIVEGONGS.BLG_TYPE, '3') > 0 then --经济适用房\低保特困公租房
+              APPLY.AP_JDBSC
+            when instr(BLIVEGONGS.BLG_TYPE, '2') > 0 then --低保特困住保补贴
+              APPLY_BUTIE.AB_JDBSC
+            when instr(BLIVEGONGS.BLG_TYPE, '4') > 0 then --外来务工公租房
+              APPLYFORFOREIGN.AFF_DWDZ
+            when instr(BLIVEGONGS.BLG_TYPE, '5') > 0 then --新就业公租房
+              APPLYFORGRADUATE.AFG_DWDZ
+            else
+              '无'
+            end as BLG_SSJ
+          from BLIVEGONGS
+              left join BLGSH
+                on BLGSH.BLG_ID = BLIVEGONGS.BLG_ID
+              left join APPLY
+                on APPLY.AP_ID = BLIVEGONGS.BLG_APID
+              left join APPLY_BUTIE
+                on APPLY_BUTIE.AB_ID = BLIVEGONGS.BLG_APID
+              left join APPLYFORFOREIGN
+                on APPLYFORFOREIGN.AFF_ID = BLIVEGONGS.BLG_APID
+              left join APPLYFORGRADUATE
+                on APPLYFORGRADUATE.AFG_ID = BLIVEGONGS.BLG_APID
+              left join APPLYNS
+                on APPLYNS.ALSID = BLIVEGONGS.BLG_APID) B,
+      APPLYUSERINFO,PARMITEM p1, PARMITEM p2,
+      APPROVE
+      where B.BLG_USERID=APPLYUSERINFO.USERID
+        and APPROVE.APLID=B.BLG_APID
+        and p1.pi_itemcode = B.BLG_SSQ
+        and p2.pi_itemcode = B.BLG_SSJ
+        and p1.PI_SETCODE = '04'
+        and p2.PI_SETCODE = '05'
+      <if test="blgId!=null and blgId!=''">
+          and B.BLG_ID = #{blgId}
+      </if>
+      <if test="blgUserName!=null and blgUserName!=''">
+          and APPLYUSERINFO.USERNAME like  '%'||#{blgUserName}||'%'
+      </if>
+      <if test="blgUserid!=null and blgUserid!=''">
+          and B.BLG_USERID = #{blgUserid}
+      </if>
+      <if test="blgRpuserid!=null and blgRpuserid!=''">
+          and B.BLG_RPUSERID = #{blgRpuserid}
+      </if>
+      <if test="blgSfzh!=null and blgSfzh!=''">
+          and APPLYUSERINFO.SFZH  like  '%'||#{blgSfzh}||'%'
+      </if>
+      <if test="blgSsq!=null and blgSsq!=''">
+          and B.BLG_SSQ = #{blgSsq}
+      </if>
+      <if test="blgSsj!=null and blgSsj!=''">
+          and B.BLG_SSJ = #{blgSsj}
+      </if>
+      <if test="blgProcessinstanceid!=null and blgProcessinstanceid!=''">
+          and B.BLG_PROCESSINSTANCEID = #{blgProcessinstanceid}
+      </if>
+      <if test="blgStatusIsNull!=null and blgStatusIsNull!='F'">
+          and B.BLG_STATE is not null
+      </if>
+      order by B.BLG_STATE
+  </select>
+
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from BLIVEGONGS
+    where BLG_ID = #{blgId,jdbcType=VARCHAR}
+  </delete>
+
+
+    <insert id="insert" parameterType="com.sys.pojo.blagsh.BliveGongS" >
+        insert into BLIVEGONGS (BLG_ID, BLG_TYPE, BLG_SQBH,
+          BLG_SQRQ, BLG_USERID, BLG_SH_PROCESSID,
+          BLG_SQTYPE, BLG_DESC, BLG_ISGS,
+          BLG_APID, BLG_RPUSERID,LOST_LETTER_NO)
+        values (#{blgId,jdbcType=VARCHAR}, #{blgType,jdbcType=VARCHAR}, #{blgSqbh,jdbcType=VARCHAR},
+          #{blgSqrq,jdbcType=TIMESTAMP}, #{blgUserid,jdbcType=VARCHAR}, #{blgShProcessid,jdbcType=VARCHAR},
+          #{blgSqtype,jdbcType=VARCHAR}, #{blgDesc,jdbcType=VARCHAR}, #{blgIsgs,jdbcType=CHAR},
+          #{blgApid,jdbcType=VARCHAR}, #{blgRpuserid,jdbcType=VARCHAR}, #{lostLetterNo,jdbcType=VARCHAR})
+  </insert>
+    <update id="update" parameterType="com.sys.pojo.blagsh.BliveGongS" >
+        update BLIVEGONGS
+        set BLG_TYPE = #{blgType,jdbcType=VARCHAR},
+          BLG_SQBH = #{blgSqbh,jdbcType=VARCHAR},
+          BLG_SQRQ = #{blgSqrq,jdbcType=TIMESTAMP},
+          BLG_USERID = #{blgUserid,jdbcType=VARCHAR},
+          BLG_SH_PROCESSID = #{blgShProcessid,jdbcType=VARCHAR},
+          BLG_SQTYPE = #{blgSqtype,jdbcType=VARCHAR},
+          BLG_DESC = #{blgDesc,jdbcType=VARCHAR},
+          BLG_ISGS = #{blgIsgs,jdbcType=CHAR},
+          BLG_APID = #{blgApid,jdbcType=VARCHAR},
+          BLG_RPUSERID = #{blgRpuserid,jdbcType=VARCHAR},
+          LOST_LETTER_NO = #{lostLetterNo,jdbcType=VARCHAR}
+        where BLG_ID = #{blgId,jdbcType=VARCHAR}
+  </update>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select BLG_ID, BLG_TYPE, BLG_SQBH, BLG_SQRQ, BLG_USERID, BLG_SH_PROCESSID, BLG_SQTYPE, 
+    BLG_DESC, BLG_ISGS, BLG_APID, BLG_RPUSERID
+    from BLIVEGONGS
+    where BLG_ID = #{blgId,jdbcType=VARCHAR}
+  </select>
+    <select id="select" resultMap="BaseResultMap" >
+    select BLG_ID, BLG_TYPE, BLG_SQBH, BLG_SQRQ, BLG_USERID, BLG_SH_PROCESSID, BLG_SQTYPE, 
+    BLG_DESC, BLG_ISGS, BLG_APID, BLG_RPUSERID
+    from BLIVEGONGS
+  </select>
+
+    <select id="selectListByMap" resultMap="BaseResultMap">
+        SELECT * from BLIVEGONGS where 1=1
+        <include refid="findCondition"></include>
+    </select>
+
+    <!--查询的条件-->
+    <sql id="findCondition">
+        <if test="userid!=null and userid!=''">
+            and BLG_USERID=#{userid}
+        </if>
+        <if test="rpuserid!=null and rpuserid!=''">
+            and BLG_RPUSERID=#{rpuserid}
+        </if>
+    </sql>
+</mapper>

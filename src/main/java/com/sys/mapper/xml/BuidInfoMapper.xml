@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.BuidInfoMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.BuidInfo">
+    <result column="BUILDINGINFO_ID" jdbcType="VARCHAR" property="buildinginfoId" />
+    <result column="ITEMCODEINFO_ID" jdbcType="VARCHAR" property="itemcodeinfoId" />
+    <result column="BUCONPERMITS_ID" jdbcType="VARCHAR" property="buconpermitsId" />
+    <result column="BUNUM" jdbcType="VARCHAR" property="bunum" />
+    <result column="BUCODE" jdbcType="VARCHAR" property="bucode" />
+    <result column="BUNAME" jdbcType="VARCHAR" property="buname" />
+    <result column="MAPCODE" jdbcType="VARCHAR" property="mapcode" />
+    <result column="HILLCODE" jdbcType="VARCHAR" property="hillcode" />
+    <result column="BUILDCODE" jdbcType="VARCHAR" property="buildcode" />
+    <result column="HILLCODE_L" jdbcType="VARCHAR" property="hillcodeL" />
+    <result column="BUILDCODE_L" jdbcType="VARCHAR" property="buildcodeL" />
+    <result column="BUNLLICNUM" jdbcType="VARCHAR" property="bunllicnum" />
+    <result column="BUSTRUCTTYPE" jdbcType="VARCHAR" property="bustructtype" />
+    <result column="BUUSETYPE" jdbcType="VARCHAR" property="buusetype" />
+    <result column="BUFINISHYEAR" jdbcType="VARCHAR" property="bufinishyear" />
+    <result column="PROPERTYKIND" jdbcType="VARCHAR" property="propertykind" />
+    <result column="LAYCOUNT" jdbcType="DECIMAL" property="laycount" />
+    <result column="HOUSECOUNT" jdbcType="DECIMAL" property="housecount" />
+    <result column="STRUAREA" jdbcType="DECIMAL" property="struarea" />
+    <result column="INAREA" jdbcType="DECIMAL" property="inarea" />
+    <result column="SHAREAREA" jdbcType="DECIMAL" property="sharearea" />
+    <result column="SHARECALEXPLAIN" jdbcType="VARCHAR" property="sharecalexplain" />
+    <result column="WALLBELONGINFO" jdbcType="VARCHAR" property="wallbelonginfo" />
+    <result column="BUILDINFOSTATES" jdbcType="CHAR" property="buildinfostates" />
+    <result column="FINSATE" jdbcType="CHAR" property="finsate" />
+    <result column="INISTATE" jdbcType="CHAR" property="inistate" />
+    <result column="ISUSED" jdbcType="CHAR" property="isused" />
+    <result column="ISFINISH" jdbcType="CHAR" property="isfinish" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="UNDERLAY" jdbcType="DECIMAL" property="underlay" />
+    <result column="ELEVATOR" jdbcType="DECIMAL" property="elevator" />
+    <result column="BUILDINFOSTATES1" jdbcType="CHAR" property="buildinfostates1" />
+    <result column="BUTYPE" jdbcType="DECIMAL" property="butype" />
+    <result column="DATASTATE" jdbcType="DECIMAL" property="datastate" />
+    <result column="RECKONINCOMMON" jdbcType="VARCHAR" property="reckonincommon" />
+    <result column="UNRECKONINCOMMON" jdbcType="VARCHAR" property="unreckonincommon" />
+    <result column="GHSGMJ" jdbcType="DECIMAL" property="ghsgmj" />
+    <result column="SGMJ" jdbcType="DECIMAL" property="sgmj" />
+    <result column="COORDX" jdbcType="VARCHAR" property="coordx" />
+    <result column="COORDY" jdbcType="VARCHAR" property="coordy" />
+    <result column="ALLOTUSERID" jdbcType="VARCHAR" property="allotuserid" />
+    <result column="OUTPUTSTATE" jdbcType="DECIMAL" property="outputstate" />
+    <result column="BDC_BU" jdbcType="VARCHAR" property="bdcBu" />
+    <result column="ZDTYBH" jdbcType="VARCHAR" property="zdtybh" />
+    <result column="BDC_ZH" jdbcType="VARCHAR" property="bdcZh" />
+    <result column="XBUCODE" jdbcType="VARCHAR" property="xbucode" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sys.pojo.BuidInfo">
+    insert into BUILDINGINFO (BUILDINGINFO_ID, ITEMCODEINFO_ID, BUCONPERMITS_ID, 
+      BUNUM, BUCODE, BUNAME, 
+      MAPCODE, HILLCODE, BUILDCODE, 
+      HILLCODE_L, BUILDCODE_L, BUNLLICNUM, 
+      BUSTRUCTTYPE, BUUSETYPE, BUFINISHYEAR, 
+      PROPERTYKIND, LAYCOUNT, HOUSECOUNT, 
+      STRUAREA, INAREA, SHAREAREA, 
+      SHARECALEXPLAIN, WALLBELONGINFO, BUILDINFOSTATES, 
+      FINSATE, INISTATE, ISUSED, ISFINISH, 
+      REMARK, UNDERLAY, ELEVATOR, 
+      BUILDINFOSTATES1, BUTYPE, DATASTATE, 
+      RECKONINCOMMON, UNRECKONINCOMMON, GHSGMJ, 
+      SGMJ, COORDX, COORDY, 
+      ALLOTUSERID, OUTPUTSTATE, BDC_BU, 
+      ZDTYBH, BDC_ZH, XBUCODE
+      )
+    values (#{buildinginfoId,jdbcType=CHAR}, #{itemcodeinfoId,jdbcType=CHAR}, #{buconpermitsId,jdbcType=CHAR}, 
+      #{bunum,jdbcType=VARCHAR}, #{bucode,jdbcType=VARCHAR}, #{buname,jdbcType=VARCHAR}, 
+      #{mapcode,jdbcType=VARCHAR}, #{hillcode,jdbcType=VARCHAR}, #{buildcode,jdbcType=VARCHAR}, 
+      #{hillcodeL,jdbcType=VARCHAR}, #{buildcodeL,jdbcType=VARCHAR}, #{bunllicnum,jdbcType=VARCHAR}, 
+      #{bustructtype,jdbcType=VARCHAR}, #{buusetype,jdbcType=VARCHAR}, #{bufinishyear,jdbcType=VARCHAR}, 
+      #{propertykind,jdbcType=VARCHAR}, #{laycount,jdbcType=DECIMAL}, #{housecount,jdbcType=DECIMAL}, 
+      #{struarea,jdbcType=DECIMAL}, #{inarea,jdbcType=DECIMAL}, #{sharearea,jdbcType=DECIMAL}, 
+      #{sharecalexplain,jdbcType=VARCHAR}, #{wallbelonginfo,jdbcType=VARCHAR}, #{buildinfostates,jdbcType=CHAR}, 
+      #{finsate,jdbcType=CHAR}, #{inistate,jdbcType=CHAR}, #{isused,jdbcType=CHAR}, #{isfinish,jdbcType=CHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{underlay,jdbcType=DECIMAL}, #{elevator,jdbcType=DECIMAL}, 
+      #{buildinfostates1,jdbcType=CHAR}, #{butype,jdbcType=DECIMAL}, #{datastate,jdbcType=DECIMAL}, 
+      #{reckonincommon,jdbcType=VARCHAR}, #{unreckonincommon,jdbcType=VARCHAR}, #{ghsgmj,jdbcType=DECIMAL}, 
+      #{sgmj,jdbcType=DECIMAL}, #{coordx,jdbcType=VARCHAR}, #{coordy,jdbcType=VARCHAR}, 
+      #{allotuserid,jdbcType=VARCHAR}, #{outputstate,jdbcType=DECIMAL}, #{bdcBu,jdbcType=VARCHAR}, 
+      #{zdtybh,jdbcType=VARCHAR}, #{bdcZh,jdbcType=VARCHAR}, #{xbucode,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  
+  <select id="findBuildNameByItemId" resultType="java.lang.Integer">
+      SELECT  count(1) FROM BUILDINGINFO
+      WHERE BUNAME = #{name} AND ITEMCODEINFO_ID=#{itemid}
+  </select>
+  
+  <insert id="insertBuildlist" parameterType="java.util.List">
+    insert into BUILDINGINFO (BUILDINGINFO_ID, ITEMCODEINFO_ID, BUCONPERMITS_ID,
+    BUNUM, BUCODE, BUNAME,
+    MAPCODE, HILLCODE, BUILDCODE,
+    HILLCODE_L, BUILDCODE_L, BUNLLICNUM,
+    BUSTRUCTTYPE, BUUSETYPE, BUFINISHYEAR,
+    PROPERTYKIND, LAYCOUNT, HOUSECOUNT,
+    STRUAREA, INAREA, SHAREAREA,
+    SHARECALEXPLAIN, WALLBELONGINFO, BUILDINFOSTATES,
+    FINSATE, INISTATE, ISUSED, ISFINISH,
+    REMARK, UNDERLAY, ELEVATOR,
+    BUILDINFOSTATES1, BUTYPE, DATASTATE,
+    RECKONINCOMMON, UNRECKONINCOMMON, GHSGMJ,
+    SGMJ, COORDX, COORDY,
+    ALLOTUSERID, OUTPUTSTATE, BDC_BU,
+    ZDTYBH, BDC_ZH, XBUCODE
+    )
+    <foreach close=")" collection="list" item="item" index="index" open="(" separator="union">
+      SELECT
+      #{item.buildinginfoId,jdbcType=VARCHAR}, #{item.itemcodeinfoId,jdbcType=VARCHAR}, #{item.buconpermitsId,jdbcType=VARCHAR},
+      #{item.bunum,jdbcType=VARCHAR}, #{item.bucode,jdbcType=VARCHAR}, #{item.buname,jdbcType=VARCHAR},
+      #{item.mapcode,jdbcType=VARCHAR}, #{item.hillcode,jdbcType=VARCHAR}, #{item.buildcode,jdbcType=VARCHAR},
+      #{item.hillcodeL,jdbcType=VARCHAR}, #{item.buildcodeL,jdbcType=VARCHAR}, #{item.bunllicnum,jdbcType=VARCHAR},
+      #{item.bustructtype,jdbcType=VARCHAR}, #{item.buusetype,jdbcType=VARCHAR}, #{item.bufinishyear,jdbcType=VARCHAR},
+      #{item.propertykind,jdbcType=VARCHAR}, #{item.laycount,jdbcType=DECIMAL}, #{item.housecount,jdbcType=DECIMAL},
+      #{item.struarea,jdbcType=DECIMAL}, #{item.inarea,jdbcType=DECIMAL}, #{item.sharearea,jdbcType=DECIMAL},
+      #{item.sharecalexplain,jdbcType=VARCHAR}, #{item.wallbelonginfo,jdbcType=VARCHAR}, #{item.buildinfostates,jdbcType=CHAR},
+      #{item.finsate,jdbcType=CHAR}, #{item.inistate,jdbcType=CHAR}, #{item.isused,jdbcType=CHAR}, #{item.isfinish,jdbcType=CHAR},
+      #{item.remark,jdbcType=VARCHAR}, #{item.underlay,jdbcType=DECIMAL}, #{item.elevator,jdbcType=DECIMAL},
+      #{item.buildinfostates1,jdbcType=CHAR}, #{item.butype,jdbcType=DECIMAL}, #{item.datastate,jdbcType=DECIMAL},
+      #{item.reckonincommon,jdbcType=VARCHAR}, #{item.unreckonincommon,jdbcType=VARCHAR}, #{item.ghsgmj,jdbcType=DECIMAL},
+      #{item.sgmj,jdbcType=DECIMAL}, #{item.coordx,jdbcType=VARCHAR}, #{item.coordy,jdbcType=VARCHAR},
+      #{item.allotuserid,jdbcType=VARCHAR}, #{item.outputstate,jdbcType=DECIMAL}, #{item.bdcBu,jdbcType=VARCHAR},
+      #{item.zdtybh,jdbcType=VARCHAR}, #{item.bdcZh,jdbcType=VARCHAR}, #{item.xbucode,jdbcType=VARCHAR}
+      from DUAL
+    </foreach>
+  </insert>
+  
+  
+  
+  
+  
+  <insert id="insertSelective" parameterType="com.sys.pojo.BuidInfo">
+    insert into BUILDINGINFO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="buildinginfoId != null">
+        BUILDINGINFO_ID,
+      </if>
+      <if test="itemcodeinfoId != null">
+        ITEMCODEINFO_ID,
+      </if>
+      <if test="buconpermitsId != null">
+        BUCONPERMITS_ID,
+      </if>
+      <if test="bunum != null">
+        BUNUM,
+      </if>
+      <if test="bucode != null">
+        BUCODE,
+      </if>
+      <if test="buname != null">
+        BUNAME,
+      </if>
+      <if test="mapcode != null">
+        MAPCODE,
+      </if>
+      <if test="hillcode != null">
+        HILLCODE,
+      </if>
+      <if test="buildcode != null">
+        BUILDCODE,
+      </if>
+      <if test="hillcodeL != null">
+        HILLCODE_L,
+      </if>
+      <if test="buildcodeL != null">
+        BUILDCODE_L,
+      </if>
+      <if test="bunllicnum != null">
+        BUNLLICNUM,
+      </if>
+      <if test="bustructtype != null">
+        BUSTRUCTTYPE,
+      </if>
+      <if test="buusetype != null">
+        BUUSETYPE,
+      </if>
+      <if test="bufinishyear != null">
+        BUFINISHYEAR,
+      </if>
+      <if test="propertykind != null">
+        PROPERTYKIND,
+      </if>
+      <if test="laycount != null">
+        LAYCOUNT,
+      </if>
+      <if test="housecount != null">
+        HOUSECOUNT,
+      </if>
+      <if test="struarea != null">
+        STRUAREA,
+      </if>
+      <if test="inarea != null">
+        INAREA,
+      </if>
+      <if test="sharearea != null">
+        SHAREAREA,
+      </if>
+      <if test="sharecalexplain != null">
+        SHARECALEXPLAIN,
+      </if>
+      <if test="wallbelonginfo != null">
+        WALLBELONGINFO,
+      </if>
+      <if test="buildinfostates != null">
+        BUILDINFOSTATES,
+      </if>
+      <if test="finsate != null">
+        FINSATE,
+      </if>
+      <if test="inistate != null">
+        INISTATE,
+      </if>
+      <if test="isused != null">
+        ISUSED,
+      </if>
+      <if test="isfinish != null">
+        ISFINISH,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+      <if test="underlay != null">
+        UNDERLAY,
+      </if>
+      <if test="elevator != null">
+        ELEVATOR,
+      </if>
+      <if test="buildinfostates1 != null">
+        BUILDINFOSTATES1,
+      </if>
+      <if test="butype != null">
+        BUTYPE,
+      </if>
+      <if test="datastate != null">
+        DATASTATE,
+      </if>
+      <if test="reckonincommon != null">
+        RECKONINCOMMON,
+      </if>
+      <if test="unreckonincommon != null">
+        UNRECKONINCOMMON,
+      </if>
+      <if test="ghsgmj != null">
+        GHSGMJ,
+      </if>
+      <if test="sgmj != null">
+        SGMJ,
+      </if>
+      <if test="coordx != null">
+        COORDX,
+      </if>
+      <if test="coordy != null">
+        COORDY,
+      </if>
+      <if test="allotuserid != null">
+        ALLOTUSERID,
+      </if>
+      <if test="outputstate != null">
+        OUTPUTSTATE,
+      </if>
+      <if test="bdcBu != null">
+        BDC_BU,
+      </if>
+      <if test="zdtybh != null">
+        ZDTYBH,
+      </if>
+      <if test="bdcZh != null">
+        BDC_ZH,
+      </if>
+      <if test="xbucode != null">
+        XBUCODE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="buildinginfoId != null">
+        #{buildinginfoId,jdbcType=CHAR},
+      </if>
+      <if test="itemcodeinfoId != null">
+        #{itemcodeinfoId,jdbcType=CHAR},
+      </if>
+      <if test="buconpermitsId != null">
+        #{buconpermitsId,jdbcType=CHAR},
+      </if>
+      <if test="bunum != null">
+        #{bunum,jdbcType=VARCHAR},
+      </if>
+      <if test="bucode != null">
+        #{bucode,jdbcType=VARCHAR},
+      </if>
+      <if test="buname != null">
+        #{buname,jdbcType=VARCHAR},
+      </if>
+      <if test="mapcode != null">
+        #{mapcode,jdbcType=VARCHAR},
+      </if>
+      <if test="hillcode != null">
+        #{hillcode,jdbcType=VARCHAR},
+      </if>
+      <if test="buildcode != null">
+        #{buildcode,jdbcType=VARCHAR},
+      </if>
+      <if test="hillcodeL != null">
+        #{hillcodeL,jdbcType=VARCHAR},
+      </if>
+      <if test="buildcodeL != null">
+        #{buildcodeL,jdbcType=VARCHAR},
+      </if>
+      <if test="bunllicnum != null">
+        #{bunllicnum,jdbcType=VARCHAR},
+      </if>
+      <if test="bustructtype != null">
+        #{bustructtype,jdbcType=VARCHAR},
+      </if>
+      <if test="buusetype != null">
+        #{buusetype,jdbcType=VARCHAR},
+      </if>
+      <if test="bufinishyear != null">
+        #{bufinishyear,jdbcType=VARCHAR},
+      </if>
+      <if test="propertykind != null">
+        #{propertykind,jdbcType=VARCHAR},
+      </if>
+      <if test="laycount != null">
+        #{laycount,jdbcType=DECIMAL},
+      </if>
+      <if test="housecount != null">
+        #{housecount,jdbcType=DECIMAL},
+      </if>
+      <if test="struarea != null">
+        #{struarea,jdbcType=DECIMAL},
+      </if>
+      <if test="inarea != null">
+        #{inarea,jdbcType=DECIMAL},
+      </if>
+      <if test="sharearea != null">
+        #{sharearea,jdbcType=DECIMAL},
+      </if>
+      <if test="sharecalexplain != null">
+        #{sharecalexplain,jdbcType=VARCHAR},
+      </if>
+      <if test="wallbelonginfo != null">
+        #{wallbelonginfo,jdbcType=VARCHAR},
+      </if>
+      <if test="buildinfostates != null">
+        #{buildinfostates,jdbcType=CHAR},
+      </if>
+      <if test="finsate != null">
+        #{finsate,jdbcType=CHAR},
+      </if>
+      <if test="inistate != null">
+        #{inistate,jdbcType=CHAR},
+      </if>
+      <if test="isused != null">
+        #{isused,jdbcType=CHAR},
+      </if>
+      <if test="isfinish != null">
+        #{isfinish,jdbcType=CHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="underlay != null">
+        #{underlay,jdbcType=DECIMAL},
+      </if>
+      <if test="elevator != null">
+        #{elevator,jdbcType=DECIMAL},
+      </if>
+      <if test="buildinfostates1 != null">
+        #{buildinfostates1,jdbcType=CHAR},
+      </if>
+      <if test="butype != null">
+        #{butype,jdbcType=DECIMAL},
+      </if>
+      <if test="datastate != null">
+        #{datastate,jdbcType=DECIMAL},
+      </if>
+      <if test="reckonincommon != null">
+        #{reckonincommon,jdbcType=VARCHAR},
+      </if>
+      <if test="unreckonincommon != null">
+        #{unreckonincommon,jdbcType=VARCHAR},
+      </if>
+      <if test="ghsgmj != null">
+        #{ghsgmj,jdbcType=DECIMAL},
+      </if>
+      <if test="sgmj != null">
+        #{sgmj,jdbcType=DECIMAL},
+      </if>
+      <if test="coordx != null">
+        #{coordx,jdbcType=VARCHAR},
+      </if>
+      <if test="coordy != null">
+        #{coordy,jdbcType=VARCHAR},
+      </if>
+      <if test="allotuserid != null">
+        #{allotuserid,jdbcType=VARCHAR},
+      </if>
+      <if test="outputstate != null">
+        #{outputstate,jdbcType=DECIMAL},
+      </if>
+      <if test="bdcBu != null">
+        #{bdcBu,jdbcType=VARCHAR},
+      </if>
+      <if test="zdtybh != null">
+        #{zdtybh,jdbcType=VARCHAR},
+      </if>
+      <if test="bdcZh != null">
+        #{bdcZh,jdbcType=VARCHAR},
+      </if>
+      <if test="xbucode != null">
+        #{xbucode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="findBuildInfoByIid" parameterType="Map" resultMap="BaseResultMap">
+      select B.BUILDINGINFO_ID,B.BUNAME from BUILDINGINFO B
+      where B.ITEMCODEINFO_ID = #{itemId}
+       order by B.BUNAME
+  </select>
+
+  <select id="findBuildInfoByMap" parameterType="Map" resultMap="BaseResultMap">
+    select DISTINCT B.BUILDINGINFO_ID,B.BUNAME from BUILDINGINFO B
+     inner join SOURCEHOUSE S on B.BUILDINGINFO_ID=S.SH_LPID
+    where B.ITEMCODEINFO_ID = #{itemId}
+     order by B.BUNAME
+  </select>
+
+  <delete id="delete" parameterType="java.lang.String">
+    DELETE  FROM BUILDINGINFO WHERE BUILDINGINFO_ID=#{id}
+  </delete>
+  <select id="findCountByItemId" resultType="java.lang.Integer">
+    select COUNT (1)
+    from BUILDINGINFO
+    where ITEMCODEINFO_ID = #{itemid,jdbcType=CHAR}
+  </select>
+</mapper>

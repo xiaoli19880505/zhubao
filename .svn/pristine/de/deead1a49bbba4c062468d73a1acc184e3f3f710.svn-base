@@ -1,0 +1,28 @@
+[
+	{
+		"id": "",
+		"text": "我的信息",
+		"src": "toPersonalInf"
+	}, {
+	"id": "",
+	"text": "发起申请",
+	"src": "toApplyType"
+	}, {
+		"id": "",
+		"text": "申请记录",
+		"src": "toPerApplyList"
+	}, {
+		"id": "",
+		"text": "年审记录",
+		"src": "toPerNsApplyList"
+	},{
+		"id": "",
+		"text": "我的通知",
+		"src": "toPerInform"
+	}, {
+		"id": "",
+		"text": "修改密码",
+		"src": "toChangePsw"
+	}
+]
+

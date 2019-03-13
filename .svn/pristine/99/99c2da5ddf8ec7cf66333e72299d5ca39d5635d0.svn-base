@@ -1,0 +1,412 @@
+<%@ page language="java" contentType="text/html" pageEncoding="utf-8"%>
+
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<jsp:include page="/WEB-INF/index/header.jsp" flush="true"></jsp:include>
+<body class="easyui-layout">
+<header>
+	<script type="text/javascript" src="<%=basePath %>src/js/webuploader.js"></script>
+	<link rel="stylesheet" href="<%=basePath %>src/css/webuploader.css" />
+</header>
+<div data-options="region:'north',border:false" style="overflow: hidden" id="publicNorth">
+	<div class="easyui-panel" style="width: 100%;overflow: hidden">
+		<div class="houseType">
+			<div class="smallType type3">
+				<div class="typeCount"></div>
+				<div class="typeName">公共租赁住房（低保、特困家庭）</div>
+				<input name="typeCode" type="hidden" value="3">
+			</div>
+			<div class="smallType type5">
+				<div class="typeCount"></div>
+				<div class="typeName">经济适用住房</div>
+				<input name="typeCode" type="hidden" value="1">
+			</div>
+		</div>
+		<form id="queryForm">
+			<ul class="search-group">
+
+				<li><input class="easyui-textbox" name="username" id="username" style="width: 92%" data-options="label:'申请人:'"></li>
+				<li><input class="easyui-textbox" name="sfzh" id="sfzh" style="width: 92%" data-options="label:'身份证号:'"></li>
+				<li class="readonly ssq">
+					<input class="easyui-combobox" name="ssq" id="ssq" style="width: 92%" data-options="label:'所属县区:',panelHeight:'auto',panelMaxHeight:400,
+					editable:false,valueField:'piItemcode',textField:'piItemname',onSelect:select">
+				</li>
+				<li>
+					<select class="easyui-combobox" name="ssjd" id="ssjd" style="width: 92%" data-options="label:'所属街道:',panelHeight:'auto',panelMaxHeight:400,
+					editable:false,valueField:'piItemcode',textField:'piItemname'"></select>
+				</li>
+
+			</ul>
+			<ul class="search-group">
+				<li><input class="easyui-datebox" name="beginDate" id="beginDate" style="width: 92%" data-options="label:'开始时间:'"></li>
+				<li><input class="easyui-datebox" name="endDate" id="endDate" style="width: 92%" data-options="label:'结束时间:'"></li>
+				<li class="query-btn">
+					<a class="icon iconfont icon-sousuo" onclick="query()"><i>查&nbsp;询</i></a>
+				</li>
+				<%--<li class="query-btn">
+					<a class="icon iconfont icon-20daochu" onclick="quit()"><i>放&nbsp;弃</i></a>
+				</li>--%>
+				<li class="query-btn">
+					<a class="icon iconfont icon-20daochu"   onclick="sendMes()"><i>部分通知选房</i></a>
+				</li>
+				<li class="query-btn">
+					<a class="icon iconfont icon-20daochu"  onclick="sendAllMes()"><i>全部通知选房</i></a>
+				</li>
+				<%--<li class="query-btn">
+					<a class="icon iconfont" onclick="divAll()"><i>分&nbsp;房</i></a>
+				</li>--%>
+			</ul>
+		</form>
+	</div>
+</div>
+<div data-options="region:'center',border:false">
+	<div class="easyui-panel resPanel" style="width: 100%;height: 98%;overflow: auto">
+		<table id="dataTable" class="easyui-datagrid resTable" style="height: 100%;min-height: 300px"
+			   data-options="rownumbers:true,pagination:true,border:true,striped:true,
+                       pagePosition:'bottom',pageSize:20,nowrap:true,fitColumns:true">
+			<thead>
+			<tr>
+				<th data-options="field:'cb',checkbox:true,align:'center'"></th>
+				<th data-options="field:'APPTYPE',width:120,align:'center',halign:'center',formatter:convenrtApplyType">申请类型</th>
+				<th data-options="field:'ID',width:150,align:'center'">申请编号</th>
+				<th data-options="field:'APPLYDATE',width:100,align:'center'">申请日期</th>
+				<th data-options="field:'PASSDATE',width:100,align:'center'">审批通过日期</th>
+				<th data-options="field:'USERNAME',width:100,align:'center'">申请人</th>
+				<th data-options="field:'SFZH',width:150,align:'center'">身份证号</th>
+				<th data-options="field:'SSQ',width:100,align:'center'">所属县区</th>
+				<th data-options="field:'SSJD',width:100,align:'center'">所属街道</th>
+				<th data-options="field:'STATE',width:100,align:'center'">摇号状态</th>
+				<th data-options="field:'OPUSERNAME',width:100,align:'center'">摇号操作人</th>
+				<th data-options="field:'OPTIME',width:100,align:'center'">操作时间</th>
+				<th data-options="field:'MSEXS',width:150,align:'center'">短信是否发送</th>
+				<th data-options="field:'MSTIME',width:150,align:'center'">发送时间</th>
+				<th data-options="field:'essetNature',width:100,align:'center',formatter:search">操作</th>
+			</tr>
+			</thead>
+		</table>
+	</div>
+</div>
+<%--短信发送窗口--%>
+   <div class="diaContainer" style="display: none">
+       <div  id="bankWindow" class="easyui-dialog " title="信息发送内容" style="width:500px;height:400px;" data-options="resizable:true,modal:true,closed:true">
+	<div class="easyui-panel windowPanel">
+		<div class="abtn-group btnInner">
+			<a id="saveButton" class="icon iconfont icon-icon- green" onclick="sendMesAfter()"><i>发送</i></a>
+		</div>
+		<form method="post" id="form" class="easyui-form">
+			<ul class="search-group-add windowInner">
+				<legend>基本信息</legend>
+				<li style="width: 380px"><input class="easyui-datebox" name="sqrq" style="width: 92%" data-options="label:'通知时间:',required:true,editable:false,validType:['overDate','empty']"></li>
+				<li style="width: 380px"><input class="easyui-textbox" name="doc" style="width: 92%;height:80px" data-options="label:'资料名称:',multiline:true,required:true,validType:['empty']"></li>
+				<li style="width: 380px"><input class="easyui-textbox" name="area" style="width: 92%" data-options="label:'办理地点:',required:true,validType:['empty']"></li>
+				<li style="width: 380px"><label style="width: 100px;display: inline-block">办理事项:</label>
+					<input type="checkbox" name="contents" value="选房" required><span>选房</span>
+					<input type="checkbox" name="contents" value="交余款"><span>交余款</span>
+					<input type="checkbox" name="contents" value="签订合同"><span>签订合同</span>
+					<input type="checkbox" name="contents" value="上房"><span>上房</span>
+				</li>
+			</ul>
+		</form>
+	</div>
+</div>
+   </div>
+</body>
+<script>
+	var sendJson={};
+	    sendJson.usernames=[];
+        sendJson.applyType=[];
+        sendJson.linktels=[];
+    sendJson.sqbhs=[];
+    sendJson.sfzhs=[];
+
+	var sendArray=[];
+	var showArray=[];
+	var clickAll=true;
+    //为街道和街区默认赋值
+    $(function () {
+        var ssqId = "${sessionScope.user.parmItemssq.piItemcode}";
+        var ssqname = "${sessionScope.user.parmItemssq.piItemname}";
+        var ssjText = "${sessionScope.user.parmItemssjd.piItemname}";
+        $("#ssq").combobox({
+            url:'<%=basePath %>ParmItem/getOptions?parmSetcode=05',
+            onLoadSuccess:function(){
+                var datas=$("#ssq").combobox('getData');
+                if(ssqId =="0"){
+                    $("#ssq").combobox('setValue',datas[0]);
+                } else {
+                    $("#ssq").combobox("setValue",ssqId);
+                    $("#ssq").combobox("readonly",true);
+                }
+            }
+        });
+
+        $("#dataTable").datagrid({
+            url:'<%=basePath %>lotnum/findlotlist',
+            queryParams:{
+                aplcEq:3
+            }
+        });
+    });
+
+    /*多条件查询*/
+    function select(record){
+        var qid = record.piItemcode;
+        var ssqId = "${sessionScope.user.parmItemssq.piItemcode}";
+        var ssjId = "${sessionScope.user.ssj}";
+        if(qid==undefined){
+            qid=record;
+        }
+        $("#ssjd").combobox({
+            url:'<%=basePath%>ParmItem/findAllJd',
+            onBeforeLoad:function(param){
+                param.qid=qid;
+            },
+            onLoadSuccess:function () {
+                if(ssqId !="0"){
+                    $("#ssjd").combobox("setValue",ssjId);
+                    $("#ssjd").combobox("readonly",true);
+                }
+            }
+        });
+    }
+
+    /*转换业务类别*/
+    function convenrtApplyType(value,row,index){
+        //alert("value:"+value);
+        var apptype = value;
+        switch (apptype){
+            case "1":
+                return "经济适用住房";
+            case "2":
+                return "公共租赁住房租赁补贴";
+            case "3":
+                return "公共租赁住房（低保、特困家庭）";
+            case "4":
+                return "公共租赁住房（外来务工人员）";
+            case "5":
+                return "公共租赁住房（新就业人员）";
+        }
+    }
+
+    //根据条件查询
+    function query(){
+        var applyType=$.trim($('.selectType').find('input[name="typeCode"]').val());
+        $("#dataTable").datagrid('load',{
+            applyType:applyType,
+            applyUsername:$.trim($("#username").val()),
+            applyUsercard:$.trim($("#sfzh").val()),
+            applyUserSsq:$.trim($("#ssq").combobox('getValue')),
+            applyUserJd:$.trim($("#ssjd").combobox('getValue')),
+            beginDate:$.trim($("#beginDate").val()),
+            endDate:$.trim($("#endDate").val()),
+            aplcEq:3
+        });
+    }
+    //点击类型查询
+    $('.houseType .smallType').click(function () {
+        $(this).addClass('selectType').siblings().removeClass('selectType');
+        var applytype=$.trim($(this).find('input[name="typeCode"]').val());
+        $("#dataTable").datagrid('load',{
+            applyType:applytype,
+            applyUsername:$.trim($("#username").val()),
+            applyUsercard:$.trim($("#sfzh").val()),
+            applyUserSsq:$.trim($("#ssq").combobox('getValue')),
+            applyUserJd:$.trim($("#ssjd").combobox('getValue')),
+            beginDate:$.trim($("#beginDate").val()),
+            endDate:$.trim($("#endDate").val()),
+            aplcEq:3
+        })
+    });
+    /*查看操作*/
+    function search(value,row,index) {
+        var apptype = row.APPTYPE;
+        var aplid = row.APPID;
+        return '<a class="blue" style="cursor:pointer" onclick="auditOpinion(\''+apptype+'\',\''+aplid +'\')">查看</a>';
+    }
+    function auditOpinion(apptype,aplid){
+        var a = $('<a href="<%=basePath %>task/toApprove?applyType='+ apptype+'&applyId='+aplid+'&chengxin=chengxin#true" target="_blank"></a>')[0];
+        var e = document.createEvent('MouseEvents');
+        e.initEvent('click', true, true);
+        a.dispatchEvent(e);
+    }
+
+    /*放弃选房*/
+   function quit() {
+       var row = $("#dataTable").datagrid("getSelections");
+       if(row.length!=0){
+           if(row.length!=1){
+               bank.alertMessage("每次只能放弃一条数据");
+		   }else{
+               $.post(
+                   "<%=basePath%>lotnum/quitLotNum",
+                   {applyid:row.APPID,applyType:row.APPTYPE},
+                   function(data) {
+                       bank.ajaxMessage(data);
+                       if(data.indexOf("成功")!=-1){
+                           $("#dataTable").datagrid("reload",{
+                               aplcEq:3
+                           });
+                       }
+                   }, "json");
+           }
+	   }else{
+           bank.alertMessage("请选择操作行");
+	   }
+   }
+
+    function reloadTable(){
+        var applyType=$.trim($('.selectType').find('input[name="typeCode"]').val());
+        $("#dataTable").datagrid('reload',{
+            applyType:$.trim($(this).find('input[name="typeCode"]').val()),
+            applyUsername:$.trim($("#username").val()),
+            applyUsercard:$.trim($("#sfzh").val()),
+            applyUserSsq:$.trim($("#ssq").combobox('getValue')),
+            applyUserJd:$.trim($("#ssjd").combobox('getValue')),
+            beginDate:$.trim($("#beginDate").val()),
+            endDate:$.trim($("#endDate").val()),
+            aplcEq:3
+        });
+	}
+	//部分发送
+	function sendMes(){
+        if(showArray.length==0){
+            bank.alertMessage("请选择要发送的数据")
+		}else{
+            clickAll=false;
+            $("#bankWindow").dialog('open');
+
+        }
+	}
+	//全部发送
+	function sendAllMes() {
+        clickAll=true;
+        $("#bankWindow").dialog('open');
+    }
+    function sendMesAfter(){
+       //部分发送
+       if(!clickAll){
+           var contents=[];
+           $.each($('input[name="contents"]:checked'),function(){
+               contents.push($(this).val());
+           });
+           solveMes();
+           $('#form').form('submit', {
+               url:'<%=basePath %>message/sendMessage',
+               onSubmit: function(param){
+                   param.usernames=(sendJson.usernames).toString();
+                   param.applyTypes=(sendJson.applyType).toString();
+                   param.sqbhs=showArray.toString();
+                   param.linktels=(sendJson.linktels).toString();
+                   param.sfzhs=(sendJson.sfzhs).toString();
+                   param.content=contents.toString();
+                   param.temType=4;
+                   var isValid = $(this).form('validate');
+                   if (!isValid){
+                       bank.ajaxMessage("请检查输入项");
+                       return isValid;
+                   }
+                   return isValid;
+               },
+               success:function(data){
+                   bank.ajaxMessage(data);
+                   if (data.indexOf("成功")!=-1){
+                       reloadTable();
+                   }
+                   $("#bankWindow").dialog('close');
+               }
+           },'json');
+	   }else{
+           //全部发送
+           var contents=[];
+           $.each($('input[name="contents"]:checked'),function(){
+               contents.push($(this).val());
+           });
+           solveMes();
+           $('#form').form('submit', {
+               url:'<%=basePath %>lotnum/sendAllLotMessage',
+               onSubmit: function(param){
+                   param.applyType=$.trim($(this).find('input[name="typeCode"]').val()),
+                       param.applyUsername=$.trim($("#username").val()),
+                       param.applyUsercard=$.trim($("#sfzh").val()),
+                       param.applyUserSsq=$.trim($("#ssq").combobox('getValue')),
+                       param.applyUserJd=$.trim($("#ssjd").combobox('getValue')),
+                       param.beginDate=$.trim($("#beginDate").val()),
+                       param.endDate=$.trim($("#endDate").val()),
+                       param.aplcEq=3
+                   param.content=contents.toString();
+                   var isValid = $(this).form('validate');
+                   if (!isValid){
+                       bank.ajaxMessage("请检查输入项");
+                       return isValid;
+                   }
+                   return isValid;
+               },
+               success:function(data){
+                   bank.ajaxMessage(data);
+                   if (data.indexOf("成功")!=-1){
+                       reloadTable();
+                   }
+                   $("#bankWindow").dialog('close');
+               }
+           },'json');
+	   }
+
+    }
+
+   function solveMes(){
+       for(var i=0;i<sendArray.length;i++){
+		   (sendJson.usernames)[i]=sendArray[i].USERNAME;
+           (sendJson.applyType)[i]=sendArray[i].APPTYPE;
+           (sendJson.linktels)[i]=sendArray[i].LINKTEL;
+           (sendJson.sfzhs)[i]=sendArray[i].SFZH;
+	   }
+    }
+    //回显已选中数据
+    function multiShow(data){
+        if(showArray.length>0){
+            $('#dataTable').datagrid('clearSelections');
+            var datas=$("#dataTable").datagrid('getRows');
+            for(var i=0;i<datas.length;i++){
+                for(var j=0;j<showArray.length;j++){
+                    if(datas[i].ID==showArray[j]){
+                        $('#dataTable').datagrid('selectRow',i);
+                    }
+                }
+            }
+        }
+    }
+    //选择失信人员
+    $("#dataTable").datagrid({
+        onSelect:function(rowIndex, rowData){
+            if($.inArray(rowData.ID,showArray)==-1){
+                showArray.push(rowData.ID);
+                sendArray.push(rowData)
+            }
+        },
+        onUnselect:function(rowIndex, rowData){
+            $.each(showArray,function(index,value){
+                if(rowData.ID==value){
+                    showArray.splice(index, 1);
+                    sendArray.splice(index,1);
+                }
+            });
+        },
+        onLoadSuccess:function(data){
+            //回填选中
+            multiShow(data)
+        }
+    });
+</script>
+<style>
+	.webuploader-pick {
+		background:none !important;
+		position: relative;
+		top:-10px;
+	}
+    .datagrid-header-check input{
+		display: none;
+	}
+</style>
+</html>

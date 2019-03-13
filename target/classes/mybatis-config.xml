@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<!-- 打印查询语句 -->
+		<setting name="logImpl" value="STDOUT_LOGGING" />
+		<setting name="defaultExecutorType" value="SIMPLE" />
+		<setting name="cacheEnabled" value="true"/>
+	</settings>
+	<!-- 别名 -->
+	<typeAliases>
+		<package name="com.sys.pojo"/>
+	</typeAliases>
+	<plugins>
+		<!-- 配置分页助手的插件 -->
+		<plugin interceptor="com.github.pagehelper.PageHelper">
+			<!-- 指定数据库方言 -->
+			<property name="dialect" value="oracle"/>
+			<!-- 设置为true时，查询结果中会查询出总条数信息 -->
+			<property name="rowBoundsWithCount" value="true"/>
+		</plugin>
+	</plugins>
+</configuration>

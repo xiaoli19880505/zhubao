@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.serialnum.SerialNumLineMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.serialnum.SerialNumLine">
+    <id column="SNL_ID" jdbcType="VARCHAR" property="snlId" />
+    <result column="SNH_ID" jdbcType="VARCHAR" property="snhId" />
+    <result column="NOW_DATE" jdbcType="VARCHAR" property="nowDate" />
+    <result column="NOW_POSITION" jdbcType="DECIMAL" property="nowPosition" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="CREATE_PERSON" jdbcType="VARCHAR" property="createPerson" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="UPDATE_PERSON" jdbcType="VARCHAR" property="updatePerson" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    SNL_ID, SNH_ID, NOW_DATE, NOW_POSITION, CREATE_TIME, CREATE_PERSON, UPDATE_TIME, 
+    UPDATE_PERSON
+  </sql>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from SERIAL_NUM_LINE
+    where SNL_ID = #{snlId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByFKIdAndNowDate" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from SERIAL_NUM_LINE
+    where SNH_ID = #{snhId,jdbcType=VARCHAR}
+    and NOW_DATE = #{nowDate,jdbcType=VARCHAR}
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from SERIAL_NUM_LINE
+    where SNL_ID = #{snlId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.serialnum.SerialNumLine">
+    insert into SERIAL_NUM_LINE (SNL_ID, SNH_ID, NOW_DATE, 
+      NOW_POSITION, CREATE_TIME, CREATE_PERSON, 
+      UPDATE_TIME, UPDATE_PERSON)
+    values (#{snlId,jdbcType=VARCHAR}, #{snhId,jdbcType=VARCHAR}, #{nowDate,jdbcType=VARCHAR},
+      #{nowPosition,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{createPerson,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sys.pojo.serialnum.SerialNumLine">
+    insert into SERIAL_NUM_LINE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="snlId != null">
+        SNL_ID,
+      </if>
+      <if test="snhId != null">
+        SNH_ID,
+      </if>
+      <if test="nowDate != null">
+        NOW_DATE,
+      </if>
+      <if test="nowPosition != null">
+        NOW_POSITION,
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME,
+      </if>
+      <if test="createPerson != null">
+        CREATE_PERSON,
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME,
+      </if>
+      <if test="updatePerson != null">
+        UPDATE_PERSON,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="snlId != null">
+        #{snlId,jdbcType=VARCHAR},
+      </if>
+      <if test="snhId != null">
+        #{snhId,jdbcType=VARCHAR},
+      </if>
+      <if test="nowDate != null">
+        #{nowDate,jdbcType=VARCHAR},
+      </if>
+      <if test="nowPosition != null">
+        #{nowPosition,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null">
+        #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null">
+        #{updatePerson,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateSelective" parameterType="com.sys.pojo.serialnum.SerialNumLine">
+    update SERIAL_NUM_LINE
+    <set>
+      <if test="snhId != null">
+        SNH_ID = #{snhId,jdbcType=VARCHAR},
+      </if>
+      <if test="nowDate != null">
+        NOW_DATE = #{nowDate,jdbcType=VARCHAR},
+      </if>
+      <if test="nowPosition != null">
+        NOW_POSITION = #{nowPosition,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createPerson != null">
+        CREATE_PERSON = #{createPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null">
+        UPDATE_PERSON = #{updatePerson,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where SNL_ID = #{snlId,jdbcType=VARCHAR}
+  </update>
+  <update id="update" parameterType="com.sys.pojo.serialnum.SerialNumLine">
+    update SERIAL_NUM_LINE
+    set SNH_ID = #{snhId,jdbcType=VARCHAR},
+      NOW_DATE = #{nowDate,jdbcType=VARCHAR},
+      NOW_POSITION = #{nowPosition,jdbcType=DECIMAL},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      CREATE_PERSON = #{createPerson,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      UPDATE_PERSON = #{updatePerson,jdbcType=VARCHAR}
+    where SNL_ID = #{snlId,jdbcType=VARCHAR}
+  </update>
+</mapper>

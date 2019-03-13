@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.apply.ApplyNsMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.apply.ApplyNs">
+    <id column="ALSID" jdbcType="VARCHAR" property="alsid" />
+    <result column="AP_PH" jdbcType="VARCHAR" property="apPh" />
+    <result column="AP_SQID" jdbcType="VARCHAR" property="apSqid" />
+    <result column="AP_SQBH" jdbcType="VARCHAR" property="apSqbh" />
+    <result column="AP_SQLB" jdbcType="VARCHAR" property="apSqlb" />
+    <result column="AP_SSQ" jdbcType="VARCHAR" property="apSsq" />
+    <result column="AP_JDBSC" jdbcType="VARCHAR" property="apJdbsc" />
+    <result column="AP_SQJWH" jdbcType="VARCHAR" property="apSqjwh" />
+    <result column="AP_SQRID" jdbcType="VARCHAR" property="apSqrid" />
+    <result column="AP_SQRPOID" jdbcType="VARCHAR" property="apSqrpoid" />
+    <result column="AP_SQHJNX" jdbcType="VARCHAR" property="apSqhjnx" />
+    <result column="AP_JTRK" jdbcType="DECIMAL" property="apJtrk" />
+    <result column="AP_JTNSR" jdbcType="DECIMAL" property="apJtnsr" />
+    <result column="AP_RJYSR" jdbcType="DECIMAL" property="apRjysr" />
+    <result column="AP_RJJZMJ" jdbcType="DECIMAL" property="apRjjzmj" />
+    <result column="AP_XZFXZ" jdbcType="VARCHAR" property="apXzfxz" />
+    <result column="AP_JTXZFQK" jdbcType="VARCHAR" property="apJtxzfqk" />
+    <result column="AP_JTZFBGQK" jdbcType="VARCHAR" property="apJtzfbgqk" />
+    <result column="AP_TSJT" jdbcType="DECIMAL" property="apTsjt" />
+    <result column="AP_BTJE" jdbcType="VARCHAR" property="apBtje" />
+    <result column="AP_FWID" jdbcType="VARCHAR" property="apFwid" />
+    <result column="AP_FLAG" jdbcType="DECIMAL" property="apFlag" />
+    <result column="AP_WFJT" jdbcType="VARCHAR" property="apWfjt" />
+    <result column="AFF_DWMC" jdbcType="VARCHAR" property="affDwmc" />
+    <result column="AFF_DWDZ" jdbcType="VARCHAR" property="affDwdz" />
+    <result column="AFF_WDHJDZ" jdbcType="VARCHAR" property="affWdhjdz" />
+    <result column="AFF_LXJZSJ" jdbcType="VARCHAR" property="affLxjzsj" />
+    <result column="AFF_LDHTKSSJ" jdbcType="VARCHAR" property="affLdhtkssj" />
+    <result column="AFF_LDHTJSSJ" jdbcType="VARCHAR" property="affLdhtjssj" />
+    <result column="AFF_SBJNSJ" jdbcType="VARCHAR" property="affSbjnsj" />
+    <result column="AFF_GJJJNSJ" jdbcType="VARCHAR" property="affGjjjnsj" />
+    <result column="AFF_GRNSR" jdbcType="DECIMAL" property="affGrnsr" />
+    <result column="AFG_BYYX" jdbcType="VARCHAR" property="afgByyx" />
+    <result column="AFG_BYSJ" jdbcType="VARCHAR" property="afgBysj" />
+    <result column="AFG_XL" jdbcType="VARCHAR" property="afgXl" />
+    <result column="AFG_HJDZ" jdbcType="VARCHAR" property="afgHjdz" />
+    <result column="AP_DBZBH" jdbcType="VARCHAR" property="apDbzbh" />
+    <result column="AP_LQRS" jdbcType="VARCHAR" property="apLqrs" />
+    <result column="AP_FZSJ" jdbcType="VARCHAR" property="apFzsj" />
+    <result column="AP_BASEIMG" jdbcType="VARCHAR" property="apBaseimg" />
+   <!-- <association property="applyUserinfo" column="AP_SQRID" select="com.sys.mapper.ApplyUserinfoMapper.selectById"/>-->
+    <association column="ALSID"  property="applyUnit"
+                 select="com.sys.mapper.apply.ApplyUnitMapper.findByApplyId" />
+    <association column="ALSID"  property="applyFamilyHouseChange"
+                 select="com.sys.mapper.apply.ApplyFamilyHouseChangeMapper.findByApplyId" />
+    <collection column="ALSID" property="applyFamilyHouses" ofType="com.sys.pojo.apply.ApplyFamilyHouse"
+                javaType="java.util.ArrayList"
+                select="com.sys.mapper.apply.ApplyFamilyHouseMapper.findByApplyId">
+    </collection>
+    <collection column="ALSID" property="applyFamilyMembers" ofType="com.sys.pojo.apply.ApplyFamilyMember"
+                javaType="java.util.ArrayList"
+                select="com.sys.mapper.apply.ApplyFamilyMemberMapper.findByApplyId">
+    </collection>
+    <collection column="ALSID" property="volList" ofType="com.sys.pojo.Volelearc"
+                javaType="java.util.ArrayList"
+                select="com.sys.mapper.VolelearcMapper.findByAppyId">
+    </collection>
+  </resultMap>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from APPLYNS
+    where ALSID = #{alsid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.apply.ApplyNs">
+    insert into APPLYNS (ALSID, AP_PH, AP_SQBH, AP_SQID,
+      AP_SQLB, AP_SSQ, AP_JDBSC, 
+      AP_SQJWH, AP_SQRID, AP_SQRPOID, 
+      AP_SQHJNX, AP_JTRK, AP_JTNSR, 
+      AP_RJYSR, AP_RJJZMJ, AP_XZFXZ, 
+      AP_JTXZFQK, AP_JTZFBGQK, AP_TSJT, 
+      AP_BTJE, AP_FWID, AP_FLAG, 
+      AP_WFJT, AFF_DWMC, AFF_DWDZ, 
+      AFF_WDHJDZ, AFF_LXJZSJ, AFF_LDHTKSSJ, 
+      AFF_LDHTJSSJ, AFF_SBJNSJ, AFF_GJJJNSJ, 
+      AFF_GRNSR, AFG_BYYX, AFG_BYSJ, 
+      AFG_XL, AFG_HJDZ, AP_DBZBH, 
+      AP_LQRS, AP_FZSJ,AP_BASEIMG)
+    values (#{alsid,jdbcType=VARCHAR}, #{apPh,jdbcType=VARCHAR}, #{apSqbh,jdbcType=VARCHAR}, 
+      #{apSqid,jdbcType=VARCHAR}, #{apSqlb,jdbcType=VARCHAR}, #{apSsq,jdbcType=VARCHAR}, #{apJdbsc,jdbcType=VARCHAR},
+      #{apSqjwh,jdbcType=VARCHAR}, #{apSqrid,jdbcType=VARCHAR}, #{apSqrpoid,jdbcType=VARCHAR}, 
+      #{apSqhjnx,jdbcType=VARCHAR}, #{apJtrk,jdbcType=DECIMAL}, #{apJtnsr,jdbcType=DECIMAL}, 
+      #{apRjysr,jdbcType=DECIMAL}, #{apRjjzmj,jdbcType=DECIMAL}, #{apXzfxz,jdbcType=VARCHAR}, 
+      #{apJtxzfqk,jdbcType=VARCHAR}, #{apJtzfbgqk,jdbcType=VARCHAR}, #{apTsjt,jdbcType=DECIMAL}, 
+      #{apBtje,jdbcType=VARCHAR}, #{apFwid,jdbcType=VARCHAR}, #{apFlag,jdbcType=DECIMAL}, 
+      #{apWfjt,jdbcType=VARCHAR}, #{affDwmc,jdbcType=VARCHAR}, #{affDwdz,jdbcType=VARCHAR}, 
+      #{affWdhjdz,jdbcType=VARCHAR}, #{affLxjzsj,jdbcType=VARCHAR}, #{affLdhtkssj,jdbcType=VARCHAR}, 
+      #{affLdhtjssj,jdbcType=VARCHAR}, #{affSbjnsj,jdbcType=VARCHAR}, #{affGjjjnsj,jdbcType=VARCHAR}, 
+      #{affGrnsr,jdbcType=DECIMAL}, #{afgByyx,jdbcType=VARCHAR}, #{afgBysj,jdbcType=VARCHAR}, 
+      #{afgXl,jdbcType=VARCHAR}, #{afgHjdz,jdbcType=VARCHAR}, #{apDbzbh,jdbcType=VARCHAR}, 
+      #{apLqrs,jdbcType=VARCHAR}, #{apFzsj,jdbcType=VARCHAR}, #{apBaseimg,jdbcType=VARCHAR})
+  </insert>
+
+  <update id="update" parameterType="com.sys.pojo.apply.ApplyNs">
+    update APPLYNS
+    <set>
+      <if test="apPh!=null">
+       AP_PH = #{apPh,jdbcType=VARCHAR},
+      </if>
+      <if test="apSqbh!=null">
+      AP_SQBH = #{apSqbh,jdbcType=VARCHAR},
+      </if>
+      <if test="apSqid!=null">
+      AP_SQID = #{apSqid,jdbcType=VARCHAR},
+      </if>
+      <if test="apSqlb!=null">
+      AP_SQLB = #{apSqlb,jdbcType=VARCHAR},
+      </if>
+      <if test="apSsq!=null">
+      AP_SSQ = #{apSsq,jdbcType=VARCHAR},
+      </if>
+      <if test="apJdbsc!=null">
+      AP_JDBSC = #{apJdbsc,jdbcType=VARCHAR},
+      </if>
+      <if test="apSqjwh!=null">
+      AP_SQJWH = #{apSqjwh,jdbcType=VARCHAR},
+      </if>
+      <if test="apSqrid!=null">
+      AP_SQRID = #{apSqrid,jdbcType=VARCHAR},
+      </if>
+      <if test="apSqrpoid!=null">
+      AP_SQRPOID = #{apSqrpoid,jdbcType=VARCHAR},
+      </if>
+      <if test="apSqhjnx!=null">
+      AP_SQHJNX = #{apSqhjnx,jdbcType=VARCHAR},
+      </if>
+      <if test="apJtrk!=null">
+      AP_JTRK = #{apJtrk,jdbcType=DECIMAL},
+      </if>
+      <if test="apJtnsr!=null">
+      AP_JTNSR = #{apJtnsr,jdbcType=DECIMAL},
+      </if>
+      <if test="apRjysr!=null">
+      AP_RJYSR = #{apRjysr,jdbcType=DECIMAL},
+      </if>
+      <if test="apRjjzmj!=null">
+      AP_RJJZMJ = #{apRjjzmj,jdbcType=DECIMAL},
+      </if>
+      <if test="apXzfxz!=null">
+      AP_XZFXZ = #{apXzfxz,jdbcType=VARCHAR},
+      </if>
+      <if test="apJtxzfqk!=null">
+      AP_JTXZFQK = #{apJtxzfqk,jdbcType=VARCHAR},
+      </if>
+      <if test="apJtzfbgqk!=null">
+      AP_JTZFBGQK = #{apJtzfbgqk,jdbcType=VARCHAR},
+      </if>
+      <if test="apTsjt!=null">
+      AP_TSJT = #{apTsjt,jdbcType=DECIMAL},
+      </if>
+      <if test="apBtje!=null">
+      AP_BTJE = #{apBtje,jdbcType=VARCHAR},
+      </if>
+      <if test="apFwid!=null">
+      AP_FWID = #{apFwid,jdbcType=VARCHAR},
+      </if>
+      <if test="apFlag!=null">
+      AP_FLAG = #{apFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="apWfjt!=null">
+      AP_WFJT = #{apWfjt,jdbcType=VARCHAR},
+      </if>
+      <if test="affDwmc!=null">
+      AFF_DWMC = #{affDwmc,jdbcType=VARCHAR},
+      </if>
+      <if test="affDwdz!=null">
+      AFF_DWDZ = #{affDwdz,jdbcType=VARCHAR},
+      </if>
+      <if test="affWdhjdz!=null">
+      AFF_WDHJDZ = #{affWdhjdz,jdbcType=VARCHAR},
+      </if>
+      <if test="affLxjzsj!=null">
+      AFF_LXJZSJ = #{affLxjzsj,jdbcType=VARCHAR},
+      </if>
+      <if test="affLdhtkssj!=null">
+      AFF_LDHTKSSJ = #{affLdhtkssj,jdbcType=VARCHAR},
+      </if>
+      <if test="affLdhtjssj!=null">
+      AFF_LDHTJSSJ = #{affLdhtjssj,jdbcType=VARCHAR},
+      </if>
+      <if test="affSbjnsj!=null">
+      AFF_SBJNSJ = #{affSbjnsj,jdbcType=VARCHAR},
+      </if>
+      <if test="affGjjjnsj!=null">
+      AFF_GJJJNSJ = #{affGjjjnsj,jdbcType=VARCHAR},
+      </if>
+      <if test="affGrnsr!=null">
+      AFF_GRNSR = #{affGrnsr,jdbcType=DECIMAL},
+      </if>
+      <if test="afgByyx!=null">
+      AFG_BYYX = #{afgByyx,jdbcType=VARCHAR},
+      </if>
+      <if test="afgBysj!=null">
+      AFG_BYSJ = #{afgBysj,jdbcType=VARCHAR},
+      </if>
+      <if test="afgXl!=null">
+      AFG_XL = #{afgXl,jdbcType=VARCHAR},
+      </if>
+      <if test="afgHjdz!=null">
+      AFG_HJDZ = #{afgHjdz,jdbcType=VARCHAR},
+      </if>
+      <if test="apDbzbh!=null">
+      AP_DBZBH = #{apDbzbh,jdbcType=VARCHAR},
+      </if>
+      <if test="apLqrs!=null">
+      AP_LQRS = #{apLqrs,jdbcType=VARCHAR},
+      </if>
+      <if test="apFzsj!=null">
+      AP_FZSJ = #{apFzsj,jdbcType=VARCHAR},
+      </if>
+      <if test="apBaseimg!=null">
+        AP_BASEIMG = #{apBaseimg,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where ALSID = #{alsid,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select ALSID, AP_PH, AP_SQBH,AP_SQID,AP_SQLB, AP_SSQ, AP_JDBSC, AP_SQJWH, AP_SQRID, AP_SQRPOID,
+    AP_SQHJNX, AP_JTRK, AP_JTNSR, AP_RJYSR, AP_RJJZMJ, AP_XZFXZ, AP_JTXZFQK, AP_JTZFBGQK, 
+    AP_TSJT, AP_BTJE, AP_FWID, AP_FLAG, AP_WFJT, AFF_DWMC, AFF_DWDZ, AFF_WDHJDZ, AFF_LXJZSJ, 
+    AFF_LDHTKSSJ, AFF_LDHTJSSJ, AFF_SBJNSJ, AFF_GJJJNSJ, AFF_GRNSR, AFG_BYYX, AFG_BYSJ, 
+    AFG_XL, AFG_HJDZ, AP_DBZBH, AP_LQRS, AP_FZSJ, AP_BASEIMG
+    from APPLYNS
+    where ALSID = #{alsid,jdbcType=VARCHAR}
+  </select>
+
+  <select id="select" resultMap="BaseResultMap">
+    select ALSID, AP_PH, AP_SQBH,AP_SQID, AP_SQLB, AP_SSQ, AP_JDBSC, AP_SQJWH, AP_SQRID, AP_SQRPOID,
+    AP_SQHJNX, AP_JTRK, AP_JTNSR, AP_RJYSR, AP_RJJZMJ, AP_XZFXZ, AP_JTXZFQK, AP_JTZFBGQK, 
+    AP_TSJT, AP_BTJE, AP_FWID, AP_FLAG, AP_WFJT, AFF_DWMC, AFF_DWDZ, AFF_WDHJDZ, AFF_LXJZSJ, 
+    AFF_LDHTKSSJ, AFF_LDHTJSSJ, AFF_SBJNSJ, AFF_GJJJNSJ, AFF_GRNSR, AFG_BYYX, AFG_BYSJ, 
+    AFG_XL, AFG_HJDZ, AP_DBZBH, AP_LQRS, AP_FZSJ, AP_BASEIMG
+    from APPLYNS
+  </select>
+
+  <select id="selectByMap" parameterType="Map" resultMap="BaseResultMap">
+    select ALSID, AP_PH, AP_SQBH,AP_SQID, AP_SQLB, AP_SSQ, AP_JDBSC, AP_SQJWH, AP_SQRID, AP_SQRPOID,
+    AP_SQHJNX, AP_JTRK, AP_JTNSR, AP_RJYSR, AP_RJJZMJ, AP_XZFXZ, AP_JTXZFQK, AP_JTZFBGQK,
+    AP_TSJT, AP_BTJE, AP_FWID, AP_FLAG, AP_WFJT, AFF_DWMC, AFF_DWDZ, AFF_WDHJDZ, AFF_LXJZSJ,
+    AFF_LDHTKSSJ, AFF_LDHTJSSJ, AFF_SBJNSJ, AFF_GJJJNSJ, AFF_GRNSR, AFG_BYYX, AFG_BYSJ,
+    AFG_XL, AFG_HJDZ, AP_DBZBH, AP_LQRS, AP_FZSJ,AP_BASEIMG
+    from APPLYNS
+    where ALSID = #{aplid,jdbcType=VARCHAR}
+  </select>
+
+  <!--查询待年审的用户申请信息,oracle分页查询-->
+  <select id="selectNsUserApp" resultType="Map">
+    SELECT * FROM
+      (SELECT  TMP_PAGE.*, ROWNUM ROW_ID FROM(
+         <include refid="findsql"></include>
+      )TMP_PAGE
+        WHERE ROWNUM &lt;= #{pageLaseIndex}
+      )WHERE ROW_ID &gt; #{pageIndex}
+  </select>
+
+  <!--查询待年审的用户申请信息,查询总数-->
+  <select id="selectNsUserAppCount" resultType="java.lang.Integer">
+    SELECT count(*) from(
+    <include refid="findsql"></include>
+    )
+  </select>
+
+  <!--公共查询sql-->
+  <sql id="findsql">
+    SELECT bb.*,ROWNUM  FROM (
+        SELECT
+       '外来务工' AS apptypename,
+        4 AS apptype,
+        apl.AFF_ID AS appid,
+        apl.AFF_LC AS applc,
+        apl.AFF_ZT AS appzt,
+        apl.AFF_SQBH AS aplbh,
+        apl.AFF_LRSJ AS apldate,
+        pi.PI_ITEMNAME AS ssq,
+        pij.PI_ITEMNAME AS ssjd,
+        afm.AFM_SFZH AS sfzh,
+        afm.AFM_XM AS username,
+        afm.AFM_LXDH AS linktel,
+        cd.C_ENDTIME AS qysj,
+        CASE
+        when mess.MSTIME is null then '未发送'
+        else '已发送'
+        END msexs,
+        mess.MSTIME AS mstime,
+       ic.IC_ITNAME||'小区'||bl.BUNAME||'楼'||fp.F_CECODE||'单元'||fp.F_RONUM||'室'
+        AS room
+     from APPLYFORFOREIGN apl
+     LEFT JOIN APPROVE apo ON apo.APLID=apl.AFF_ID
+     LEFT JOIN PARMITEM pi ON (apl.AFF_SSQ = pi.PI_ITEMCODE AND pi.PI_SETCODE='04')
+     LEFT JOIN PARMITEM pij ON (apl.AFF_DWDZ = pij.PI_ITEMCODE AND pij.PI_SETCODE='05')
+    LEFT JOIN APPLYFAMILYMEMBER afm ON (apl.AFF_SQRID = afm.AFM_ID)
+    LEFT JOIN SOURCEHOUSE sh on sh.SH_APPLYID=apl.AFF_ID
+    LEFT JOIN FACTMAPPING fp on sh.SH_FWID = fp.FACTMAPPING_ID
+    LEFT JOIN BUILDINGINFO bl on fp.BUILDINGINFO_ID=bl.BUILDINGINFO_ID
+    LEFT JOIN ITEMCODEINFO ic on bl.ITEMCODEINFO_ID=ic.ITEMCODEINFO_ID
+    LEFT JOIN MESSAGE mess ON (apl.AFF_SQBH = mess.SQBH AND (mess.MSTYPE='7' OR mess.MSTYPE='10'))
+    LEFT JOIN CONTRACT_DETAIL cd ON (apl.AFF_ID = cd.C_SQID AND cd.C_ZFZT=0)
+     where  apl.AFF_ZT=4
+    <if test="ssq!=null and ssq!=''">
+      AND apl.AFF_SSQ=#{ssq}
+    </if>
+    <if test="ssj!=null and ssj!=''">
+      AND apl.AFF_DWDZ=#{ssj}
+    </if>
+    <choose>
+      <when test="oldData!=null">
+        and not exists (
+        SELECT * FROM APPROVE ap where ap.APTYPE NOT LIKE concat('%',concat('ns','%'))
+        and apl.AFF_ID=ap.APLID
+        )
+      </when>
+     <otherwise>
+       and  exists (
+       SELECT * FROM APPROVE ap where ap.APTYPE NOT LIKE concat('%',concat('ns','%'))
+       and apl.AFF_ID=ap.APLID
+       )
+     </otherwise>
+    </choose>
+    <choose>
+      <when test="mesState==1">
+        and mess.MSTIME is null
+      </when>
+      <when test="mesState==2">
+        and mess.MSTIME is not null
+      </when>
+    </choose>
+    AND (EXISTS
+    (SELECT * FROM APPROVE ap where ap.APTYPE LIKE concat('%',concat('ns','%'))
+    and to_char(ap.APLDATE,'yyyy') = to_char(sysdate,'yyyy')
+    and ap.STATE like '%驳回%'
+    and apl.AFF_ID=ap.APLID)
+    OR NOT EXISTS
+    (SELECT * FROM APPROVE  ap where apl.AFF_ID=ap.APLID
+    and to_char(ap.APLDATE,'yyyy') = to_char(sysdate,'yyyy')
+    and ap.APTYPE LIKE concat('%',concat('ns','%'))
+    )
+    )
+
+    UNION ALL
+
+    SELECT
+    '新就业' AS apptypename,
+    5 AS apptype,
+    apl.AFG_ID AS appid,
+    apl.AFG_LC AS applc,
+    apl.AFG_ZT AS appzt,
+    apl.AFG_SQBH AS aplbh,
+    apl.AFG_LRSJ AS apldate,
+    pi.PI_ITEMNAME AS ssq,
+    pij.PI_ITEMNAME AS ssjd,
+    afm.AFM_SFZH AS sfzh,
+    afm.AFM_XM AS username,
+    afm.AFM_LXDH AS linktel,
+    cd.C_ENDTIME AS qysj,
+    CASE
+    when mess.MSTIME is null then '未发送'
+    else '已发送'
+    END msexs,
+    mess.MSTIME AS mstime,
+    ic.IC_ITNAME||'小区'||bl.BUNAME||'楼'||fp.F_CECODE||'单元'||fp.F_RONUM||'室'
+    AS room
+    from APPLYFORGRADUATE apl
+    LEFT JOIN PARMITEM pi ON (apl.AFG_SSQ = pi.PI_ITEMCODE AND pi.PI_SETCODE='04')
+    LEFT JOIN PARMITEM pij ON (apl.AFG_DWDZ = pij.PI_ITEMCODE AND pij.PI_SETCODE='05')
+    LEFT JOIN APPLYFAMILYMEMBER afm ON (apl.AFG_SQRID = afm.AFM_ID)
+    LEFT JOIN SOURCEHOUSE sh on sh.SH_APPLYID=apl.AFG_ID
+    LEFT JOIN FACTMAPPING fp on sh.SH_FWID = fp.FACTMAPPING_ID
+    LEFT JOIN BUILDINGINFO bl on fp.BUILDINGINFO_ID=bl.BUILDINGINFO_ID
+    LEFT JOIN ITEMCODEINFO ic on bl.ITEMCODEINFO_ID=ic.ITEMCODEINFO_ID
+    LEFT JOIN MESSAGE mess ON (apl.AFG_SQBH = mess.SQBH AND (mess.MSTYPE='7' OR mess.MSTYPE='10'))
+    LEFT JOIN CONTRACT_DETAIL cd ON (apl.AFG_ID = cd.C_SQID AND cd.C_ZFZT=0)
+    where apl.AFG_ZT=4
+    <if test="ssq!=null and ssq!=''">
+      AND apl.AFG_SSQ=#{ssq}
+    </if>
+    <if test="ssj!=null and ssj!=''">
+      AND apl.AFG_DWDZ=#{ssj}
+    </if>
+    <choose>
+      <when test="oldData!=null">
+        and not exists (
+        SELECT * FROM APPROVE ap where ap.APTYPE NOT LIKE concat('%',concat('ns','%'))
+        and apl.AFG_ID=ap.APLID
+        )
+      </when>
+      <otherwise>
+        and  exists (
+        SELECT * FROM APPROVE ap where ap.APTYPE NOT LIKE concat('%',concat('ns','%'))
+        and apl.AFG_ID=ap.APLID
+        )
+      </otherwise>
+    </choose>
+    <choose>
+      <when test="mesState==1">
+        and mess.MSTIME is null
+      </when>
+      <when test="mesState==2">
+        and mess.MSTIME is not null
+      </when>
+    </choose>
+    AND (EXISTS
+    (SELECT * FROM APPROVE ap where ap.APTYPE LIKE concat('%',concat('ns','%'))
+    and to_char(ap.APLDATE,'yyyy') = to_char(sysdate,'yyyy')
+    and ap.STATE like '%驳回%'
+    and apl.AFG_ID=ap.APLID)
+    OR NOT EXISTS
+    (SELECT * FROM APPROVE  ap where apl.AFG_ID=ap.APLID
+    and to_char(ap.APLDATE,'yyyy') = to_char(sysdate,'yyyy')
+    and ap.APTYPE LIKE concat('%',concat('ns','%'))
+    )
+    )
+
+      UNION ALL
+
+      SELECT
+       '补贴申请' AS apptypename,
+        2 AS apptype,
+        apl.AB_ID AS appid,
+        apl.AB_LC AS applc,
+        apl.AB_ZT AS appzt,
+        apl.AB_SQBH AS aplbh,
+        apl.AB_LRSJ AS apldate,
+        pi.PI_ITEMNAME AS ssq,
+        pij.PI_ITEMNAME AS ssjd,
+        afm.AFM_SFZH AS sfzh,
+        afm.AFM_XM AS username,
+        afm.AFM_LXDH AS linktel,
+        cd.C_ENDTIME AS qysj,
+        CASE
+        when mess.MSTIME is null then '未发送'
+        else '已发送'
+        END msexs,
+        mess.MSTIME AS mstime,
+        '' AS room
+    from APPLY_BUTIE apl
+    LEFT JOIN PARMITEM pi ON (apl.AB_SSQ = pi.PI_ITEMCODE AND pi.PI_SETCODE='04')
+    LEFT JOIN PARMITEM pij ON (apl.AB_JDBSC = pij.PI_ITEMCODE AND pij.PI_SETCODE='05')
+    LEFT JOIN APPLYFAMILYMEMBER afm ON (apl.AB_SQRID = afm.AFM_ID)
+    LEFT JOIN MESSAGE mess ON (apl.AB_SQBH = mess.SQBH AND (mess.MSTYPE='7' OR mess.MSTYPE='10'))
+    LEFT JOIN CONTRACT_DETAIL cd ON (apl.AB_ID = cd.C_SQID AND cd.C_ZFZT=0)
+    where  apl.AB_ZT=4
+    <if test="ssq!=null and ssq!=''">
+      AND apl.AB_SSQ=#{ssq}
+    </if>
+    <if test="ssj!=null and ssj!=''">
+      AND apl.AB_JDBSC=#{ssj}
+    </if>
+    <choose>
+      <when test="oldData!=null">
+        and not exists (
+        SELECT * FROM APPROVE ap where ap.APTYPE NOT LIKE concat('%',concat('ns','%'))
+        and apl.AB_ID=ap.APLID
+        )
+      </when>
+      <otherwise>
+        and  exists (
+        SELECT * FROM APPROVE ap where ap.APTYPE NOT LIKE concat('%',concat('ns','%'))
+        and apl.AB_ID=ap.APLID
+        )
+      </otherwise>
+    </choose>
+    <choose>
+      <when test="mesState==1">
+        and mess.MSTIME is null
+      </when>
+      <when test="mesState==2">
+        and mess.MSTIME is not null
+      </when>
+    </choose>
+    AND (EXISTS
+    (SELECT * FROM APPROVE ap where ap.APTYPE LIKE concat('%',concat('ns','%'))
+    and to_char(ap.APLDATE,'yyyy') = to_char(sysdate,'yyyy')
+    and ap.STATE like '%驳回%'
+    and apl.AB_ID=ap.APLID)
+    OR NOT EXISTS
+    (SELECT * FROM APPROVE  ap where apl.AB_ID=ap.APLID
+    and to_char(ap.APLDATE,'yyyy') = to_char(sysdate,'yyyy')
+    and ap.APTYPE LIKE concat('%',concat('ns','%'))
+    )
+    )
+
+
+      UNION ALL
+
+      SELECT
+          '低保特困公租房' AS apptypename,
+        to_number(apl.AP_SQLB) AS apptype,
+        apl.AP_ID AS appid,
+        apl.AP_LC AS applc,
+        apl.AP_ZT AS appzt,
+        apl.AP_SQBH AS aplbh,
+        apl.AP_LRSJ AS apldate,
+        pi.PI_ITEMNAME AS ssq,
+        pij.PI_ITEMNAME AS ssjd,
+        afm.AFM_SFZH AS sfzh,
+        afm.AFM_XM AS username,
+        afm.AFM_LXDH AS linktel,
+        cd.C_ENDTIME AS qysj,
+        CASE
+        when mess.MSTIME is null then '未发送'
+        else '已发送'
+        END msexs,
+        mess.MSTIME AS mstime,
+        ic.IC_ITNAME||'小区'||bl.BUNAME||'楼'||fp.F_CECODE||'单元'||fp.F_RONUM||'室'
+         AS room
+    from APPLY apl
+    LEFT JOIN PARMITEM pi ON (apl.AP_SSQ = pi.PI_ITEMCODE AND pi.PI_SETCODE='04')
+    LEFT JOIN PARMITEM pij ON (apl.AP_JDBSC = pij.PI_ITEMCODE AND pij.PI_SETCODE='05')
+    LEFT JOIN APPLYFAMILYMEMBER afm ON (apl.AP_SQRID = afm.AFM_ID)
+    LEFT JOIN SOURCEHOUSE sh on sh.SH_APPLYID=apl.AP_ID
+    LEFT JOIN FACTMAPPING fp on sh.SH_FWID = fp.FACTMAPPING_ID
+    LEFT JOIN BUILDINGINFO bl on fp.BUILDINGINFO_ID=bl.BUILDINGINFO_ID
+    LEFT JOIN ITEMCODEINFO ic on bl.ITEMCODEINFO_ID=ic.ITEMCODEINFO_ID
+    LEFT JOIN MESSAGE mess ON (apl.AP_SQBH = mess.SQBH AND (mess.MSTYPE='7' OR mess.MSTYPE='10'))
+    LEFT JOIN CONTRACT_DETAIL cd ON (apl.AP_ID = cd.C_SQID AND cd.C_ZFZT=0)
+    where apl.AP_SQLB=3  AND apl.AP_ZT=4
+    <if test="ssq!=null and ssq!=''">
+      AND apl.AP_SSQ=#{ssq}
+    </if>
+    <if test="ssj!=null and ssj!=''">
+      AND apl.AP_JDBSC=#{ssj}
+    </if>
+    <choose>
+      <when test="oldData!=null">
+        and not exists (
+        SELECT * FROM APPROVE ap where ap.APTYPE NOT LIKE concat('%',concat('ns','%'))
+        and apl.AP_ID=ap.APLID
+        )
+      </when>
+      <otherwise>
+        and  exists (
+        SELECT * FROM APPROVE ap where ap.APTYPE NOT LIKE concat('%',concat('ns','%'))
+        and apl.AP_ID=ap.APLID
+        )
+      </otherwise>
+    </choose>
+    <choose>
+      <when test="mesState==1">
+        and mess.MSTIME is null
+      </when>
+      <when test="mesState==2">
+        and mess.MSTIME is not null
+      </when>
+    </choose>
+     AND (EXISTS
+    (SELECT * FROM APPROVE ap where ap.APTYPE LIKE concat('%',concat('ns','%'))
+    and to_char(ap.APLDATE,'yyyy') = to_char(sysdate,'yyyy')
+    and ap.STATE like '%驳回%'
+    and apl.AP_ID=ap.APLID)
+    OR NOT EXISTS
+    (SELECT * FROM APPROVE  ap where apl.AP_ID=ap.APLID
+    and to_char(ap.APLDATE,'yyyy') = to_char(sysdate,'yyyy')
+    and ap.APTYPE LIKE concat('%',concat('ns','%'))
+    )
+    )
+  )bb <include refid="condition"></include>
+  </sql>
+
+<!--过滤条件-->
+  <sql id="condition">
+      <where>
+        <if test="username!=null and username!=''">
+          and bb.username like concat('%',concat(#{username},'%'))
+        </if>
+       <if test="sfzh!=null and sfzh!=''">
+        and bb.sfzh like concat('%',concat(#{sfzh},'%'))
+       </if>
+        <if test="applyType!=null and applyType!=''">
+          and bb.apptype like concat('%',concat(#{applyType},'%'))
+        </if>
+      </where>
+  </sql>
+
+</mapper>

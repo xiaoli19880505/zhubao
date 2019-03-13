@@ -1,0 +1,652 @@
+package com.sys.controller.message;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.sys.common.*;
+import com.sys.common.dataconver.BaseInfoDataConvertor;
+import com.sys.pojo.Message;
+import com.sys.pojo.ParmItem;
+import com.sys.pojo.UserInfo;
+import com.sys.pojo.apply.ApplyFamilyMember;
+import com.sys.pojo.apply.Approve;
+import com.sys.pojo.contract.ContractDetail;
+import com.sys.service.ContractDetailService;
+import com.sys.service.MessageService;
+import com.sys.service.ParmItemService;
+import com.sys.service.apply.ApproveService;
+import com.sys.service.common.MessageAndFormService;
+import freemarker.template.utility.DateUtil;
+import org.apache.commons.collections4.map.LinkedMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @Desc:短信通知管理接口
+ * @Author:wangli
+ * @CreateTime:11:27 2018/11/13
+ */
+@Controller
+@RequestMapping("message")
+public class MessageController {
+
+    @Autowired
+    private ParmItemService parmItemService;
+
+    @Autowired
+    private MessageAndFormService messageAndFormService;
+
+    @Autowired
+    private MessageService messageService;
+
+    @Autowired
+    private ApproveService approveService;
+
+    @Autowired
+    private ContractDetailService contractDetailService;
+
+    /**
+     * 跳转到短信消息列表页面
+     * @return
+     */
+    @RequestMapping("toMessageList")
+    public String toMessageList(HttpServletRequest request){
+        String sqbh = request.getParameter("sqbh");
+        if(sqbh!=null){
+            request.setAttribute("sqbh",sqbh);
+        }
+        return "message/messageList";
+    }
+
+    /**
+     * 查询短信消息列表
+     * @param request
+     * @return
+     */
+   @RequestMapping("findMessageList")
+   @ResponseBody
+    public Object findMessageList(HttpServletRequest request){
+       Map<String,Object> conditionMap = Maps.newHashMap();
+       conditionMap.put("linktel",request.getParameter("linktl"));
+       conditionMap.put("template",request.getParameter("template"));
+       conditionMap.put("msType",request.getParameter("mstype"));
+       conditionMap.put("beginTime",request.getParameter("beginTime"));
+       conditionMap.put("appType",request.getParameter("appType"));
+       conditionMap.put("endTime",request.getParameter("endTime"));
+       conditionMap.put("sqbh",request.getParameter("sqbh"));
+       conditionMap.put("username",request.getParameter("username"));
+       conditionMap.put("sfzh",request.getParameter("sfzh"));
+       conditionMap.put("opusername",request.getParameter("opusername"));
+       /*设置分页参数*/
+       String page = request.getParameter("page");
+       String rows = request.getParameter("rows");
+       if(StringUtils.isEmpty(rows)){
+           rows="20";
+       }
+       if(StringUtils.isEmpty(page)){
+           page="1";
+       }
+
+       PageHelper.startPage(Integer.parseInt(page),Integer.parseInt(rows));
+       List<Message> messageList = messageService.findMessageList(conditionMap);
+       PageInfo<Message> pageList = new PageInfo<Message>(messageList);
+       Map<String,Object> resultMap = Maps.newHashMap();
+       resultMap.put("total",pageList.getTotal());//查询总数
+       resultMap.put("rows",pageList.getList());//查询条目
+       return resultMap;
+    }
+
+
+    /**
+     * 发送短信接口
+     * @param request
+     */
+    @RequestMapping("sendMessage")
+    @ResponseBody
+    public String sendMessage(HttpServletRequest request){
+
+        LinkedMap<String,String> map = new LinkedMap<String, String>();
+        UserInfo userInfo = (UserInfo)request.getSession().getAttribute("user");
+        Message messagePojo = new Message();
+        messagePojo.setMsid(CommonUtils.getUUIDWith_());//设置主键id
+        messagePojo.setMstime(new Date());//设置操作时间
+        //messagePojo.setToUsername(applyUserinfo.getUsername());//发送用户姓名
+        //messagePojo.setToUserSfzh(applyUserinfo.getSfzh());//身份证号
+        messagePojo.setMsuserid(userInfo.getUserid());//设置操作用户id
+        //messagePojo.setSqbh(approve.getAplbh());//设置申请编号
+        //messagePojo.setAppType(approve.getAptype());//设置业务类别
+        //messagePojo.setLinktel(applyUserinfo.getLinktel());//设置联系电话
+
+        String type = request.getParameter("temType");//短信需要手工填写的模板类别
+        String linktel="";//发送手机号
+        String tplid="";//模板编码
+        String sfzh="";//查询身份证号
+        /*type为2：场景2：区住保审核通过后发送原件复审通知短信【JSM41823-0024】，
+        * type为5：场景5：公租房租赁补贴终审通过通知【JSM41823-0028】
+        * type为11：场景11：公租房租赁补贴年审通过通知【JSM41823-0033】
+        * type为7：场景7：公租房年审通知【JSM41823-0031】
+        * type为10：场景10：公租房租赁补贴年审通知【JSM41823-0032】
+        * type为4：场景4：住保选房、交余款、签合同、上房通知短信*/
+        if("2".equals(type)){
+            String username = request.getParameter("username");//申请用户姓名
+            String applyType = request.getParameter("applyType");//申请类型
+            String sqbh = request.getParameter("sqbh");//审核编号
+            String sqrq = request.getParameter("sqrq");//传来的复审日期
+            linktel = request.getParameter("linktel");//手机号
+            sfzh=request.getParameter("sfzh");//身份证号
+            tplid="JSM41823-0024";
+
+            /*查询区住保地址*/
+            Map<String,Object> conditionMap = Maps.newHashMap();
+            conditionMap.put("piSetcode",19);
+            conditionMap.put("piItemcode",userInfo.getSsq());
+            List<ParmItem> parmItemList = parmItemService.selectBySetCodeAndItemCode(conditionMap);
+
+            /*设置消息实体*/
+            messagePojo.setToUsername(username);//发送用户姓名
+            messagePojo.setToUserSfzh(sfzh);//身份证号
+            messagePojo.setSqbh(sqbh);//设置申请编号
+            messagePojo.setAppType(applyType);//设置业务类别
+            messagePojo.setLinktel(linktel);//设置联系电话
+            messagePojo.setMstem(tplid);//模板
+            messagePojo.setMstype(type);//短信实体类别
+
+            /*设置短信发送的信息值*/
+            map.put("@1@",username);
+            map.put("@2@", PropertiesUtil.getApplyTypeProperties(applyType));
+            map.put("@3@",sqbh);
+            map.put("@4@",sqrq);
+            map.put("@5@",parmItemList.get(0).getPiItemname());
+            map.put("@6@",userInfo.getUsername());
+            map.put("@7@",userInfo.getLinktel());
+            map.put("@8@", BaseInfoDataConvertor.convertUserUnit(userInfo));
+        }else if("5".equals(type)){
+            String username = request.getParameter("username");//申请用户姓名
+            //String applyType = request.getParameter("applyType");//申请类型
+            String sqbh = request.getParameter("sqbh");//审核编号
+            String sqrq = request.getParameter("sqrq");//传来的通知签订协议日期
+            linktel = request.getParameter("linktel");//手机号
+            sfzh=request.getParameter("sfzh");//身份证号
+            tplid="JSM41823-0028";
+
+            /*查询区住保地址*/
+            Map<String,Object> conditionMap = Maps.newHashMap();
+            conditionMap.put("piSetcode",19);
+            conditionMap.put("piItemcode",userInfo.getSsq());
+            List<ParmItem> parmItemList = parmItemService.selectBySetCodeAndItemCode(conditionMap);
+
+            /*设置消息实体*/
+            messagePojo.setToUsername(username);//发送用户姓名
+            messagePojo.setToUserSfzh(sfzh);//身份证号
+            messagePojo.setSqbh(sqbh);//设置申请编号
+            messagePojo.setAppType(PropertiesUtil.getApplyTypeProperties("butie"));//设置业务类别
+            messagePojo.setLinktel(linktel);//设置联系电话
+            messagePojo.setMstem(tplid);//模板
+            messagePojo.setMstype(type);//短信实体类别
+
+            /*设置短信发送的信息值*/
+            map.put("@1@",username);
+            map.put("@2@",sqbh);
+            map.put("@3@",sqrq);
+            map.put("@4@",userInfo.getUsername());
+            map.put("@5@",userInfo.getLinktel());
+            map.put("@6@", BaseInfoDataConvertor.convertUserUnit(userInfo));
+        }else if("11".equals(type)){
+            String username = request.getParameter("username");//申请用户姓名
+            String year = request.getParameter("year");//申请年度
+            String sqrq = request.getParameter("sqrq");//传来的通知签订协议日期
+            String doc = request.getParameter("doc");//传来的资料名称
+            linktel = request.getParameter("linktel");//手机号
+            String sqbh = request.getParameter("sqbh");
+            sfzh=request.getParameter("sfzh");//身份证号
+            tplid="JSM41823-0033";
+
+            /*设置消息实体*/
+            messagePojo.setToUsername(username);//发送用户姓名
+            messagePojo.setToUserSfzh(sfzh);//身份证号
+            messagePojo.setSqbh(sqbh);//设置申请编号
+            messagePojo.setAppType(PropertiesUtil.getApplyTypeProperties("butie"));//设置业务类别
+            messagePojo.setLinktel(linktel);//设置联系电话
+            messagePojo.setMstem(tplid);//模板
+            messagePojo.setMstype(type);//短信实体类别
+
+            /*设置短信发送的信息值*/
+            map.put("@1@",username);
+            map.put("@2@", year);
+            map.put("@3@",sqrq);
+            map.put("@4@",doc);
+            map.put("@5@",userInfo.getUsername());
+            map.put("@6@",userInfo.getLinktel());
+        }else if("7".equals(type)){
+            String username = request.getParameter("username");//申请用户姓名
+            String room = request.getParameter("room");//房屋位置
+            String sqrq = request.getParameter("htqx");//合同期限
+            linktel = request.getParameter("linktel");//手机号
+            String sqbh =  request.getParameter("sqbh");//申请编号
+            String applyid = request.getParameter("applyid");
+            String applytype =  request.getParameter("applytype");//申请类型
+            String updateTelFlag = request.getParameter("updateTelFlag");//更新
+            String addConFlag = request.getParameter("addConFlag");//更新
+            sfzh=request.getParameter("sfzh");//身份证号
+            tplid="JSM41823-0031";
+
+
+            /*设置短信发送的信息值*/
+            map.put("@1@",username);
+            map.put("@2@", room);
+            map.put("@3@",sqrq);
+            map.put("@4@",userInfo.getLinktel());
+            map.put("@5@",userInfo.getUsername());
+            List<Message> msgAddList = Lists.newArrayList();
+            List<Message> msgupdateList = Lists.newArrayList();
+            List<ContractDetail> contractDetailList = Lists.newArrayList();
+            List<ApplyFamilyMember> members = Lists.newArrayList();
+            Map<String,Object> conditionMap = Maps.newHashMap();
+            conditionMap.put("sqbh",sqbh);
+            conditionMap.put("msType","7");
+            if(messageService.selectCountByMap(conditionMap)>0){
+                Message message = new Message();
+                message.setSqbh(sqbh);
+                message.setMstype("7");
+                message.setMstime(new Date());
+                msgupdateList.add(message);
+            }else{
+                Message message = new Message();
+                message.setMsuserid(userInfo.getUserid());
+                message.setAppType(applytype);
+                message.setLinktel(linktel);
+                message.setSqbh(sqbh);
+                message.setMsid(CommonUtils.getUUIDWith_());
+                message.setMstime(new Date());
+                message.setMstem(tplid);
+                message.setMstype("7");
+                message.setToUsername(username);
+                message.setToUserSfzh(sfzh);
+                msgAddList.add(message);
+                // message.setToUserSfzh(sfzhArr[i]);
+            }
+
+            if(!StringUtils.isEmpty(updateTelFlag)){
+                ApplyFamilyMember applyFamilyMember = new ApplyFamilyMember();
+                applyFamilyMember.setAfmSqid(applyid);//申请单id
+                applyFamilyMember.setAfmLxdh(linktel);//联系电话
+                members.add(applyFamilyMember);//更新联系电话的家庭成员
+            }
+
+            if(!StringUtils.isEmpty(addConFlag)){
+                /*插入待录入的合同数据*/
+                ContractDetail contractDetail = new ContractDetail();
+                contractDetail.setcId(CommonUtils.getUUIDWith_());
+                contractDetail.setcSqid(applyid);//设置申请单id
+                contractDetail.setcLc((short)2);//设为已录入状态
+                contractDetail.setcZfzt((short)0);//未过期状态
+                contractDetail.setCreateDate(new Date());//创建时间
+                // System.out.println("sqrq:"+sqrq);
+                contractDetail.setcEndTime(DatetimeUtils.string2date(sqrq,"yyyy-MM-dd"));
+                contractDetail.setcHtlx(applytype);//设置申请类别
+                contractDetail.setcType("3");//类别设为3 老数据初始化合同
+                contractDetailList.add(contractDetail);
+            }
+            /*发送短信*/
+            messageService.updateAllMessage(msgAddList,msgupdateList,contractDetailList,members);
+            /*发送短信*/
+            messageAndFormService.sendMessage(linktel,tplid,map);
+
+        }else if("batch7".equals(type)){
+            String usernames = request.getParameter("usernames");//申请用户姓名
+            String rooms = request.getParameter("rooms");//房屋位置
+            String sqrqs = request.getParameter("htqxs");//合同期限
+            String linktels = request.getParameter("linktels");//手机号
+            String sqbhs =  request.getParameter("sqbhs");//申请编号
+            String sfzhs =  request.getParameter("sfzhs");//身份证号
+            String applytype =  request.getParameter("applytype");//申请类型
+            String applyids = request.getParameter("applyids");//申请id数组
+            String updateContraFlags = request.getParameter("updateContraFlags");//更新合同的标志数组
+            String updateLinkTelFlags = request.getParameter("updateLinkTelFlags");//是否更新手机号的标志数组
+            String msgType = "";
+            tplid="JSM41823-0031";
+            String[] usernameArr = usernames.split(",");
+            String[] roomArr = rooms.split(",");
+            String[] sqrqArr = sqrqs.split(",");
+            String[] linktelArr = linktels.split(",");
+            String[] sqbhArr = sqbhs.split(",");
+            String[] sfzhArr = sfzhs.split(",");
+            String[] applyidArr = new String[sfzhArr.length];
+            if(applyids!=null){
+                applyidArr = applyids.split(",");
+            }
+
+            String[] updateLinkTelFlagArr = new String[sfzhArr.length];
+            if(updateLinkTelFlags!=null){
+                updateLinkTelFlagArr = updateLinkTelFlags.split(",");
+            }
+
+            String[] updateContraFlagArr = new String[sfzhArr.length];
+            if(updateContraFlags!=null){
+                updateContraFlagArr = updateContraFlags.split(",");
+            }
+
+           // String[] applytypeArr = applytypes.split(",");
+            if(applytype.equals(PropertiesUtil.getApplyTypeProperties("butie"))){
+                msgType="10";
+                tplid="JSM41823-0032";
+            }else{
+                msgType="7";
+            }
+
+            List<Message> msgAddList = Lists.newArrayList();
+            List<Message> msgupdateList = Lists.newArrayList();
+            List<ContractDetail> contractDetailList = Lists.newArrayList();
+            List<ApplyFamilyMember> members = Lists.newArrayList();
+            Map<String,Object> conditionMap = Maps.newHashMap();
+            for(int i=0;i<usernameArr.length;i++){
+                /*设置短信发送的信息值*/
+                map.put("@1@",usernameArr[i]);
+                map.put("@2@", roomArr[i]);
+                map.put("@3@",sqrqArr[i]);
+                map.put("@4@",userInfo.getLinktel());
+                map.put("@5@",userInfo.getUsername());
+
+                conditionMap.put("sqbh",sqbhArr[i]);
+                conditionMap.put("msType",msgType);
+                if(messageService.selectCountByMap(conditionMap)>0){
+                    Message message = new Message();
+                    message.setSqbh(sqbhArr[i]);
+                    message.setMstype(msgType);
+                    message.setMstime(new Date());
+                    msgupdateList.add(message);
+                }else{
+                    Message message = new Message();
+                    message.setMsuserid(userInfo.getUserid());
+                    message.setAppType(applytype);
+                    message.setLinktel(linktelArr[i]);
+                    message.setSqbh(sqbhArr[i]);
+                    message.setMsid(CommonUtils.getUUIDWith_());
+                    message.setMstime(new Date());
+                    message.setMstem(tplid);
+                    message.setMstype(msgType);
+                    message.setToUsername(usernameArr[i]);
+                    msgAddList.add(message);
+                    message.setToUserSfzh(sfzhArr[i]);
+                }
+
+                /*合同批量更新记录*/
+                if(!StringUtils.isEmpty(updateContraFlagArr[i]) && !"no".equals(updateContraFlagArr[i])){
+                    ContractDetail contractDetail = new ContractDetail();
+                    /*插入待录入的合同数据*/
+                    contractDetail.setcId(CommonUtils.getUUIDWith_());
+                    contractDetail.setcSqid(applyidArr[i]);//设置申请单id
+                    contractDetail.setcLc((short)2);//设为已录入状态
+                    contractDetail.setcZfzt((short)0);//未过期状态
+                    contractDetail.setCreateDate(new Date());//创建时间
+                    contractDetail.setcHtlx(applytype);//设置申请类别
+                    contractDetail.setcType("3");//类别设为3 老数据初始化合同
+                    contractDetail.setcEndTime(DatetimeUtils.string2date(sqrqArr[i],"yyyy-MM-dd"));
+                    contractDetailList.add(contractDetail);
+                }
+
+                /*手机号批量更新*/
+                if(!StringUtils.isEmpty(updateLinkTelFlagArr[i]) && !"no".equals(updateLinkTelFlagArr[i])){
+                    ApplyFamilyMember applyFamilyMember = new ApplyFamilyMember();
+                    applyFamilyMember.setAfmSqid(applyidArr[i]);//申请单id
+                    applyFamilyMember.setAfmLxdh(linktelArr[i]);//联系电话
+                    members.add(applyFamilyMember);//更新联系电话的家庭成员
+                }
+                /*发送短信*/
+                messageAndFormService.sendMessage(linktelArr[i],tplid,map);
+            }
+            /*更新消息、合同、家庭成员数据*/
+            messageService.updateAllMessage(msgAddList,msgupdateList,contractDetailList,members);
+
+        }else if("10".equals(type)){
+            String username = request.getParameter("username");//申请用户姓名
+            String sqrq = request.getParameter("htqx");//合同期限
+            String sqbh = request.getParameter("sqbh");//申请编号
+            linktel = request.getParameter("linktel");//手机号
+            sfzh = request.getParameter("sfzh");//身份证号
+            String applyid =  request.getParameter("applyid");//申请id
+            String updateTelFlag = request.getParameter("updateTelFlag");//更新
+            String addConFlag = request.getParameter("addConFlag");//更新
+            tplid="JSM41823-0032";
+
+            /*设置消息实体*/
+            /*messagePojo.setToUsername(username);//发送用户姓名
+            messagePojo.setToUserSfzh(sfzh);//身份证号
+            messagePojo.setSqbh(sqbh);//设置申请编号
+            messagePojo.setAppType("2");//设置业务类别
+            messagePojo.setLinktel(linktel);//设置联系电话
+            messagePojo.setMstem(tplid);//模板
+            messagePojo.setMstype("10");//短信实体类别*/
+
+            List<Message> msgAddList = Lists.newArrayList();
+            List<Message> msgupdateList = Lists.newArrayList();
+            List<ContractDetail> contractDetailList = Lists.newArrayList();
+            List<ApplyFamilyMember> members = Lists.newArrayList();
+            Map<String,Object> conditionMap = Maps.newHashMap();
+            conditionMap.put("sqbh",sqbh);
+            conditionMap.put("msType",type);
+            if(messageService.selectCountByMap(conditionMap)>0){
+                Message message = new Message();
+                message.setSqbh(sqbh);
+                message.setMstype(type);
+                message.setMstime(new Date());
+                msgupdateList.add(message);
+            }else{
+                Message message = new Message();
+                message.setMsuserid(userInfo.getUserid());
+                message.setAppType("2");
+                message.setLinktel(linktel);
+                message.setSqbh(sqbh);
+                message.setMsid(CommonUtils.getUUIDWith_());
+                message.setMstime(new Date());
+                message.setMstem(tplid);
+                message.setMstype(type);
+                message.setToUsername(username);
+                message.setToUserSfzh(sfzh);
+                msgAddList.add(message);
+                // message.setToUserSfzh(sfzhArr[i]);
+            }
+            /*发送短信*//*
+            messageService.updateAndAddMessageBatch(msgAddList,msgupdateList);*/
+
+            /*设置短信发送的信息值*/
+            map.put("@1@",username);
+            map.put("@2@",sqrq);
+            map.put("@3@",userInfo.getLinktel());
+            map.put("@4@",userInfo.getUsername());
+
+
+            if(!StringUtils.isEmpty(updateTelFlag)){
+                ApplyFamilyMember applyFamilyMember = new ApplyFamilyMember();
+                applyFamilyMember.setAfmSqid(applyid);//申请单id
+                applyFamilyMember.setAfmLxdh(linktel);//联系电话
+                members.add(applyFamilyMember);//更新联系电话的家庭成员
+            }
+
+            if(!StringUtils.isEmpty(addConFlag)){
+                /*插入待录入的合同数据*/
+                ContractDetail contractDetail = new ContractDetail();
+                contractDetail.setcId(CommonUtils.getUUIDWith_());
+                contractDetail.setcSqid(applyid);//设置申请单id
+                contractDetail.setcLc((short)2);//设为已录入状态
+                contractDetail.setcZfzt((short)0);//未过期状态
+                contractDetail.setCreateDate(new Date());//创建时间
+                contractDetail.setcHtlx("2");//设置申请类别
+                contractDetail.setcType("3");//类别设为3 老数据初始化合同
+                contractDetail.setcEndTime(DatetimeUtils.string2date(sqrq,"yyyy-MM-dd"));
+                contractDetailList.add(contractDetail);
+            }
+            /*更新消息、合同、家庭成员*/
+            messageService.updateAllMessage(msgAddList,msgupdateList,contractDetailList,members);
+            /*发送短信*/
+            messageAndFormService.sendMessage(linktel,tplid,map);
+
+        }else if("4".equals(type) || "40".equals(type)){
+            String usernames = request.getParameter("usernames");//申请用户姓字符组，格式为"张三,李四"
+            String applyTypes = request.getParameter("applyTypes");//申请类型为字符组，格式为"1,2"
+            String sqbhs = request.getParameter("sqbhs");//申请编号字符组，格式为"123,456"
+            String sfzhs = request.getParameter("sfzhs");//身份证号字符组，格式为"123,456"
+
+            String sqrq = request.getParameter("sqrq");//约定日期
+            String doc = request.getParameter("doc");//传来的资料名称
+            String area = request.getParameter("area");//办理业务地点
+            String content = request.getParameter("content");//具体办理事项内容，多选框选择，如□选房、 □交余款、 □签订合同、 □上房；
+            String linktels = request.getParameter("linktels");//手机号，格式为"18652855650,18652855650"
+            tplid="JSM41823-0026";
+            String[] usernameArr = usernames.split(",");//以分隔符拆分成数组，格式为"张三,李四"
+            String[] sqbhArr = sqbhs.split(",");//以分隔符拆分成数组，格式为"123,456"
+            String[] linktelArr = linktels.split(",");//以分隔符拆分成数组，格式为"18652855650,18652855650"
+            String[] applyTtypeArr = applyTypes.split(",");//以分隔符拆分成数组，格式为"1,2"
+            String[] sfzhArr = sfzhs.split(",");//以分隔符拆分成数组，格式为"342224199109090001,342224199109090002"
+            /*设置短信发送的信息值*/
+            /*设置短信发送的信息值*/
+            //map.put("@1@",username);
+
+           // map.put("@3@",sqbh);
+            map.put("@4@",sqrq);
+            map.put("@5@",doc);
+            map.put("@6@",area);
+            map.put("@7@",content);
+            map.put("@8@",userInfo.getUsername());
+            map.put("@9@",userInfo.getLinktel());
+            map.put("@10@", BaseInfoDataConvertor.convertUserUnit(userInfo));
+
+            List<Message> msgAddList = Lists.newArrayList();
+            List<Message> msgupdateList = Lists.newArrayList();
+            Map<String,Object> conditionMap = Maps.newHashMap();
+            for(int i=0;i<usernameArr.length;i++){
+                conditionMap.put("sqbh",sqbhArr[i]);
+                conditionMap.put("msType",type);
+                if(messageService.selectCountByMap(conditionMap)>0){
+                    Message message = new Message();
+                    message.setSqbh(sqbhArr[i]);
+                    message.setMstype(type);
+                    message.setMstime(new Date());
+                    msgupdateList.add(message);
+                }else{
+                    Message message = new Message();
+                    message.setMsuserid(userInfo.getUserid());
+                    message.setAppType(applyTtypeArr[i]);
+                    message.setLinktel(linktelArr[i]);
+                    message.setSqbh(sqbhArr[i]);
+                    message.setMsid(CommonUtils.getUUIDWith_());
+                    message.setMstime(new Date());
+                    message.setMstem(tplid);
+                    message.setMstype(type);
+                    message.setToUsername(usernameArr[i]);
+                    msgAddList.add(message);
+                    message.setToUserSfzh(sfzhArr[i]);
+                }
+                map.put("@1@",usernameArr[i]);
+                map.put("@3@",sqbhArr[i]);
+                map.put("@2@", PropertiesUtil.getApplyTypeProperties(applyTtypeArr[i]));
+                messageAndFormService.sendMessage(linktelArr[i],tplid,map);
+            }
+            /*发送短信*/
+            messageService.updateAndAddMessageBatch(msgAddList,msgupdateList);
+            return "发送成功";
+                //messageAndFormService.sendMessage(linktelArr[i],tplid,map);
+
+        }
+        /*如果消息实体存在申请编号，则是非群发的短信，直接插入*/
+        if(messagePojo.getSqbh()!=null){
+            this.messageService.insert(messagePojo);
+        }
+        messageAndFormService.sendMessage(linktel,tplid,map);
+
+
+        return "发送成功";
+    }
+
+    /**
+     * 群发短信
+     * @param request
+     * @return
+     */
+    @RequestMapping("notificationMessage")
+    @ResponseBody
+    public Object notificationMessage(HttpServletRequest request){
+
+        UserInfo userInfo = (UserInfo)request.getSession().getAttribute("user");
+        String sqrq = request.getParameter("sqrq");//约定日期
+        String doc = request.getParameter("doc");//传来的资料名称
+        String area = request.getParameter("area");//办理业务地点
+        String content = request.getParameter("content");//具体办理事项内容，多选框选择，如□选房、 □交余款、 □签订合同、 □上房；
+        String tplid="JSM41823-0026";
+        String jsonStr=request.getParameter("jsonStr");
+        JSONArray jsonArray = JSONArray.parseArray(jsonStr);
+        List<Message> msgAddList = Lists.newArrayList();
+        List<Message> msgupdateList = Lists.newArrayList();
+
+        for (int i = 0; i <jsonArray.size() ; i++) {
+            LinkedMap<String,String> map = new LinkedMap<String, String>();
+            map.put("@1@",jsonArray.getJSONObject(i).getString("username"));
+            map.put("@2@", PropertiesUtil.getApplyTypeProperties(jsonArray.getJSONObject(i).getString("atype")));
+            map.put("@3@",jsonArray.getJSONObject(i).getString("aplbh"));
+            map.put("@4@",sqrq);
+            map.put("@5@",doc);
+            map.put("@6@",area);
+            map.put("@7@",content);
+            map.put("@8@",userInfo.getUsername());
+            map.put("@9@",userInfo.getLinktel());
+            map.put("@10@", BaseInfoDataConvertor.convertUserUnit(userInfo));
+            /*发送短信*/
+            messageAndFormService.sendMessage(jsonArray.getJSONObject(i).getString("linktel"),tplid,map);
+
+            Map<String,Object> conditionMap = Maps.newHashMap();
+            conditionMap.put("sqbh",jsonArray.getJSONObject(i).getString("aplbh"));
+            conditionMap.put("msType","40");
+            if(messageService.selectCountByMap(conditionMap)>0){
+                Message message = new Message();
+                message.setSqbh(jsonArray.getJSONObject(i).getString("aplbh"));
+                message.setMstype("40");
+                message.setMstime(new Date());
+                msgupdateList.add(message);
+            }else{
+                Message message = new Message();
+                message.setMsuserid(userInfo.getUserid());
+                message.setAppType(jsonArray.getJSONObject(i).getString("atype"));
+                message.setLinktel(jsonArray.getJSONObject(i).getString("linktel"));
+                message.setSqbh(jsonArray.getJSONObject(i).getString("aplbh"));
+                message.setMsid(CommonUtils.getUUIDWith_());
+                message.setMstime(new Date());
+                message.setMstem(tplid);
+                message.setMstype("40");
+                message.setToUsername(jsonArray.getJSONObject(i).getString("username"));
+                msgAddList.add(message);
+                // message.setToUserSfzh(sfzhArr[i]);
+            }
+
+        }
+        messageService.updateAndAddMessageBatch(msgAddList,msgupdateList);
+        return "发送成功";
+    }
+
+    public static void main(String[] args){
+
+        LinkedMap<String,String> map = new LinkedMap<String, String>();
+        map.put("@1@","旺旺");
+        map.put("@2@","补贴");
+        map.put("@3@","123456");
+        map.put("@4@","2019-09-09");
+        map.put("@5@","云龙区");
+        map.put("@6@","王一");
+        map.put("@7@","18652955650");
+        map.put("@8@", "江苏徐州");
+
+        MessageAndFormService messageAndFormService = new MessageAndFormService();
+        messageAndFormService.sendMessage("18652955650","JSM41823-0024",map);
+    }
+
+}

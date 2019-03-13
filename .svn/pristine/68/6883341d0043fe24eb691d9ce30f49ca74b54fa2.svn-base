@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.HisRentMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.HisRent">
+    <id column="HIS_ID" jdbcType="VARCHAR" property="hisId" />
+    <result column="USERID" jdbcType="VARCHAR" property="userid" />
+    <result column="FW_ID" jdbcType="VARCHAR" property="fwId" />
+    <result column="QYSJ" jdbcType="VARCHAR" property="qysj" />
+    <result column="JZSJ" jdbcType="VARCHAR" property="jzsj" />
+    <result column="SFSJ" jdbcType="VARCHAR" property="sfsj" />
+    <result column="TFSJ" jdbcType="VARCHAR" property="tfsj" />
+    <result column="SQID" jdbcType="VARCHAR" property="sqid" />
+    <result column="USERNAME" jdbcType="VARCHAR" property="username" />
+    <result column="SFZH" jdbcType="VARCHAR" property="sfzh" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    HIS_ID, USERID, FW_ID, QYSJ, JZSJ, SFSJ, TFSJ,SQID
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from HISRENT
+    where HIS_ID = #{hisId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from HISRENT
+    where HIS_ID = #{hisId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.HisRent">
+    insert into HISRENT (HIS_ID, USERID, FW_ID, 
+      QYSJ, JZSJ, SFSJ, TFSJ,SQID
+      )
+    values (#{hisId,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, #{fwId,jdbcType=VARCHAR}, 
+      #{qysj,jdbcType=VARCHAR}, #{jzsj,jdbcType=VARCHAR}, #{sfsj,jdbcType=VARCHAR}, #{tfsj,jdbcType=VARCHAR}, #{sqid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sys.pojo.HisRent">
+    insert into HISRENT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="hisId != null">
+        HIS_ID,
+      </if>
+      <if test="userid != null">
+        USERID,
+      </if>
+      <if test="fwId != null">
+        FW_ID,
+      </if>
+      <if test="qysj != null">
+        QYSJ,
+      </if>
+      <if test="jzsj != null">
+        JZSJ,
+      </if>
+      <if test="sfsj != null">
+        SFSJ,
+      </if>
+      <if test="tfsj != null">
+        TFSJ,
+      </if>
+      <if test="sqid != null">
+        SQID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="hisId != null">
+        #{hisId,jdbcType=VARCHAR},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="fwId != null">
+        #{fwId,jdbcType=VARCHAR},
+      </if>
+      <if test="qysj != null">
+        #{qysj,jdbcType=VARCHAR},
+      </if>
+      <if test="jzsj != null">
+        #{jzsj,jdbcType=VARCHAR},
+      </if>
+      <if test="sfsj != null">
+        #{sfsj,jdbcType=VARCHAR},
+      </if>
+      <if test="tfsj != null">
+        #{tfsj,jdbcType=VARCHAR},
+      </if>
+      <if test="sqid != null">
+        #{sqid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sys.pojo.HisRent">
+    update HISRENT
+    <set>
+      <if test="userid != null">
+        USERID = #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="fwId != null">
+        FW_ID = #{fwId,jdbcType=VARCHAR},
+      </if>
+      <if test="qysj != null">
+        QYSJ = #{qysj,jdbcType=VARCHAR},
+      </if>
+      <if test="jzsj != null">
+        JZSJ = #{jzsj,jdbcType=VARCHAR},
+      </if>
+      <if test="sfsj != null">
+        SFSJ = #{sfsj,jdbcType=VARCHAR},
+      </if>
+      <if test="tfsj != null">
+        TFSJ = #{tfsj,jdbcType=VARCHAR},
+      </if>
+      <if test="sqid != null">
+        TFSJ = #{sqid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where HIS_ID = #{hisId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sys.pojo.HisRent">
+    update HISRENT
+    set USERID = #{userid,jdbcType=VARCHAR},
+      FW_ID = #{fwId,jdbcType=VARCHAR},
+      QYSJ = #{qysj,jdbcType=VARCHAR},
+      JZSJ = #{jzsj,jdbcType=VARCHAR},
+      SFSJ = #{sfsj,jdbcType=VARCHAR},
+      TFSJ = #{tfsj,jdbcType=VARCHAR},
+      SQID = #{sqid,jdbcType=VARCHAR}
+    where HIS_ID = #{hisId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="findByFwId" parameterType="Map" resultMap="BaseResultMap">
+    select
+     H.HIS_ID, H.USERID, H.FW_ID, H.QYSJ, H.JZSJ, H.SFSJ, H.TFSJ,H.SQID,
+     AFM.AFM_XM AS USERNAME,AFM.AFM_SFZH AS SFZH
+    from HISRENT H
+    LEFT JOIN APPLYFAMILYMEMBER AFM ON H.USERID=AFM.AFM_ID
+    where H.FW_ID = #{fwid,jdbcType=VARCHAR}
+  </select>
+  <update id="updateBySqid" parameterType="Map" >
+    UPDATE HISRENT
+    <set>
+      <if test="sfsj != null">
+        SFSJ = #{sfsj,jdbcType=VARCHAR},
+      </if>
+      <if test="tfsj != null">
+        TFSJ = #{tfsj,jdbcType=VARCHAR}
+      </if>
+    </set>
+    WHERE SQID=#{sqid}
+  </update>
+
+  <update id="updateSFSJBySqid" parameterType="java.util.List" >
+    <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+      update HISRENT H
+      set
+      H.SFSJ= #{item.sfsj,jdbcType=VARCHAR}
+      where H.HIS_ID=#{item.hisId}
+    </foreach>
+  </update>
+
+</mapper>

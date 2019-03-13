@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.MessageMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.Message">
+    <id column="MSID" jdbcType="VARCHAR" property="msid" />
+    <result column="LINKTEL" jdbcType="VARCHAR" property="linktel" />
+    <result column="MSTEM" jdbcType="VARCHAR" property="mstem" />
+    <result column="MSTYPE" jdbcType="VARCHAR" property="mstype" />
+    <result column="MSTIME" jdbcType="TIMESTAMP" property="mstime" />
+    <result column="MSUSERID" jdbcType="VARCHAR" property="msuserid" />
+    <result column="SQBH" jdbcType="VARCHAR" property="sqbh" />
+    <result column="TO_USERNAME" jdbcType="VARCHAR" property="toUsername" />
+    <result column="TO_USER_SFZH" jdbcType="VARCHAR" property="toUserSfzh" />
+    <result column="APP_TYPE" jdbcType="VARCHAR" property="appType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    MSID, LINKTEL, MSTEM, MSTYPE, MSTIME, MSUSERID, SQBH, TO_USERNAME, TO_USER_SFZH, 
+    APP_TYPE
+  </sql>
+
+  <select id="select" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from MESSAGE
+  </select>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from MESSAGE
+    where MSID = #{msid,jdbcType=VARCHAR}
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from MESSAGE
+    where MSID = #{msid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.Message">
+    insert into MESSAGE (MSID, LINKTEL, MSTEM, 
+      MSTYPE, MSTIME, MSUSERID, 
+      SQBH, TO_USERNAME, TO_USER_SFZH, 
+      APP_TYPE)
+    values (#{msid,jdbcType=VARCHAR}, #{linktel,jdbcType=VARCHAR}, #{mstem,jdbcType=VARCHAR}, 
+      #{mstype,jdbcType=VARCHAR}, #{mstime,jdbcType=TIMESTAMP}, #{msuserid,jdbcType=VARCHAR}, 
+      #{sqbh,jdbcType=VARCHAR}, #{toUsername,jdbcType=VARCHAR}, #{toUserSfzh,jdbcType=VARCHAR}, 
+      #{appType,jdbcType=VARCHAR})
+  </insert>
+  <!--<insert id="insertSelective" parameterType="com.sys.pojo.Message">
+    insert into MESSAGE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="msid != null">
+        MSID,
+      </if>
+      <if test="linktel != null">
+        LINKTEL,
+      </if>
+      <if test="mstem != null">
+        MSTEM,
+      </if>
+      <if test="mstype != null">
+        MSTYPE,
+      </if>
+      <if test="mstime != null">
+        MSTIME,
+      </if>
+      <if test="msuserid != null">
+        MSUSERID,
+      </if>
+      <if test="sqbh != null">
+        SQBH,
+      </if>
+      <if test="toUsername != null">
+        TO_USERNAME,
+      </if>
+      <if test="toUserSfzh != null">
+        TO_USER_SFZH,
+      </if>
+      <if test="appType != null">
+        APP_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="msid != null">
+        #{msid,jdbcType=VARCHAR},
+      </if>
+      <if test="linktel != null">
+        #{linktel,jdbcType=VARCHAR},
+      </if>
+      <if test="mstem != null">
+        #{mstem,jdbcType=VARCHAR},
+      </if>
+      <if test="mstype != null">
+        #{mstype,jdbcType=VARCHAR},
+      </if>
+      <if test="mstime != null">
+        #{mstime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="msuserid != null">
+        #{msuserid,jdbcType=VARCHAR},
+      </if>
+      <if test="sqbh != null">
+        #{sqbh,jdbcType=VARCHAR},
+      </if>
+      <if test="toUsername != null">
+        #{toUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="toUserSfzh != null">
+        #{toUserSfzh,jdbcType=VARCHAR},
+      </if>
+      <if test="appType != null">
+        #{appType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>-->
+  <update id="update" parameterType="com.sys.pojo.Message">
+    update MESSAGE
+    <set>
+      <if test="linktel != null">
+        LINKTEL = #{linktel,jdbcType=VARCHAR},
+      </if>
+      <if test="mstem != null">
+        MSTEM = #{mstem,jdbcType=VARCHAR},
+      </if>
+      <if test="mstype != null">
+        MSTYPE = #{mstype,jdbcType=VARCHAR},
+      </if>
+      <if test="mstime != null">
+        MSTIME = #{mstime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="msuserid != null">
+        MSUSERID = #{msuserid,jdbcType=VARCHAR},
+      </if>
+      <if test="sqbh != null">
+        SQBH = #{sqbh,jdbcType=VARCHAR},
+      </if>
+      <if test="toUsername != null">
+        TO_USERNAME = #{toUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="toUserSfzh != null">
+        TO_USER_SFZH = #{toUserSfzh,jdbcType=VARCHAR},
+      </if>
+      <if test="appType != null">
+        APP_TYPE = #{appType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where MSID = #{msid,jdbcType=VARCHAR}
+  </update>
+ <!-- <update id="update" parameterType="com.sys.pojo.Message">
+    update MESSAGE
+    set LINKTEL = #{linktel,jdbcType=VARCHAR},
+      MSTEM = #{mstem,jdbcType=VARCHAR},
+      MSTYPE = #{mstype,jdbcType=VARCHAR},
+      MSTIME = #{mstime,jdbcType=TIMESTAMP},
+      MSUSERID = #{msuserid,jdbcType=VARCHAR},
+      SQBH = #{sqbh,jdbcType=VARCHAR},
+      TO_USERNAME = #{toUsername,jdbcType=VARCHAR},
+      TO_USER_SFZH = #{toUserSfzh,jdbcType=VARCHAR},
+      APP_TYPE = #{appType,jdbcType=VARCHAR}
+    where MSID = #{msid,jdbcType=VARCHAR}
+  </update>-->
+  <!--查询个数-->
+  <select id="selectCountByMap" resultType="java.lang.Integer">
+    select count(*) from MESSAGE msg
+    <include refid="sqlWhere"></include>
+  </select>
+
+<!--条件查询信息列表-->
+  <select id="findMessageList" resultType="Message">
+    select msg.MSID , msg.LINKTEL, msg.MSTEM, msg.MSTYPE, msg.MSTIME, msg.MSUSERID, msg.SQBH,
+      msg.TO_USERNAME AS toUsername,
+     msg.TO_USER_SFZH AS toUserSfzh,
+       msg.APP_TYPE AS appType,
+      us.USERNAME AS opUsername
+      from MESSAGE msg
+    LEFT JOIN USERINFO us ON msg.MSUSERID = us.USERID
+    <include refid="sqlWhere"></include>
+    order  by msg.MSTIME
+  </select>
+
+<!--查询条件-->
+  <sql id="sqlWhere">
+    <where>
+    <if test="sqbh!=null and sqbh!=''">
+      and msg.SQBH like '%'||#{sqbh}||'%'
+    </if>
+    <if test="msType!=null and msType!=''">
+      and msg.MSTYPE=#{msType}
+    </if>
+      <if test="appType!=null and appType!=''">
+        and msg.APP_TYPE=#{appType}
+      </if>
+      <if test="linktel!=null and linktel!=''">
+        and msg.LINKTEL like '%'||#{linktel}||'%'
+      </if>
+      <if test="template!=null and template!=''">
+        and msg.MSTIME like '%'||#{template}||'%'
+      </if>
+      <if test="beginTime!=null and beginTime!=''">
+      and to_char(msg.MSTIME,'yyyy-MM-dd hh:ss:mm') &gt;=  #{beginTime}
+    </if>
+
+      <if test="endTime!=null and endTime!=''">
+        and to_char(msg.MSTIME,'yyyy-MM-dd hh:ss:mm') &lt;=  #{endTime}
+      </if>
+      <if test="username!=null and username!=''">
+        and msg.TO_USERNAME like '%'||#{username}||'%'
+      </if>
+      <if test="sfzh!=null and sfzh!=''">
+        and msg.TO_USER_SFZH like '%'||#{sfzh}||'%'
+      </if>
+      <if test="opusername!=null and opusername!=''">
+        and us.USERNAME like '%'||#{opusername}||'%'
+      </if>
+    </where>
+  </sql>
+
+  <!--批量更新信息实体-->
+  <update id="updateMessBaBatch" parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+      update MESSAGE
+      <set>
+        MSTIME=#{item.mstime}
+      </set>
+      <where>
+        <if test="item.sqbh!=null and item.sqbh!=null">
+          and SQBH=#{item.sqbh}
+        </if>
+        <if test="item.mstype!=null and item.mstype!=null">
+          and MSTYPE=#{item.mstype}
+        </if>
+      </where>
+    </foreach>
+  </update>
+
+</mapper>

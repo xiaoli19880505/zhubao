@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.apply.ApplyForForeignMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.apply.ApplyForForeign">
+    <id column="AFF_ID" jdbcType="VARCHAR" property="affId" />
+    <result column="AFF_SQBH" jdbcType="VARCHAR" property="affSqbh" />
+    <result column="AFF_SSQ" jdbcType="VARCHAR" property="affSsq" />
+    <result column="AFF_DWMC" jdbcType="VARCHAR" property="affDwmc" />
+    <result column="AFF_DWDZ" jdbcType="VARCHAR" property="affDwdz" />
+    <result column="AFF_WDHJDZ" jdbcType="VARCHAR" property="affWdhjdz" />
+    <result column="AFF_SQRID" jdbcType="VARCHAR" property="affSqrid" />
+    <result column="AFF_LXJZSJ" jdbcType="VARCHAR" property="affLxjzsj" />
+    <result column="AFF_LDHTKSSJ" jdbcType="VARCHAR" property="affLdhtkssj" />
+    <result column="AFF_LDHTJSSJ" jdbcType="VARCHAR" property="affLdhtjssj" />
+    <result column="AFF_SBJNSJ" jdbcType="VARCHAR" property="affSbjnsj" />
+    <result column="AFF_GJJJNSJ" jdbcType="VARCHAR" property="affGjjjnsj" />
+    <result column="AFF_GRNSR" jdbcType="DECIMAL" property="affGrnsr" />
+    <result column="AFF_JTNSR" jdbcType="DECIMAL" property="affJtnsr" />
+    <result column="AFF_JTRKS" jdbcType="DECIMAL" property="affJtrks" />
+    <result column="AFF_RJYSR" jdbcType="DECIMAL" property="affRjysr" />
+    <result column="AFF_RJJZMJ" jdbcType="DECIMAL" property="affRjjzmj" />
+    <result column="AFF_XZFXZ" jdbcType="VARCHAR" property="affXzfxz" />
+    <result column="AFF_XZFQK" jdbcType="VARCHAR" property="affXzfqk" />
+    <result column="AFF_ZT" jdbcType="DECIMAL" property="affZt" />
+    <result column="AFF_LC" jdbcType="DECIMAL" property="affLc" />
+    <result column="AFF_WFJT" jdbcType="VARCHAR" property="affWfjt" />
+    <result column="AFF_LRSJ" jdbcType="VARCHAR" property="affLrsj" />
+    <result column="AFF_LRR" jdbcType="VARCHAR" property="affLrr" />
+    <result column="AFF_SMSJ" jdbcType="VARCHAR" property="affSmsj" />
+    <result column="AFF_SMR" jdbcType="VARCHAR" property="affSmr" />
+    <result column="AFF_BZSJ" jdbcType="VARCHAR" property="affBzsj" />
+    <result column="AFF_CXDA" jdbcType="DECIMAL" property="affCxda" />
+    <result column="AFF_FLAG" jdbcType="DECIMAL" property="affFlag" />
+    <result column="AFF_DALC" jdbcType="VARCHAR" property="affDalc" />
+    <result column="SSQ_STR" jdbcType="VARCHAR" property="ssqStr" />
+    <result column="SSJ_STR" jdbcType="VARCHAR" property="ssjStr" />
+    <result column="C_ZT_NAME" jdbcType="VARCHAR" property="cZtName" />
+    <result column="AFF_BASEIMG" jdbcType="VARCHAR" property="affBaseimg" />
+    <association property="applyUserinfo" javaType="com.sys.pojo.ApplyUserinfo">
+      <result column="USERNAME" property="username"/>
+      <result column="SFZH" property="sfzh"/>
+      <result column="SSQ" property="ssq"/>
+      <result column="SSJ" property="ssj"/>
+    </association>
+    <association property="approve" javaType="com.sys.pojo.apply.Approve">
+      <result column="APLDATE" property="apldate"/>
+      <result column="APLDATE_STR" property="apldateStr"/>
+    </association>
+    <association property="contractDetail" javaType="com.sys.pojo.contract.ContractDetail">
+      <result column="C_ZT" property="cZt"/>
+      <result column="C_TYPE" property="cType"/>
+    </association>
+    <association column="AFF_ID"  property="applyUnit"
+                 select="com.sys.mapper.apply.ApplyUnitMapper.findByApplyId" />
+    <association column="AFF_ID"  property="applyFamilyHouse"
+                 select="com.sys.mapper.apply.ApplyFamilyHouseMapper.findByApplyId" />
+    <collection column="AFF_ID" property="applyFamilyMembers" ofType="com.sys.pojo.apply.ApplyFamilyMember"
+                javaType="java.util.ArrayList"
+                select="com.sys.mapper.apply.ApplyFamilyMemberMapper.findByApplyId">
+    </collection>
+    <collection column="AFF_ID" property="volList" ofType="com.sys.pojo.Volelearc"
+                javaType="java.util.ArrayList"
+                select="com.sys.mapper.VolelearcMapper.findByAppyId">
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+     AFF_ID,    AFF_SQBH,     AFF_SSQ,    AFF_DWMC,     AFF_DWDZ,     AFF_WDHJDZ,
+     AFF_SQRID,   AFF_LXJZSJ,     AFF_LDHTKSSJ,     AFF_LDHTJSSJ,     AFF_SBJNSJ,
+     AFF_GJJJNSJ,     AFF_GRNSR,    AFF_JTNSR,    AFF_JTRKS,      AFF_RJYSR,
+     AFF_RJJZMJ,    AFF_XZFXZ,    AFF_XZFQK,    AFF_ZT,     AFF_LC,
+     AFF_WFJT,    AFF_LRSJ,      AFF_LRR,     AFF_SMSJ,     AFF_SMR,
+     AFF_BZSJ,    AFF_CXDA,     AFF_FLAG,     AFF_DALC, AFF_BASEIMG
+  </sql>
+
+  <sql id="Base_Approve_Column_List">
+    APPROVE.APLDATE,to_char(APPROVE.APLDATE,'yyyy-mm-dd') APLDARW_STR
+  </sql>
+
+  <sql id="Base_ContDeta_Column_List">
+    CONTRACT_DETAIL.C_ZT,CONTRACT_DETAIL.C_TYPE
+  </sql>
+
+  <sql id="Base_User_Column_List">
+    APPLYUSERINFO.USERNAME,APPLYUSERINFO.SFZH,APPLYUSERINFO.SSQ,APPLYUSERINFO.SSJ
+  </sql>
+
+  <select id="selectByCondition" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <!--<include refid="Base_Approve_Column_List" />
+    ,-->
+    <include refid="Base_ContDeta_Column_List" />
+    ,
+    <!--<include refid="Base_User_Column_List" />
+    ,-->
+    APPLYFAMILYMEMBER.AFM_XM USERNAME,
+    APPLYFAMILYMEMBER.AFM_SFZH SFZH,
+    case
+      when CONTRACT_DETAIL.C_ZT is null then '未备案'
+      when CONTRACT_DETAIL.C_ZT=1 then '签约'
+      when CONTRACT_DETAIL.C_ZT=2 then '备案'
+      else '状态出错'
+    end C_ZT_NAME,
+    p1.PI_ITEMNAME SSQ_STR,
+    p2.PI_ITEMNAME SSJ_STR
+    from APPLYFORFOREIGN
+      left join CONTRACT_DETAIL
+        on APPLYFORFOREIGN.AFF_ID = CONTRACT_DETAIL.C_SQID and (CONTRACT_DETAIL.C_ZFZT=0 or CONTRACT_DETAIL.C_ZFZT is null),
+      PARMITEM p1, PARMITEM p2,APPLYFAMILYMEMBER
+    where APPLYFAMILYMEMBER.AFM_ID = APPLYFORFOREIGN.AFF_SQRID
+    and p1.pi_itemcode=APPLYFORFOREIGN.AFF_SSQ
+    and p2.pi_itemcode=APPLYFORFOREIGN.AFF_DWDZ
+    <if test="applyUserinfo != null">
+      <if test="applyUserinfo.xzq != null and applyUserinfo.xzq != ''">
+        AND p1.PI_SETCODE = #{applyUserinfo.xzq,jdbcType=VARCHAR}
+      </if>
+      <if test="applyUserinfo.jiedao != null and applyUserinfo.jiedao != ''">
+        AND p2.PI_SETCODE = #{applyUserinfo.jiedao,jdbcType=VARCHAR}
+      </if>
+      <if test="applyUserinfo.username != null">
+        AND APPLYFAMILYMEMBER.AFM_XM = #{applyUserinfo.username,jdbcType=VARCHAR}
+      </if>
+      <if test="applyUserinfo.sfzh != null">
+        AND APPLYFAMILYMEMBER.AFM_SFZH = #{applyUserinfo.sfzh,jdbcType=VARCHAR}
+      </if>
+      <if test="affSsq != null and affSsq != ''">
+        AND APPLYFORFOREIGN.AFF_SSQ = #{affSsq,jdbcType=VARCHAR}
+      </if>
+      <if test="affDwdz != null and affDwdz != ''">
+        AND APPLYFORFOREIGN.AFF_DWDZ = #{affDwdz,jdbcType=VARCHAR}
+      </if>
+      <if test="affLc != null and affLc != ''">
+        AND APPLYFORFOREIGN.AFF_LC &gt;= #{affLc,jdbcType=VARCHAR}
+      </if>
+      <if test="affZt != null and affZt != ''">
+        AND (APPLYFORFOREIGN.AFF_ZT &lt; #{affZt,jdbcType=VARCHAR} OR APPLYFORFOREIGN.AFF_ZT is null)
+      </if>
+    </if>
+    AND EXISTS (select 1 from (select APPROVE.APLID SQID from APPROVE
+    union all select CONTRACT_DETAIL.C_SQID SQID from CONTRACT_DETAIL) t where t.sqid=APPLYFORFOREIGN.AFF_ID)
+    order by APPLYFORFOREIGN.AFF_LC
+  </select>
+
+  <delete id="delete" parameterType="java.lang.String">
+    delete from APPLYFORFOREIGN
+    where AFF_ID = #{affId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.sys.pojo.apply.ApplyForForeign">
+    insert into APPLYFORFOREIGN (AFF_ID, AFF_SQBH, AFF_SSQ, 
+      AFF_DWMC, AFF_DWDZ, AFF_WDHJDZ, AFF_SQRID, AFF_LXJZSJ, AFF_LDHTKSSJ,
+      AFF_LDHTJSSJ, AFF_SBJNSJ, AFF_GJJJNSJ, AFF_GRNSR, AFF_JTNSR, AFF_JTRKS,
+      AFF_RJYSR, AFF_RJJZMJ, AFF_XZFXZ, AFF_XZFQK, AFF_WFJT, AFF_LRSJ, AFF_LRR,
+      AFF_SMSJ, AFF_SMR, AFF_BZSJ, AFF_CXDA, AFF_DALC, AFF_BASEIMG
+      )
+    values (#{affId,jdbcType=VARCHAR}, #{affSqbh,jdbcType=VARCHAR}, #{affSsq,jdbcType=VARCHAR}, 
+      #{affDwmc,jdbcType=VARCHAR}, #{affDwdz,jdbcType=VARCHAR}, #{affWdhjdz,jdbcType=VARCHAR}, 
+      #{affSqrid,jdbcType=VARCHAR}, #{affLxjzsj,jdbcType=VARCHAR}, #{affLdhtkssj,jdbcType=VARCHAR}, 
+      #{affLdhtjssj,jdbcType=VARCHAR}, #{affSbjnsj,jdbcType=VARCHAR}, #{affGjjjnsj,jdbcType=VARCHAR}, 
+      #{affGrnsr,jdbcType=DECIMAL}, #{affJtnsr,jdbcType=DECIMAL}, #{affJtrks,jdbcType=DECIMAL}, 
+      #{affRjysr,jdbcType=DECIMAL}, #{affRjjzmj,jdbcType=DECIMAL}, #{affXzfxz,jdbcType=VARCHAR}, 
+      #{affXzfqk,jdbcType=VARCHAR},
+      #{affWfjt,jdbcType=VARCHAR}, #{affLrsj,jdbcType=VARCHAR}, #{affLrr,jdbcType=VARCHAR}, 
+      #{affSmsj,jdbcType=VARCHAR}, #{affSmr,jdbcType=VARCHAR}, #{affBzsj,jdbcType=VARCHAR}, 
+      #{affCxda,jdbcType=DECIMAL}, #{affDalc,jdbcType=VARCHAR}, #{affBaseimg,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <update id="update" parameterType="com.sys.pojo.apply.ApplyForForeign">
+    update APPLYFORFOREIGN
+    <set>
+      <if test="affSqbh!=null and affSqbh!=''">
+        AFF_SQBH = #{affSqbh,jdbcType=VARCHAR},
+      </if>
+      <if test="affSsq!=null and affSsq!=''">
+        AFF_SSQ = #{affSsq,jdbcType=VARCHAR},
+      </if>
+      <if test="affDwmc!=null and affDwmc!=''">
+        AFF_DWMC = #{affDwmc,jdbcType=VARCHAR},
+      </if>
+      <if test="affDwdz!=null and affDwdz!=''">
+        AFF_DWDZ = #{affDwdz,jdbcType=VARCHAR},
+      </if>
+      <if test="affWdhjdz!=null and affWdhjdz!=''">
+        AFF_WDHJDZ = #{affWdhjdz,jdbcType=VARCHAR},
+      </if>
+      <if test="affSqrid!=null and affSqrid!=''">
+        AFF_SQRID = #{affSqrid,jdbcType=VARCHAR},
+      </if>
+      <if test="affLxjzsj!=null and affLxjzsj!=''">
+        AFF_LXJZSJ = #{affLxjzsj,jdbcType=VARCHAR},
+      </if>
+      <if test="affLdhtkssj!=null and affLdhtkssj!=''">
+        AFF_LDHTKSSJ = #{affLdhtkssj,jdbcType=VARCHAR},
+      </if>
+      <if test="affLdhtjssj!=null and affLdhtjssj!=''">
+        AFF_LDHTJSSJ = #{affLdhtjssj,jdbcType=VARCHAR},
+      </if>
+      <if test="affSbjnsj!=null and affSbjnsj!=''">
+        AFF_SBJNSJ = #{affSbjnsj,jdbcType=VARCHAR},
+      </if>
+      <if test="affGjjjnsj!=null and affGjjjnsj!=''">
+        AFF_GJJJNSJ = #{affGjjjnsj,jdbcType=VARCHAR},
+      </if>
+      <if test="affGrnsr!=null and affGrnsr!=''">
+      AFF_GRNSR = #{affGrnsr,jdbcType=DECIMAL},
+      </if>
+      <if test="affJtnsr!=null and affJtnsr!=''">
+      AFF_JTNSR = #{affJtnsr,jdbcType=DECIMAL},
+      </if>
+      <if test="affJtrks!=null and affJtrks!=''">
+      AFF_JTRKS = #{affJtrks,jdbcType=DECIMAL},
+      </if>
+      <if test="affRjysr!=null and affRjysr!=''">
+      AFF_RJYSR = #{affRjysr,jdbcType=DECIMAL},
+      </if>
+      <if test="affRjjzmj!=null and affRjjzmj!=''">
+      AFF_RJJZMJ = #{affRjjzmj,jdbcType=DECIMAL},
+      </if>
+      <if test="affXzfxz!=null and affXzfxz!=''">
+      AFF_XZFXZ = #{affXzfxz,jdbcType=VARCHAR},
+      </if>
+      <if test="affXzfqk!=null and affXzfqk!=''">
+      AFF_XZFQK = #{affXzfqk,jdbcType=VARCHAR},
+      </if>
+      <if test="affZt!=null and affZt!=''">
+      AFF_ZT = #{affZt,jdbcType=DECIMAL},
+      </if>
+      <if test="affLc!=null and affLc!=''">
+      AFF_LC = #{affLc,jdbcType=DECIMAL},
+      </if>
+      <if test="affWfjt!=null and affWfjt!=''">
+      AFF_WFJT = #{affWfjt,jdbcType=VARCHAR},
+      </if>
+      <if test="affLrsj!=null and affLrsj!=''">
+      AFF_LRSJ = #{affLrsj,jdbcType=VARCHAR},
+      </if>
+      <if test="affLrr!=null and affLrr!=''">
+      AFF_LRR = #{affLrr,jdbcType=VARCHAR},
+      </if>
+      <if test="affSmsj!=null and affSmsj!=''">
+      AFF_SMSJ = #{affSmsj,jdbcType=VARCHAR},
+      </if>
+      <if test="affSmr!=null and affSmr!=''">
+      AFF_SMR = #{affSmr,jdbcType=VARCHAR},
+      </if>
+      <if test="affBzsj!=null and affBzsj!=''">
+      AFF_BZSJ = #{affBzsj,jdbcType=VARCHAR},
+      </if>
+      <if test="affCxda!=null and affCxda!=''">
+      AFF_CXDA = #{affCxda,jdbcType=DECIMAL},
+      </if>
+      <if test="affFlag!=null and affFlag!=''">
+      AFF_FLAG = #{affFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="affDalc!=null and affDalc!=''">
+      AFF_DALC = #{affDalc,jdbcType=VARCHAR},
+      </if>
+      <if test="affBaseimg!=null and affBaseimg!=''">
+        AFF_BASEIMG = #{affBaseimg,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where AFF_ID = #{affId,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select AFF_ID, AFF_SQBH, AFF_SSQ, AFF_DWMC, AFF_DWDZ, AFF_WDHJDZ, AFF_SQRID, AFF_LXJZSJ, 
+    AFF_LDHTKSSJ, AFF_LDHTJSSJ, AFF_SBJNSJ, AFF_GJJJNSJ, AFF_GRNSR, AFF_JTNSR, AFF_JTRKS, 
+    AFF_RJYSR, AFF_RJJZMJ, AFF_XZFXZ, AFF_XZFQK, AFF_ZT, AFF_LC, AFF_WFJT, AFF_LRSJ, 
+    AFF_LRR, AFF_SMSJ, AFF_SMR, AFF_BZSJ, AFF_CXDA, AFF_FLAG, AFF_DALC,AFF_BASEIMG
+    from APPLYFORFOREIGN
+    where AFF_ID = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="select" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from APPLYFORFOREIGN
+  </select>
+
+  <select id="selectByMap" parameterType="Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from APPLYFORFOREIGN
+    where AFF_ID = #{affId,jdbcType=VARCHAR}
+  </select>
+
+  <update id="updateApLC" parameterType="Map">
+    update APPLYFORFOREIGN
+    <set>
+      <if test="lc!=null and lc!=''">
+        AFF_LC=#{lc},
+      </if>
+      <if test="zt!=null and zt!=''">
+        AFF_ZT=#{zt}
+      </if>
+    </set>
+    where AFF_ID=#{applyid}
+  </update>
+
+  <!--查询老系统用户的申请单-->
+  <select id="selectOldListByMap" resultType="Map">
+    SELECT
+       '外来务工' AS apptypename,
+        4 AS apptype,
+        apl.AFF_ID AS appid,
+        apl.AFF_LC AS applc,
+        apl.AFF_ZT AS appzt,
+        apl.AFF_SQBH AS aplbh,
+        apl.AFF_LRSJ AS apldate,
+        pi.PI_ITEMNAME AS ssq,
+        pij.PI_ITEMNAME AS ssjd,
+        afm.AFM_SFZH AS sfzh,
+        afm.AFM_XM AS username
+    from APPLYFORFOREIGN apl
+    LEFT JOIN PARMITEM pi ON (apl.AFF_SSQ = pi.PI_ITEMCODE AND pi.PI_SETCODE='04')
+    LEFT JOIN PARMITEM pij ON (apl.AFF_DWDZ = pij.PI_ITEMCODE AND pij.PI_SETCODE='05')
+    LEFT JOIN APPLYFAMILYMEMBER afm ON (apl.AFF_SQRID = afm.AFM_ID)
+    WHERE
+      afm.AFM_SFZH=#{sfzh}
+      <if test="appZt!=null and appZt!=''">
+        and apl.AFF_ZT=#{appZt}
+      </if>
+    UNION
+
+    SELECT
+       '新就业' AS apptypename,
+        5 AS apptype,
+        apl.AFG_ID AS appid,
+        apl.AFG_LC AS applc,
+        apl.AFG_ZT AS appzt,
+        apl.AFG_SQBH AS aplbh,
+        apl.AFG_LRSJ AS apldate,
+        pi.PI_ITEMNAME AS ssq,
+        pij.PI_ITEMNAME AS ssjd,
+        afm.AFM_SFZH AS sfzh,
+        afm.AFM_XM AS username
+    from APPLYFORGRADUATE apl
+    LEFT JOIN PARMITEM pi ON (apl.AFG_SSQ = pi.PI_ITEMCODE AND pi.PI_SETCODE='04')
+    LEFT JOIN PARMITEM pij ON (apl.AFG_DWDZ = pij.PI_ITEMCODE AND pij.PI_SETCODE='05')
+    LEFT JOIN APPLYFAMILYMEMBER afm ON (apl.AFG_SQRID = afm.AFM_ID)
+    WHERE
+      afm.AFM_SFZH=#{sfzh}
+    <if test="appZt!=null and appZt!=''">
+      and apl.AFG_ZT=#{appZt}
+    </if>
+  UNION
+
+    SELECT
+       '补贴申请' AS apptypename,
+        2 AS apptype,
+        apl.AB_ID AS appid,
+        apl.AB_LC AS applc,
+        apl.AB_ZT AS appzt,
+        apl.AB_SQBH AS aplbh,
+        apl.AB_LRSJ AS apldate,
+        pi.PI_ITEMNAME AS ssq,
+        pij.PI_ITEMNAME AS ssjd,
+        afm.AFM_SFZH AS sfzh,
+        afm.AFM_XM AS username
+    from APPLY_BUTIE apl
+    LEFT JOIN PARMITEM pi ON (apl.AB_SSQ = pi.PI_ITEMCODE AND pi.PI_SETCODE='04')
+    LEFT JOIN PARMITEM pij ON (apl.AB_JDBSC = pij.PI_ITEMCODE AND pij.PI_SETCODE='05')
+    LEFT JOIN APPLYFAMILYMEMBER afm ON (apl.AB_SQRID = afm.AFM_ID)
+    WHERE
+      afm.AFM_SFZH=#{sfzh}
+    <if test="appZt!=null and appZt!=''">
+      and apl.AB_ZT=#{appZt}
+    </if>
+  UNION
+
+    SELECT
+        CASE
+          WHEN apl.AP_SQLB='1' THEN '经济适用住房'
+          WHEN apl.AP_SQLB='3' THEN '公共租赁住房（低保、特困家庭）'
+          ELSE '状态出错'
+          END apptypename,
+        to_number(apl.AP_SQLB) AS apptype,
+        apl.AP_ID AS appid,
+        apl.AP_LC AS applc,
+        apl.AP_ZT AS appzt,
+        apl.AP_SQBH AS aplbh,
+        apl.AP_LRSJ AS apldate,
+        pi.PI_ITEMNAME AS ssq,
+        pij.PI_ITEMNAME AS ssjd,
+        afm.AFM_SFZH AS sfzh,
+        afm.AFM_XM AS username
+    from APPLY apl
+    LEFT JOIN PARMITEM pi ON (apl.AP_SSQ = pi.PI_ITEMCODE AND pi.PI_SETCODE='04')
+    LEFT JOIN PARMITEM pij ON (apl.AP_JDBSC = pij.PI_ITEMCODE AND pij.PI_SETCODE='05')
+    LEFT JOIN APPLYFAMILYMEMBER afm ON (apl.AP_SQRID = afm.AFM_ID)
+    WHERE
+      afm.AFM_SFZH=#{sfzh}
+    <if test="appZt!=null and appZt!=''">
+      and apl.AP_ZT=#{appZt}
+    </if>
+  </select>
+
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.QxInfoMapper" >
+  <resultMap id="QxInfoResultMap" type="com.sys.pojo.QxInfo" >
+    <id column="QX_ID" property="qxId" jdbcType="VARCHAR" />
+    <result column="QX_CODE" property="qxCode" jdbcType="VARCHAR" />
+    <result column="QX_NAME" property="qxName" jdbcType="VARCHAR" />
+    <result column="QX_DESC" property="qxDesc" jdbcType="VARCHAR" />
+    <association property="qxMeid" column="QX_MEID" jdbcType="CLOB"
+                 select="com.sys.mapper.MenuInfoMapper.selectById"></association>
+  </resultMap>
+
+  <delete id="delete" parameterType="java.lang.String" >
+    delete from QXINFO
+    where QX_ID = #{qxId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.sys.pojo.QxInfo" >
+    insert into QXINFO (QX_ID, QX_CODE, QX_NAME, 
+      QX_MEID, QX_DESC)
+    values (#{qxId},#{qxCode},#{qxName},#{meId},#{qxDesc})
+  </insert>
+
+  <update id="update" parameterType="com.sys.pojo.QxInfo" >
+    update QXINFO
+    <set>
+    <if test="qxCode!=null and qxCode!=''">
+      QX_CODE=#{qxCode},
+    </if>
+    <if test="qxName!=null and qxName!=''">
+      QX_NAME=#{qxName},
+    </if>
+    <if test="meId!=null">
+      QX_MEID=#{meId},
+    </if>
+    <if test="qxDesc!=null and qxDesc!=''">
+      QX_DESC=#{qxDesc},
+    </if>
+    </set>
+    where QX_ID = #{qxId}
+  </update>
+
+  <select id="selectByPrimaryKey" resultMap="QxInfoResultMap" parameterType="java.lang.String" >
+    select QX_ID, QX_CODE, QX_NAME, QX_MEID, QX_DESC
+    from QXINFO
+    where QX_ID = #{qxId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectAll" resultMap="QxInfoResultMap" >
+    select QX_ID, QX_CODE, QX_NAME, QX_MEID, QX_DESC
+    from QXINFO
+  </select>
+
+  <select id="findAllQxInfo" parameterType="Map" resultMap="QxInfoResultMap">
+      select QX_ID, QX_CODE, QX_NAME, QX_MEID, QX_DESC
+      from QXINFO
+      <where>
+      <if test="mid!=null and mid!=''">
+        QX_MEID=#{mid}
+      </if>
+      </where>
+  </select>
+
+  <select id="findQxinfoByNameOrMid" resultType="java.lang.Integer">
+    select count(1)
+      from QXINFO
+      where  QX_NAME=#{qxname}
+  </select>
+
+
+  <select id="findQxInfoByMeId" resultType="int">
+    select COUNT (1)
+    from QXINFO
+    <if test="meId!=null and meId!=''">
+      <where>
+        AND QX_MEID=#{meId}
+      </where>
+    </if>
+  </select>
+
+
+</mapper>

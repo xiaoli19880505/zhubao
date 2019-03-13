@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sys.mapper.ExcelMapper" >
+
+    <select id="findAllBliveGos" parameterType="Map" resultType="Map">
+        SELECT BLIVEGONGS.BLG_ID,
+        case when BLIVEGONGS.BLG_TYPE='1'then '经济适用房'
+        when BLIVEGONGS.BLG_TYPE='2' then '低保特困住保补贴'
+        when BLIVEGONGS.BLG_TYPE='3' then '低保特困公租房'
+        when BLIVEGONGS.BLG_TYPE='4' then '外来务工公租房'
+        else '新就业公租房' end as BLG_TYPE_NAME,
+        BLIVEGONGS.BLG_SQBH,
+        APPROVE.APLDATE APLDATE,
+        BLIVEGONGS.BLG_DESC,
+        APPLYUSERINFO.USERNAME BLG_USER_NAME,
+        APPLYUSERINFO.SFZH BLG_SFZH,
+        p1.PI_ITEMNAME BLG_SSQ_STR,
+        p2.PI_ITEMNAME BLG_SSJ_STR,
+        case when (BLGSH.BS_ID is null or BLGSH.BS_ID='') then '未提交'
+        when (BLGSH.BS_ID is not null) and (BLGSH.BLG_STATE is null or BLGSH.BLG_STATE='') then '未审核'
+        when BLGSH.BLG_STATE='1' then '非失信状态'
+        else '失信状态'
+        end as BLG_STATUS_STR,
+        case when BLIVEGONGS.bLG_SQTYPE='1'then '一般'
+        when BLIVEGONGS.bLG_SQTYPE='2' then '严重'
+        else '' end as bLG_SQTYPE_NAME,
+        BLGSH.BLG_PROCESSINSTANCEID
+        from BLIVEGONGS left join BLGSH on BLGSH.BLG_ID = BLIVEGONGS.BLG_ID,
+        APPLYUSERINFO,PARMITEM p1, PARMITEM p2,
+        APPROVE
+        where BLIVEGONGS.BLG_USERID=APPLYUSERINFO.USERID
+        and APPROVE.APLID=BLIVEGONGS.BLG_APID
+        and p1.pi_itemcode=APPLYUSERINFO.SSQ
+        and p2.pi_itemcode=APPLYUSERINFO.SSJ
+        and p1.PI_SETCODE = '04'
+        and p2.PI_SETCODE = '05'
+        <if test="blgId!=null and blgId!=''">
+            and BLIVEGONGS.BLG_ID = #{blgId}
+        </if>
+        <if test="blgUserName!=null and blgUserName!=''">
+            and APPLYUSERINFO.USERNAME = #{blgUserName}
+        </if>
+        <if test="blgUserid!=null and blgUserid!=''">
+            and BLIVEGONGS.BLG_USERID = #{blgUserid}
+        </if>
+        <if test="blgRpuserid!=null and blgRpuserid!=''">
+            and BLIVEGONGS.BLG_RPUSERID = #{blgRpuserid}
+        </if>
+        <if test="blgSfzh!=null and blgSfzh!=''">
+            and APPLYUSERINFO.SFZH = #{blgSfzh}
+        </if>
+        <if test="blgSsq!=null and blgSsq!=''">
+            and APPLYUSERINFO.SSQ = #{blgSsq}
+        </if>
+        <if test="blgSsj!=null and blgSsj!=''">
+            and APPLYUSERINFO.SSJ = #{blgSsj}
+        </if>
+        <if test="blgProcessinstanceid!=null and blgProcessinstanceid!=''">
+            and BLGSH.BLG_PROCESSINSTANCEID = #{blgProcessinstanceid}
+        </if>
+    </select>
+
+
+
+</mapper>
+
+

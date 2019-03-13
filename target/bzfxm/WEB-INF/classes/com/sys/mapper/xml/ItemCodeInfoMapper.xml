@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.ItemCodeInfoMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.ItemCodeInfo">
+    <result column="ITEMCODEINFO_ID" jdbcType="VARCHAR" property="itemcodeinfoId" />
+    <result column="CONSTRUCTER_ID" jdbcType="VARCHAR" property="constructerId" />
+    <result column="IC_ITNAME" jdbcType="VARCHAR" property="icItname" />
+    <result column="IC_ITNUM" jdbcType="VARCHAR" property="icItnum" />
+    <result column="IC_ITSITE" jdbcType="VARCHAR" property="icItsite" />
+    <result column="IC_DIST" jdbcType="VARCHAR" property="icDist" />
+    <result column="IC_OFFICE" jdbcType="VARCHAR" property="icOffice" />
+    <result column="IC_ZONE" jdbcType="VARCHAR" property="icZone" />
+    <result column="IC_SUMAAREA" jdbcType="SMALLINT" property="icSumaarea" />
+    <result column="IC_ITACPAPER" jdbcType="VARCHAR" property="icItacpaper" />
+    <result column="IC_PLLICNUM" jdbcType="VARCHAR" property="icPllicnum" />
+    <result column="IC_CONSTRUCTORTYPE" jdbcType="CHAR" property="icConstructortype" />
+    <result column="IC_STATE" jdbcType="SMALLINT" property="icState" />
+    <result column="IC_ACNUM" jdbcType="VARCHAR" property="icAcnum" />
+    <result column="IC_ACTIME" jdbcType="DATE" property="icActime" />
+    <result column="IC_ACMAN" jdbcType="VARCHAR" property="icAcman" />
+    <result column="IC_ACREASON" jdbcType="VARCHAR" property="icAcreason" />
+    <result column="IC_AUDITTIME" jdbcType="DATE" property="icAudittime" />
+    <result column="IC_AUDITMAN" jdbcType="VARCHAR" property="icAuditman" />
+    <result column="IC_AUDITREASON" jdbcType="VARCHAR" property="icAuditreason" />
+    <result column="IC_ENSURE" jdbcType="SMALLINT" property="icEnsure" />
+  </resultMap>
+  <sql id="Base_Column_List">
+      ITEMCODEINFO_ID,
+      CONSTRUCTER_ID,
+      IC_ITNAME,
+      IC_ITNUM,
+      IC_ITSITE,
+      IC_DIST,
+      IC_OFFICE,
+      IC_ZONE,
+      IC_SUMAAREA,
+      IC_ITACPAPER,
+      IC_PLLICNUM,
+      IC_CONSTRUCTORTYPE,
+      IC_STATE,
+      IC_ACNUM,
+      IC_ACTIME,
+      IC_ACMAN,
+      IC_ACREASON,
+      IC_AUDITTIME,
+      IC_AUDITMAN,
+      IC_AUDITREASON,
+      IC_ENSURE
+  </sql>
+
+  <insert id="inserItemCodeInfo" parameterType="java.util.List" useGeneratedKeys="false">
+    insert into ITEMCODEINFO (ITEMCODEINFO_ID, CONSTRUCTER_ID, IC_ITNAME,
+    IC_ITNUM, IC_ITSITE, IC_DIST,
+    IC_OFFICE, IC_ZONE, IC_SUMAAREA,
+    IC_ITACPAPER, IC_PLLICNUM, IC_CONSTRUCTORTYPE,
+    IC_STATE, IC_ACNUM, IC_ACTIME,
+    IC_ACMAN, IC_ACREASON, IC_AUDITTIME,
+    IC_AUDITMAN, IC_AUDITREASON, IC_ENSURE
+    )
+    <foreach close=")" collection="list" item="item" index="index" open="(" separator="union">
+      select
+      #{item.itemcodeinfoId,jdbcType=VARCHAR}, #{item.constructerId,jdbcType=VARCHAR}, #{item.icItname,jdbcType=VARCHAR},
+      #{item.icItnum,jdbcType=VARCHAR}, #{item.icItsite,jdbcType=VARCHAR}, #{item.icDist,jdbcType=VARCHAR},
+      #{item.icOffice,jdbcType=VARCHAR}, #{item.icZone,jdbcType=VARCHAR}, #{item.icSumaarea,jdbcType=SMALLINT},
+      #{item.icItacpaper,jdbcType=VARCHAR}, #{item.icPllicnum,jdbcType=VARCHAR}, #{item.icConstructortype,jdbcType=VARCHAR},
+      #{item.icState,jdbcType=SMALLINT}, #{item.icAcnum,jdbcType=VARCHAR}, #{item.icActime,jdbcType=DATE},
+      #{item.icAcman,jdbcType=VARCHAR}, #{item.icAcreason,jdbcType=VARCHAR}, #{item.icAudittime,jdbcType=DATE},
+      #{item.icAuditman,jdbcType=VARCHAR}, #{item.icAuditreason,jdbcType=VARCHAR}, #{item.icEnsure,jdbcType=SMALLINT}
+      from DUAL
+    </foreach>
+  </insert>
+
+  <select id="selectItemByName" resultType="java.lang.Integer">
+      select COUNT (1) from ITEMCODEINFO
+      WHERE  ITEMCODEINFO.IC_ITNAME=#{itemname}
+  </select>
+
+  <insert id="insert" parameterType="com.sys.pojo.ItemCodeInfo">
+    insert into ITEMCODEINFO (ITEMCODEINFO_ID, CONSTRUCTER_ID, IC_ITNAME,
+      IC_ITNUM, IC_ITSITE, IC_DIST,
+      IC_OFFICE, IC_ZONE, IC_SUMAAREA,
+      IC_ITACPAPER, IC_PLLICNUM, IC_CONSTRUCTORTYPE,
+      IC_STATE, IC_ACNUM, IC_ACTIME,
+      IC_ACMAN, IC_ACREASON, IC_AUDITTIME,
+      IC_AUDITMAN, IC_AUDITREASON, IC_ENSURE
+      )
+    values (#{itemcodeinfoId,jdbcType=VARCHAR}, #{constructerId,jdbcType=VARCHAR}, #{icItname,jdbcType=VARCHAR},
+      #{icItnum,jdbcType=VARCHAR}, #{icItsite,jdbcType=VARCHAR}, #{icDist,jdbcType=VARCHAR},
+      #{icOffice,jdbcType=VARCHAR}, #{icZone,jdbcType=VARCHAR}, #{icSumaarea,jdbcType=DECIMAL},
+      #{icItacpaper,jdbcType=VARCHAR}, #{icPllicnum,jdbcType=VARCHAR}, #{icConstructortype,jdbcType=CHAR},
+      #{icState,jdbcType=DECIMAL}, #{icAcnum,jdbcType=VARCHAR}, #{icActime,jdbcType=TIMESTAMP},
+      #{icAcman,jdbcType=VARCHAR}, #{icAcreason,jdbcType=VARCHAR}, #{icAudittime,jdbcType=TIMESTAMP},
+      #{icAuditman,jdbcType=VARCHAR}, #{icAuditreason,jdbcType=VARCHAR}, #{icEnsure,jdbcType=DECIMAL}
+      )
+    </insert>
+
+  <insert id="insertSelective" parameterType="com.sys.pojo.ItemCodeInfo">
+    insert into ITEMCODEINFO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="itemcodeinfoId != null">
+        ITEMCODEINFO_ID,
+      </if>
+      <if test="constructerId != null">
+        CONSTRUCTER_ID,
+      </if>
+      <if test="icItname != null">
+        IC_ITNAME,
+      </if>
+      <if test="icItnum != null">
+        IC_ITNUM,
+      </if>
+      <if test="icItsite != null">
+        IC_ITSITE,
+      </if>
+      <if test="icDist != null">
+        IC_DIST,
+      </if>
+      <if test="icOffice != null">
+        IC_OFFICE,
+      </if>
+      <if test="icZone != null">
+        IC_ZONE,
+      </if>
+      <if test="icSumaarea != null">
+        IC_SUMAAREA,
+      </if>
+      <if test="icItacpaper != null">
+        IC_ITACPAPER,
+      </if>
+      <if test="icPllicnum != null">
+        IC_PLLICNUM,
+      </if>
+      <if test="icConstructortype != null">
+        IC_CONSTRUCTORTYPE,
+      </if>
+      <if test="icState != null">
+        IC_STATE,
+      </if>
+      <if test="icAcnum != null">
+        IC_ACNUM,
+      </if>
+      <if test="icActime != null">
+        IC_ACTIME,
+      </if>
+      <if test="icAcman != null">
+        IC_ACMAN,
+      </if>
+      <if test="icAcreason != null">
+        IC_ACREASON,
+      </if>
+      <if test="icAudittime != null">
+        IC_AUDITTIME,
+      </if>
+      <if test="icAuditman != null">
+        IC_AUDITMAN,
+      </if>
+      <if test="icAuditreason != null">
+        IC_AUDITREASON,
+      </if>
+      <if test="icEnsure != null">
+        IC_ENSURE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="itemcodeinfoId != null">
+        #{itemcodeinfoId,jdbcType=CHAR},
+      </if>
+      <if test="constructerId != null">
+        #{constructerId,jdbcType=CHAR},
+      </if>
+      <if test="icItname != null">
+        #{icItname,jdbcType=VARCHAR},
+      </if>
+      <if test="icItnum != null">
+        #{icItnum,jdbcType=VARCHAR},
+      </if>
+      <if test="icItsite != null">
+        #{icItsite,jdbcType=VARCHAR},
+      </if>
+      <if test="icDist != null">
+        #{icDist,jdbcType=VARCHAR},
+      </if>
+      <if test="icOffice != null">
+        #{icOffice,jdbcType=VARCHAR},
+      </if>
+      <if test="icZone != null">
+        #{icZone,jdbcType=VARCHAR},
+      </if>
+      <if test="icSumaarea != null">
+        #{icSumaarea,jdbcType=DECIMAL},
+      </if>
+      <if test="icItacpaper != null">
+        #{icItacpaper,jdbcType=VARCHAR},
+      </if>
+      <if test="icPllicnum != null">
+        #{icPllicnum,jdbcType=VARCHAR},
+      </if>
+      <if test="icConstructortype != null">
+        #{icConstructortype,jdbcType=CHAR},
+      </if>
+      <if test="icState != null">
+        #{icState,jdbcType=DECIMAL},
+      </if>
+      <if test="icAcnum != null">
+        #{icAcnum,jdbcType=VARCHAR},
+      </if>
+      <if test="icActime != null">
+        #{icActime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="icAcman != null">
+        #{icAcman,jdbcType=CHAR},
+      </if>
+      <if test="icAcreason != null">
+        #{icAcreason,jdbcType=VARCHAR},
+      </if>
+      <if test="icAudittime != null">
+        #{icAudittime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="icAuditman != null">
+        #{icAuditman,jdbcType=CHAR},
+      </if>
+      <if test="icAuditreason != null">
+        #{icAuditreason,jdbcType=VARCHAR},
+      </if>
+      <if test="icEnsure != null">
+        #{icEnsure,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="select" resultMap="BaseResultMap">
+        SELECT T.ITEMCODEINFO_ID,T.IC_ITNAME  FROM ITEMCODEINFO T where IC_ensure = '1'
+  </select>
+  <select id="selectById" resultMap="BaseResultMap">
+        SELECT
+          <include refid="Base_Column_List" />
+          FROM ITEMCODEINFO T where ITEMCODEINFO_ID = #{itemcodeinfoId,jdbcType=CHAR}
+  </select>
+
+  <delete id="delete" parameterType="java.lang.String">
+    DELETE FROM ITEMCODEINFO WHERE ITEMCODEINFO_ID=#{id}
+  </delete>
+
+
+</mapper>

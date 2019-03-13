@@ -1,0 +1,158 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    String path = request.getContextPath();
+    String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<jsp:include page="/WEB-INF/index/header.jsp" flush="true"></jsp:include>
+<body class="easyui-layout">
+<div data-options="region:'north',border:false" style="overflow: hidden" id="publicNorth">
+    <div class="easyui-panel" style="width: 100%;overflow: hidden">
+        <form id="queryForm">
+            <ul class="search-group">
+                <li style="width: 320px">
+                    <select class="easyui-combobox" id="apSqlb" data-options="label:'申请类型',panelHeight:'auto',panelMaxHeight:'400',editable:false,
+                valueField:'id',textField:'text'" style="width: 92%">
+                        <option value="">全部</option>
+                        <option value="1">经济适用住房</option>
+                        <option value="3">公共租赁住房（低保、特困家庭）</option>
+                        <option value="4">公共租赁住房（外来务工人员）</option>
+                        <option value="5">公共租赁住房（新就业人员）</option>
+                    </select>
+                </li>
+                <li><input class="easyui-textbox" name="username" id="username" style="width: 92%" data-options="label:'申请人:'"></li>
+                <li><input class="easyui-textbox" name="sfzh" id="sfzh" style="width: 92%" data-options="label:'身份证号:'"></li>
+                <li><input class="easyui-textbox" name="sqbh" id="sqbh" style="width: 92%" data-options="label:'申请编号:'"></li>
+                <li><input class="easyui-textbox" name="item" id="item" style="width: 92%" data-options="label:'项目名称:'"></li>
+                <li><input class="easyui-textbox" name="buname" id="buname" style="width: 92%" data-options="label:'楼号:'"></li>
+                <li class="query-btn">
+                    <a class="icon iconfont icon-sousuo" onclick="query()"><i>查&nbsp;询</i></a>
+                </li>
+            </ul>
+        </form>
+        <div class="abtn-group btnInner">
+            <a class="icon iconfont icon-icon-refresh green" onclick="bank.tbReload('dataTable')"><i>刷新</i></a>
+            <a class="icon iconfont icon-guanbi red" onclick="bank.closeCurrent()"><i>关闭</i></a>
+        </div>
+    </div>
+</div>
+<div data-options="region:'center',border:false">
+    <div class="easyui-panel resPanel" style="width: 100%;height: 98%;overflow: auto">
+        <table id="dataTable" class="easyui-datagrid resTable" style="height: 100%;min-height: 300px"
+               data-options="url:'<%=basePath %>appove/findAllApply',singleSelect:true,rownumbers:true,pagination:true,border:true,striped:true,
+                       pagePosition:'bottom',nowrap:true,queryParams:{ssq:'${sessionScope.user.parmItemssq.piItemcode}'}">
+            <thead>
+            <tr>
+                <th data-options="field:'atype',width:120,align:'center',align:'center',formatter:convenrtApplyType">申请类型</th>
+                <th data-options="field:'aplbh',width:150,align:'center'">申请编号</th>
+                <th data-options="field:'username',width:100,align:'center'">申请人</th>
+                <th data-options="field:'sfzh',width:200,align:'center'">身份证号</th>
+                <th data-options="field:'ssq',width:100,align:'center'">所属县区</th>
+                <th data-options="field:'ssj',width:100,align:'center'">所属街道</th>
+                <th data-options="field:'f_community',width:100,align:'center'">项目名称</th>
+                <th data-options="field:'f_buname',width:100,align:'center'">楼号</th>
+                <th data-options="field:'f_cecode',width:100,align:'center'">单元</th>
+                <th data-options="field:'f_ronum',width:100,align:'center'">房号</th>
+                <th data-options="field:'operate',width:200,align:'center',formatter:operate">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    function operate(value,row,index) {
+       var apptype = row.aptype;
+       var atype=row.atype;
+       var aplid = row.aplid;
+       var apsqlb=row.aplbh;
+       var printable=row.printable;
+       if(atype=='1'){
+            // if (printable=='0'){
+            //     return '<a class="agreen" onclick="jsfOpinion(\''+apptype+'\',\''+aplid +'\')">打印审批表</a>' +
+            //         '<a class="ablue" onclick="backHouse(\''+atype+'\',\''+aplid +'\',\''+apsqlb+'\')">退房</a>';
+            // }else{
+            //     return '<a class="agreen" onclick="jsfOpinion(\''+apptype+'\',\''+aplid +'\')">打印审批表</a>';
+            // }
+
+           return '<a class="agreen" onclick="jsfOpinion(\''+apptype+'\',\''+aplid +'\')">打印审批表</a>';
+
+       }else{
+           // if (printable=='0'){
+           //     return '<a class="agreen" onclick="auditOpinion(\''+apptype+'\',\''+aplid +'\')">打印审批表</a>' +
+           //         '<a class="ablue" onclick="backHouse(\''+atype+'\',\''+aplid +'\',\''+apsqlb+'\')">退房</a>';
+           // }else{
+           //     return '<a class="agreen" onclick="auditOpinion(\''+apptype+'\',\''+aplid +'\')">打印审批表</a>';
+           // }
+           return '<a class="agreen" onclick="auditOpinion(\''+apptype+'\',\''+aplid +'\')">打印审批表</a>';
+
+       }
+
+    }
+
+    /*转换业务类别*/
+    function convenrtApplyType(value,row,index){
+        var apptype = value;
+        switch (apptype){
+            case "1":
+                return "经济适用住房";
+            case "2":
+                return "公共租赁住房租赁补贴";
+            case "3":
+                return "公共租赁住房（低保、特困家庭）";
+            case "4":
+                return "公共租赁住房（外来务工人员）";
+            case "5":
+                return "公共租赁住房（新就业人员）";
+        }
+    }
+
+    function auditOpinion(apptype,aplid){
+        var a = $('<a href="<%=basePath %>appove/toTFSpPage?applyid='+aplid+'#true" target="_blank"></a>')[0];
+        var e = document.createEvent('MouseEvents');
+        e.initEvent('click', true, true);
+        a.dispatchEvent(e);
+    }
+
+    function jsfOpinion(apptype,aplid){
+        var a = $('<a href="<%=basePath %>appove/findJSFForm?applyid='+aplid+'#true" target="_blank"></a>')[0];
+        var e = document.createEvent('MouseEvents');
+        e.initEvent('click', true, true);
+        a.dispatchEvent(e);
+    }
+
+
+   function backHouse(atype,aplid,apsqlb){
+       $.messager.confirm('操作提示', '您确定退房吗？', function (r) {
+           if (r) {
+               $.ajax({
+                   url:'<%=basePath %>sourceHouse/updateReturnHouse',
+                   type:'post',
+                   data:{
+                       atype:atype,
+                       applyid:aplid,
+                       acSqbh:apsqlb
+                   },
+                   success:function(data){
+                       bank.ajaxMessage(data);
+                       $("#dataTable").datagrid('reload')
+                   }
+               })
+           }
+       });
+   }
+
+    //根据条件查询
+    function query(){
+        $("#dataTable").datagrid('load',{
+            apSqlb:$.trim($("#apSqlb").combobox('getValue')),
+            username:$.trim($("#username").val()),
+            sfzh:$.trim($("#sfzh").val()),
+            sqbh:$.trim($("#sqbh").val()),
+            item:$.trim($("#item").val()),
+            buname:$.trim($("#buname").val())
+
+        });
+    }
+
+</script>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.apply.ApplyFamilyHouseMapper">
+  <resultMap id="BaseResultMap" type="com.sys.pojo.apply.ApplyFamilyHouse">
+    <id column="AFH_ID" jdbcType="VARCHAR" property="afhId" />
+    <result column="AFH_SQID" jdbcType="VARCHAR" property="afhSqid" />
+    <result column="AFH_FWID" jdbcType="VARCHAR" property="afhFwid" />
+    <result column="AFH_ZL" jdbcType="VARCHAR" property="afhZl" />
+    <result column="AFH_CQR" jdbcType="VARCHAR" property="afhCqr" />
+    <result column="AFH_MJ" jdbcType="VARCHAR" property="afhMj" />
+    <result column="AFH_RJMJ" jdbcType="VARCHAR" property="afhRjmj" />
+    <result column="AFH_ZFXZ" jdbcType="VARCHAR" property="afhZfxz" />
+    <result column="AFH_LB" jdbcType="VARCHAR" property="afhLb" />
+    <result column="AFH_FLAG" jdbcType="DECIMAL" property="afhFlag" />
+  </resultMap>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from APPLYFAMILYHOUSE
+    where AFH_ID = #{afhId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sys.pojo.apply.ApplyFamilyHouse">
+    insert into APPLYFAMILYHOUSE (AFH_ID, AFH_SQID, AFH_FWID, 
+      AFH_ZL, AFH_CQR, AFH_MJ, 
+      AFH_RJMJ, AFH_ZFXZ, AFH_LB, 
+      AFH_FLAG)
+    values (#{afhId,jdbcType=VARCHAR}, #{afhSqid,jdbcType=VARCHAR}, #{afhFwid,jdbcType=VARCHAR}, 
+      #{afhZl,jdbcType=VARCHAR}, #{afhCqr,jdbcType=VARCHAR}, #{afhMj,jdbcType=VARCHAR}, 
+      #{afhRjmj,jdbcType=VARCHAR}, #{afhZfxz,jdbcType=VARCHAR}, #{afhLb,jdbcType=VARCHAR}, 
+      #{afhFlag,jdbcType=DECIMAL})
+  </insert>
+  <update id="update" parameterType="com.sys.pojo.apply.ApplyFamilyHouse">
+    update APPLYFAMILYHOUSE
+    set AFH_SQID = #{afhSqid,jdbcType=VARCHAR},
+      AFH_FWID = #{afhFwid,jdbcType=VARCHAR},
+      AFH_ZL = #{afhZl,jdbcType=VARCHAR},
+      AFH_CQR = #{afhCqr,jdbcType=VARCHAR},
+      AFH_MJ = #{afhMj,jdbcType=VARCHAR},
+      AFH_RJMJ = #{afhRjmj,jdbcType=VARCHAR},
+      AFH_ZFXZ = #{afhZfxz,jdbcType=VARCHAR},
+      AFH_LB = #{afhLb,jdbcType=VARCHAR},
+      AFH_FLAG = #{afhFlag,jdbcType=DECIMAL}
+    where AFH_ID = #{afhId,jdbcType=VARCHAR}
+  </update>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select AFH_ID, AFH_SQID, AFH_FWID, AFH_ZL, AFH_CQR, AFH_MJ, AFH_RJMJ, AFH_ZFXZ, AFH_LB, 
+    AFH_FLAG
+    from APPLYFAMILYHOUSE
+    where AFH_ID = #{afhId,jdbcType=VARCHAR}
+  </select>
+  <select id="select" resultMap="BaseResultMap">
+    select AFH_ID, AFH_SQID, AFH_FWID, AFH_ZL, AFH_CQR, AFH_MJ, AFH_RJMJ, AFH_ZFXZ, AFH_LB, 
+    AFH_FLAG
+    from APPLYFAMILYHOUSE
+  </select>
+
+  <update id="updateHouseByApplyId" parameterType="com.sys.pojo.apply.ApplyFamilyHouse">
+    update APPLYFAMILYHOUSE
+    <set>
+      <if test="afhZl!=null and afhZl!=''">
+        AFH_ZL = #{afhZl,jdbcType=VARCHAR},
+      </if>
+      <if test="afhCqr!=null and afhCqr!=''">
+        AFH_CQR = #{afhCqr,jdbcType=VARCHAR},
+      </if>
+      <if test="afhMj!=null and afhMj!=''">
+        AFH_MJ = #{afhMj,jdbcType=VARCHAR},
+      </if>
+      <if test="afhRjmj!=null and afhRjmj!=''">
+        AFH_RJMJ = #{afhRjmj,jdbcType=VARCHAR},
+      </if>
+      <if test="afhZfxz!=null and afhZfxz!=''">
+        AFH_ZFXZ = #{afhZfxz,jdbcType=VARCHAR},
+      </if>
+      <if test="afhLb!=null and afhLb!=''">
+        AFH_LB = #{afhLb,jdbcType=VARCHAR},
+      </if>
+      <if test="afhFlag!=null and afhFlag!=''">
+        AFH_FLAG = #{afhFlag,jdbcType=DECIMAL}
+      </if>
+    </set>
+    where AFH_SQID = #{afhSqid,jdbcType=VARCHAR}
+  </update>
+  <select id="findByApplyId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select AFH_ID, AFH_SQID, AFH_FWID, AFH_ZL, AFH_CQR, AFH_MJ, AFH_RJMJ, AFH_ZFXZ, AFH_LB,
+    AFH_FLAG
+    from APPLYFAMILYHOUSE
+    where AFH_SQID = #{afhSqid,jdbcType=VARCHAR}
+  </select>
+
+
+  <!--通过申请单id删除单位信息-->
+  <delete id="deleteByMap">
+    DELETE  from APPLYFAMILYHOUSE
+    <where>
+      <if test="applyid!=null and applyid!=''">
+        and AFH_SQID=#{applyid}
+      </if>
+    </where>
+  </delete>
+</mapper>

@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: TestTableService
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 7.102 s <<< FAILURE! - in TestTableService
+Test1(TestTableService)  Time elapsed: 7.101 s  <<< ERROR!
+java.lang.NullPointerException
+	at TestTableService.Test1(TestTableService.java:38)
+

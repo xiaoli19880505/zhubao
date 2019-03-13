@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sys.mapper.apply.ApplyButieMapper">
+    <resultMap id="BaseResultMap" type="com.sys.pojo.apply.ApplyButie">
+        <!--<id column="AB_ID" jdbcType="VARCHAR" property="abId"/>--><!-- 合同关联出现重复ID，不进行去重 -->
+        <result column="AB_ID" jdbcType="VARCHAR" property="abId"/>
+        <result column="AB_SQBH" jdbcType="VARCHAR" property="abSqbh"/>
+        <result column="AB_BZLB" jdbcType="VARCHAR" property="abBzlb"/>
+        <result column="AB_SSQ" jdbcType="VARCHAR" property="abSsq"/>
+        <result column="AB_JDBSC" jdbcType="VARCHAR" property="abJdbsc"/>
+        <result column="AB_SQJWH" jdbcType="VARCHAR" property="abSqjwh"/>
+        <result column="AB_SQRID" jdbcType="VARCHAR" property="abSqrid"/>
+        <result column="AB_SQRPOID" jdbcType="VARCHAR" property="abSqrpoid"/>
+        <result column="AB_SQHJNX" jdbcType="DECIMAL" property="abSqhjnx"/>
+        <result column="AB_JTRK" jdbcType="DECIMAL" property="abJtrk"/>
+        <result column="AB_JTNSR" jdbcType="DECIMAL" property="abJtnsr"/>
+        <result column="AB_RJYSR" jdbcType="DECIMAL" property="abRjysr"/>
+        <result column="AB_RJJZMJ" jdbcType="DECIMAL" property="abRjjzmj"/>
+        <result column="AB_XZFXZ" jdbcType="VARCHAR" property="abXzfxz"/>
+        <result column="AB_TSJT" jdbcType="DECIMAL" property="abTsjt"/>
+        <result column="AB_BTJE" jdbcType="DECIMAL" property="abBtje"/>
+        <result column="AB_YHKH" jdbcType="VARCHAR" property="abYhkh"/>
+        <result column="AB_KSRQ" jdbcType="VARCHAR" property="abKsrq"/>
+        <result column="AB_JSRQ" jdbcType="VARCHAR" property="abJsrq"/>
+        <result column="AB_ZT" jdbcType="DECIMAL" property="abZt"/>
+        <result column="AB_LC" jdbcType="DECIMAL" property="abLc"/>
+        <result column="AB_DALC" jdbcType="VARCHAR" property="abDalc"/>
+        <result column="AB_FLAG" jdbcType="DECIMAL" property="abFlag"/>
+        <result column="AB_LRR" jdbcType="VARCHAR" property="abLrr"/>
+        <result column="AB_LRSJ" jdbcType="VARCHAR" property="abLrsj"/>
+        <result column="AB_XGR" jdbcType="VARCHAR" property="abXgr"/>
+        <result column="AB_XGSJ" jdbcType="VARCHAR" property="abXgsj"/>
+        <result column="AB_SMR" jdbcType="VARCHAR" property="abSmr"/>
+        <result column="AB_SMSJ" jdbcType="VARCHAR" property="abSmsj"/>
+        <result column="SSQ_STR" jdbcType="VARCHAR" property="ssqStr"/>
+        <result column="SSJ_STR" jdbcType="VARCHAR" property="ssjStr"/>
+        <result column="C_ZT_NAME" jdbcType="VARCHAR" property="cZtName"/>
+
+        <result column="AB_DBZBH" jdbcType="VARCHAR" property="abDbzbh"/>
+        <result column="AB_LQRS" jdbcType="VARCHAR" property="abLqrs"/>
+        <result column="AB_FZSJ" jdbcType="VARCHAR" property="abFzsj"/>
+        <result column="AB_BASEIMG" jdbcType="VARCHAR" property="abBaseimg"/>
+        <result column="C_HTBH" jdbcType="VARCHAR" property="cHtbh"/>
+
+        <association property="applyUserinfo" javaType="com.sys.pojo.ApplyUserinfo">
+            <result column="USERNAME" property="username"/>
+            <result column="SFZH" property="sfzh"/>
+            <result column="SSQ" property="ssq"/>
+            <result column="SSJ" property="ssj"/>
+        </association>
+        <association property="approve" javaType="com.sys.pojo.apply.Approve">
+            <result column="APLDATE" property="apldate"/>
+            <result column="APLDATE_STR" property="apldateStr"/>
+        </association>
+        <association property="contractDetail" javaType="com.sys.pojo.contract.ContractDetail">
+            <result column="C_ID" property="cId"/>
+            <result column="C_LC" property="cLc"/>
+            <result column="C_ZT" property="cZt"/>
+            <result column="C_TYPE" property="cType"/>
+        </association>
+        <association column="AB_ID" property="applyFamilyHouseChange"
+                     select="com.sys.mapper.apply.ApplyFamilyHouseChangeMapper.findByApplyId"/>
+        <association column="AB_ID"  property="applyUnit"
+                     select="com.sys.mapper.apply.ApplyUnitMapper.findByApplyId" />
+        <collection column="AB_ID" property="applyFamilyMembers" ofType="com.sys.pojo.apply.ApplyFamilyMember"
+                    javaType="java.util.ArrayList"
+                    select="com.sys.mapper.apply.ApplyFamilyMemberMapper.findByApplyId">
+        </collection>
+        <collection column="AB_ID" property="applyFamilyHouses" ofType="com.sys.pojo.apply.ApplyFamilyHouse"
+                    javaType="java.util.ArrayList"
+                    select="com.sys.mapper.apply.ApplyFamilyHouseMapper.findByApplyId">
+        </collection>
+        <collection column="AB_ID" property="volList" ofType="com.sys.pojo.Volelearc"
+                    javaType="java.util.ArrayList"
+                    select="com.sys.mapper.VolelearcMapper.findByAppyId">
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    AB_ID, AB_SQBH, AB_BZLB, AB_SSQ, AB_JDBSC, AB_SQJWH, AB_SQRID, AB_SQRPOID, AB_SQHJNX, 
+    AB_JTRK, AB_JTNSR, AB_RJYSR, AB_RJJZMJ, AB_XZFXZ, AB_TSJT, AB_BTJE, AB_YHKH, AB_KSRQ, 
+    AB_JSRQ, AB_ZT, AB_LC, AB_DALC, AB_FLAG, AB_LRR, AB_LRSJ, AB_XGR, AB_XGSJ, AB_SMR, 
+    AB_SMSJ,AB_DBZBH,AB_LQRS,AB_FZSJ,AB_BASEIMG
+  </sql>
+
+
+    <sql id="Base_Approve_Column_List">
+      APPROVE.APLDATE,to_char(APPROVE.APLDATE,'yyyy-mm-dd') APLDARW_STR
+    </sql>
+
+    <sql id="Base_ContDeta_Column_List">
+      CONTRACT_DETAIL.C_ZT,CONTRACT_DETAIL.C_TYPE,CONTRACT_DETAIL.C_ID,CONTRACT_DETAIL.C_LC
+    </sql>
+
+    <sql id="Base_User_Column_List">
+      APPLYUSERINFO.USERNAME,APPLYUSERINFO.SFZH,APPLYUSERINFO.SSQ,APPLYUSERINFO.SSJ
+    </sql>
+
+    <select id="selectByCondition" parameterType="Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        ,
+        <!--<include refid="Base_Approve_Column_List" />
+        ,-->
+        <include refid="Base_ContDeta_Column_List" />
+        ,
+        <!--<include refid="Base_User_Column_List" />-->
+        APPLYFAMILYMEMBER.AFM_XM USERNAME,
+        APPLYFAMILYMEMBER.AFM_SFZH SFZH,
+        APPLY_BUTIE.AB_SSQ SSQ,
+        APPLY_BUTIE.AB_JDBSC SSJ,
+        case
+        when CONTRACT_DETAIL.C_ZT is null then '未备案'
+        when CONTRACT_DETAIL.C_ZT=1 then '签约'
+        when CONTRACT_DETAIL.C_ZT=2 then '备案'
+        else '状态出错'
+        end C_ZT_NAME,
+        p1.PI_ITEMNAME SSQ_STR,
+        p2.PI_ITEMNAME SSJ_STR,
+        CONTRACT_DETAIL.C_HTBH  C_HTBH
+        from APPLY_BUTIE
+        left join CONTRACT_DETAIL
+          on APPLY_BUTIE.AB_ID = CONTRACT_DETAIL.C_SQID and (CONTRACT_DETAIL.C_ZFZT=0 or CONTRACT_DETAIL.C_ZFZT is null),
+        PARMITEM p1, PARMITEM p2,APPLYFAMILYMEMBER
+        where APPLYFAMILYMEMBER.AFM_ID = APPLY_BUTIE.AB_SQRID
+        and p1.pi_itemcode=APPLY_BUTIE.AB_SSQ
+        and p2.pi_itemcode=APPLY_BUTIE.AB_JDBSC
+        <if test="applyUserinfo != null">
+            <if test="applyUserinfo.xzq != null and applyUserinfo.xzq !=''">
+                and p1.PI_SETCODE=#{applyUserinfo.xzq,jdbcType=VARCHAR}
+            </if>
+            <if test="applyUserinfo.jiedao != null and applyUserinfo.jiedao !=''">
+                and p2.PI_SETCODE=#{applyUserinfo.jiedao,jdbcType=VARCHAR}
+            </if>
+            <if test="applyUserinfo.username != null and applyUserinfo.username!=''">
+                AND APPLYFAMILYMEMBER.AFM_XM = #{applyUserinfo.username,jdbcType=VARCHAR}
+            </if>
+            <if test="applyUserinfo.sfzh != null and applyUserinfo.sfzh !=''">
+                AND APPLYFAMILYMEMBER.AFM_SFZH = #{applyUserinfo.sfzh,jdbcType=VARCHAR}
+            </if>
+            <if test="abSsq != null and abSsq !=''">
+                AND APPLY_BUTIE.AB_SSQ = #{abSsq,jdbcType=VARCHAR}
+            </if>
+            <if test="abJdbsc != null and abJdbsc !=''">
+                AND APPLY_BUTIE.AB_JDBSC = #{abJdbsc,jdbcType=VARCHAR}
+            </if>
+            <if test="abLc != null and abLc !=''">
+                AND APPLY_BUTIE.AB_LC &gt;= #{abLc,jdbcType=VARCHAR}
+            </if>
+            <if test="abZt != null and abZt !=''">
+                AND (APPLY_BUTIE.AB_ZT &lt; #{abZt,jdbcType=VARCHAR} OR APPLY_BUTIE.AB_ZT is null)
+            </if>
+        </if>
+        AND EXISTS (select 1 from (select APPROVE.APLID SQID from APPROVE
+        union all select CONTRACT_DETAIL.C_SQID SQID from CONTRACT_DETAIL) t where t.sqid=APPLY_BUTIE.AB_ID)
+        order by APPLY_BUTIE.AB_LC
+    </select>
+
+    <select id="selectByMap" parameterType="Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from APPLY_BUTIE
+        <where>
+            <if test="abzt!=null and abzt!=''">
+                and AB_ZT=#{abzt}
+            </if>
+            <if test="abId!=null and abId!=''">
+                and AB_ID = #{abId,jdbcType=VARCHAR}
+            </if>
+            <if test="sfzh!=null and sfzh!=''">
+                and AB_ID in (
+                  select AFM_SQID from APPLYFAMILYMEMBER
+                  where AFM_SFZH=#{sfzh}
+                )
+            </if>
+        </where>
+    </select>
+
+    <update id="update" parameterType="com.sys.pojo.apply.ApplyButie">
+        update APPLY_BUTIE
+        <set>
+            <if test="abSqbh != null">
+                AB_SQBH = #{abSqbh,jdbcType=VARCHAR},
+            </if>
+            <if test="abBzlb != null">
+                AB_BZLB = #{abBzlb,jdbcType=VARCHAR},
+            </if>
+            <if test="abSsq != null">
+                AB_SSQ = #{abSsq,jdbcType=VARCHAR},
+            </if>
+            <if test="abJdbsc != null">
+                AB_JDBSC = #{abJdbsc,jdbcType=VARCHAR},
+            </if>
+            <if test="abSqjwh != null">
+                AB_SQJWH = #{abSqjwh,jdbcType=VARCHAR},
+            </if>
+            <if test="abSqrid != null">
+                AB_SQRID = #{abSqrid,jdbcType=VARCHAR},
+            </if>
+            <if test="abSqrpoid != null">
+                AB_SQRPOID = #{abSqrpoid,jdbcType=VARCHAR},
+            </if>
+            <if test="abSqhjnx != null">
+                AB_SQHJNX = #{abSqhjnx,jdbcType=DECIMAL},
+            </if>
+            <if test="abJtrk != null">
+                AB_JTRK = #{abJtrk,jdbcType=DECIMAL},
+            </if>
+            <if test="abJtnsr != null">
+                AB_JTNSR = #{abJtnsr,jdbcType=DECIMAL},
+            </if>
+            <if test="abRjysr != null">
+                AB_RJYSR = #{abRjysr,jdbcType=DECIMAL},
+            </if>
+            <if test="abRjjzmj != null">
+                AB_RJJZMJ = #{abRjjzmj,jdbcType=DECIMAL},
+            </if>
+            <if test="abXzfxz != null">
+                AB_XZFXZ = #{abXzfxz,jdbcType=VARCHAR},
+            </if>
+            <!--<if test="abTsjt != null">-->
+                AB_TSJT = #{abTsjt,jdbcType=DECIMAL},
+            <!--</if>-->
+            <if test="abBtje != null">
+                AB_BTJE = #{abBtje,jdbcType=DECIMAL},
+            </if>
+            <if test="abYhkh != null">
+                AB_YHKH = #{abYhkh,jdbcType=VARCHAR},
+            </if>
+            <if test="abKsrq != null">
+                AB_KSRQ = #{abKsrq,jdbcType=VARCHAR},
+            </if>
+            <if test="abJsrq != null">
+                AB_JSRQ = #{abJsrq,jdbcType=VARCHAR},
+            </if>
+            <if test="abZt != null">
+                AB_ZT = #{abZt,jdbcType=DECIMAL},
+            </if>
+            <if test="abLc != null">
+                AB_LC = #{abLc,jdbcType=DECIMAL},
+            </if>
+            <if test="abDalc != null">
+                AB_DALC = #{abDalc,jdbcType=VARCHAR},
+            </if>
+            <if test="abFlag != null">
+                AB_FLAG = #{abFlag,jdbcType=DECIMAL},
+            </if>
+            <if test="abLrr != null">
+                AB_LRR = #{abLrr,jdbcType=VARCHAR},
+            </if>
+            <if test="abLrsj != null">
+                AB_LRSJ = #{abLrsj,jdbcType=VARCHAR},
+            </if>
+            <if test="abXgr != null">
+                AB_XGR = #{abXgr,jdbcType=VARCHAR},
+            </if>
+            <if test="abXgsj != null">
+                AB_XGSJ = #{abXgsj,jdbcType=VARCHAR},
+            </if>
+            <if test="abSmr != null">
+                AB_SMR = #{abSmr,jdbcType=VARCHAR},
+            </if>
+            <if test="abSmsj != null">
+                AB_SMSJ = #{abSmsj,jdbcType=VARCHAR}
+            </if>
+
+            <if test="abDbzbh != null">
+                AB_DBZBH = #{abDbzbh,jdbcType=VARCHAR},
+            </if>
+            <if test="abLqrs != null">
+                AB_LQRS = #{abLqrs,jdbcType=VARCHAR},
+            </if>
+            <if test="abFzsj != null">
+                AB_FZSJ = #{abFzsj,jdbcType=VARCHAR},
+            </if>
+            <if test="abBaseimg != null">
+                AB_BASEIMG = #{abBaseimg,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where AB_ID = #{abId,jdbcType=VARCHAR}
+    </update>
+
+    <insert id="insert" parameterType="com.sys.pojo.apply.ApplyButie">
+    insert into APPLY_BUTIE (AB_ID, AB_SQBH, AB_BZLB,
+      AB_SSQ, AB_JDBSC, AB_SQJWH,
+      AB_SQRID, AB_SQRPOID, AB_SQHJNX,
+      AB_JTRK, AB_JTNSR, AB_RJYSR,
+      AB_RJJZMJ, AB_XZFXZ, AB_TSJT,
+      AB_BTJE, AB_YHKH, AB_KSRQ,
+      AB_JSRQ,
+      AB_DALC, AB_LRR,
+      AB_LRSJ, AB_XGR, AB_XGSJ,
+      AB_SMR, AB_SMSJ,AB_DBZBH,AB_LQRS,AB_FZSJ,AB_BASEIMG)
+    values (#{abId,jdbcType=VARCHAR}, #{abSqbh,jdbcType=VARCHAR}, #{abBzlb,jdbcType=VARCHAR},
+      #{abSsq,jdbcType=VARCHAR}, #{abJdbsc,jdbcType=VARCHAR}, #{abSqjwh,jdbcType=VARCHAR},
+      #{abSqrid,jdbcType=VARCHAR}, #{abSqrpoid,jdbcType=VARCHAR}, #{abSqhjnx,jdbcType=DECIMAL},
+      #{abJtrk,jdbcType=DECIMAL}, #{abJtnsr,jdbcType=DECIMAL}, #{abRjysr,jdbcType=DECIMAL},
+      #{abRjjzmj,jdbcType=DECIMAL}, #{abXzfxz,jdbcType=VARCHAR}, #{abTsjt,jdbcType=DECIMAL},
+      #{abBtje,jdbcType=DECIMAL}, #{abYhkh,jdbcType=VARCHAR}, #{abKsrq,jdbcType=VARCHAR},
+      #{abJsrq,jdbcType=VARCHAR}, #{abDalc,jdbcType=VARCHAR}, #{abLrr,jdbcType=VARCHAR},
+      #{abLrsj,jdbcType=VARCHAR}, #{abXgr,jdbcType=VARCHAR}, #{abXgsj,jdbcType=VARCHAR},
+      #{abSmr,jdbcType=VARCHAR}, #{abSmsj,jdbcType=VARCHAR}, #{abDbzbh,jdbcType=VARCHAR}, #{abLqrs,jdbcType=VARCHAR},
+      #{abFzsj,jdbcType=VARCHAR}, #{abBaseimg,jdbcType=VARCHAR})
+  </insert>
+
+    <update id="updateApLC" parameterType="Map">
+      update APPLY_BUTIE set AB_LC=4 where AB_ID=#{applyid}
+    </update>
+
+    <update id="updateApZT" parameterType="Map">
+        update APPLY_BUTIE set AB_ZT=5 where AB_ID=#{applyid}
+    </update>
+
+    <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from APPLY_BUTIE
+        where AB_ID = #{id,jdbcType=VARCHAR}
+    </select>
+
+</mapper>
