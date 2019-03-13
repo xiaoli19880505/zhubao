@@ -7,7 +7,7 @@ import org.activiti.engine.impl.persistence.entity.UserEntity;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @Desc:activiti转换类--
+ * @Desc:activiti转换类--33
  * @Author:wangli
  * @CreateTime:14:08 2018/10/17
  */
